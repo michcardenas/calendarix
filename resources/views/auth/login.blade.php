@@ -84,7 +84,6 @@
                         </a>
                     </div>
                 </form>
-
                 <div class="auth-bottom-link">
                     <a href="{{ route('register') }}">¿No tienes cuenta? Regístrate</a>
                 </div>

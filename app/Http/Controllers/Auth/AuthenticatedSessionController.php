@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Mostrar la vista de login.
      */
     public function create(): View
     {
@@ -20,29 +19,46 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Procesar la autenticación.
      */
-     public function store(Request $request)
+    public function store(Request $request)
+
     {
+         \Log::info('== INTENTANDO LOGIN ==', $request->only('email'));
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
+        \Log::info('== CREDENCIALES VALIDAS ==', $credentials);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard'); // o la ruta a donde lo llevas después
+
+            $user = Auth::user();
+
+            if ($user->hasRole('Administrador')) {
+                return redirect()->route('dashboard');
+            }
+
+            if ($user->hasRole('Cliente')) {
+                return redirect()->route('dashboard');
+            }
+
+            Auth::logout();
+            return abort(403, 'No tienes permisos asignados.');
         }
+        \Log::warning('== CREDENCIALES INVALIDAS ==', $credentials);
 
         throw ValidationException::withMessages([
             'email' => __('Estas credenciales no coinciden con nuestros registros.'),
         ]);
+        
     }
 
+
     /**
-     * Destroy an authenticated session.
+     * Cerrar sesión.
      */
-   
     public function destroy(Request $request)
     {
         Auth::guard('web')->logout();

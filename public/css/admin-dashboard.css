@@ -1,0 +1,517 @@
+/* ============================================
+   ADMIN DASHBOARD CSS - AGENDAMIENTOS
+   public/css/admin-dashboard.css
+   ============================================ */
+
+:root {
+    --admin-bg: #f8fafc;
+    --admin-white: #ffffff;
+    --admin-primary: #6366f1;
+    --admin-success: #10b981;
+    --admin-warning: #f59e0b;
+    --admin-danger: #ef4444;
+    --admin-text: #1f2937;
+    --admin-text-light: #6b7280;
+    --admin-border: #e5e7eb;
+    --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --admin-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.admin-dashboard {
+    background: var(--admin-bg);
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--admin-text);
+    padding: 1.5rem;
+}
+
+/* 📱 LAYOUT PRINCIPAL */
+.admin-main-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 🌳 SIDEBAR */
+.admin-sidebar {
+    background: var(--admin-white);
+    border-radius: 12px;
+    box-shadow: var(--admin-shadow);
+    height: fit-content;
+    position: sticky;
+    top: 1.5rem;
+}
+
+.admin-sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-sidebar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.admin-sidebar-title i {
+    color: var(--admin-primary);
+}
+
+.admin-sidebar-nav {
+    padding: 1rem;
+}
+
+.admin-nav-section {
+    margin-bottom: 1.5rem;
+}
+
+.admin-nav-section:last-child {
+    margin-bottom: 0;
+}
+
+.admin-nav-category {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+    border-radius: 8px;
+}
+
+.admin-nav-category:hover {
+    background: #f9fafb;
+}
+
+.admin-nav-category-icon {
+    color: var(--admin-primary);
+    font-size: 0.875rem;
+}
+
+.admin-nav-category-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    flex: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-nav-toggle {
+    color: var(--admin-text-light);
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.admin-nav-section.expanded .admin-nav-toggle {
+    transform: rotate(180deg);
+}
+
+.admin-nav-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.admin-nav-section.expanded .admin-nav-items {
+    max-height: 300px;
+}
+
+.admin-nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.admin-nav-link:hover {
+    background: rgba(99, 102, 241, 0.05);
+    transform: translateX(2px);
+}
+
+.admin-nav-link:hover .admin-nav-icon {
+    color: var(--admin-primary);
+}
+
+.admin-nav-icon {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+}
+
+.admin-nav-content span {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--admin-text);
+    display: block;
+    margin-bottom: 0.125rem;
+}
+
+.admin-nav-content small {
+    font-size: 0.75rem;
+    color: var(--admin-text-light);
+    line-height: 1.3;
+}
+
+.admin-container {
+    min-height: 600px;
+}
+
+/* 🎯 HEADER */
+.admin-header {
+    background: var(--admin-white);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--admin-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--admin-text);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-header .icon {
+    color: var(--admin-primary);
+}
+
+.admin-date {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+}
+
+/* 📊 STATS GRID */
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.admin-stat-card {
+    background: var(--admin-white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--admin-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-lg);
+}
+
+.admin-stat-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.admin-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.admin-stat-icon.primary { background: var(--admin-primary); }
+.admin-stat-icon.success { background: var(--admin-success); }
+.admin-stat-icon.warning { background: var(--admin-warning); }
+.admin-stat-icon.danger { background: var(--admin-danger); }
+
+.admin-stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: var(--admin-text);
+}
+
+.admin-stat-label {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.admin-stat-trend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.admin-stat-trend.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--admin-success);
+}
+
+.admin-stat-trend.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--admin-danger);
+}
+
+/* 📈 CHARTS SECTION */
+.admin-charts {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.admin-chart-card {
+    background: var(--admin-white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-chart-header {
+    margin-bottom: 1.5rem;
+}
+
+.admin-chart-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.admin-chart-subtitle {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+}
+
+.admin-chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* 📋 RECENT APPOINTMENTS */
+.admin-recent {
+    background: var(--admin-white);
+    border-radius: 12px;
+    box-shadow: var(--admin-shadow);
+    overflow: hidden;
+}
+
+.admin-recent-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-recent-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-view-all {
+    color: var(--admin-primary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.admin-view-all:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    background: #f9fafb;
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--admin-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--admin-border);
+    font-size: 0.875rem;
+}
+
+.admin-table tr:hover {
+    background: #f9fafb;
+}
+
+.admin-client {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--admin-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.admin-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.admin-status.confirmed {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--admin-success);
+}
+
+.admin-status.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--admin-warning);
+}
+
+.admin-status.cancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--admin-danger);
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 1024px) {
+    .admin-main-layout {
+        grid-template-columns: 250px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-dashboard {
+        padding: 1rem;
+    }
+    
+    .admin-main-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-sidebar {
+        order: 2;
+        position: relative;
+        top: 0;
+    }
+    
+    .admin-container {
+        order: 1;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .admin-charts {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-table {
+        font-size: 0.75rem;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+/* 🎨 ANIMACIONES */
+.admin-stat-card {
+    animation: fadeInUp 0.6s ease;
+}
+
+.admin-stat-card:nth-child(1) { animation-delay: 0.1s; }
+.admin-stat-card:nth-child(2) { animation-delay: 0.2s; }
+.admin-stat-card:nth-child(3) { animation-delay: 0.3s; }
+.admin-stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-chart-card {
+    animation: fadeIn 0.8s ease 0.5s both;
+}
+
+.admin-recent {
+    animation: fadeIn 0.8s ease 0.7s both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

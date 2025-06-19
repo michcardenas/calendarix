@@ -7,6 +7,8 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+
 
 class GoogleController extends Controller
 {
@@ -27,7 +29,13 @@ class GoogleController extends Controller
             ]
         );
 
+        // ✅ Asignar rol 'Cliente' si aún no lo tiene
+        if (!$user->hasRole('Cliente')) {
+            $user->assignRole('Cliente');
+        }
+
         Auth::login($user);
-        return redirect()->route('dashboard');
+        return redirect()->route('dashboard'); // Redirige al dashboard correcto
     }
+
 }
