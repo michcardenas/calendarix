@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
-
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\negocio\NegocioController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,20 +32,33 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('l
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-// Admin Dashboard
-// Route::middleware(['auth'])->get('/admin/dashboard', function () {
-//     return view('admin.dashboard-admin');
-// })->name('admin.dashboard');
-
-// // Cliente Dashboard
-// Route::middleware(['auth'])->get('/client/dashboard', function () {
-//     return view('client.dashboard-client');
-// })->name('client.dashboard');
-
-
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 });
+
+Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class);
+});
+
+// Negocio Routes
+Route::get('/negocio/registro', [NegocioController::class, 'create'])->name('negocio.create');
+Route::post('/negocio/registro', [NegocioController::class, 'store'])->name('negocio.store');
+Route::get('/negocio/datos', [NegocioController::class, 'datosNegocio'])->name('negocio.datos');
+Route::post('/negocio/datos', [NegocioController::class, 'guardarNombre'])->name('negocio.nombre.store');
+Route::get('/negocio/categorias', [NegocioController::class, 'categorias'])->name('negocio.categorias');
+Route::post('/negocio/categorias', [NegocioController::class, 'guardarCategorias'])->name('negocio.categorias.store');
+Route::get('/negocio/equipo', [NegocioController::class, 'equipo'])->name('negocio.equipo');
+Route::post('/negocio/equipo', [NegocioController::class, 'guardarEquipo'])->name('negocio.equipo.store');
+Route::get('/negocio/ubicacion', [NegocioController::class, 'ubicacion'])->name('negocio.ubicacion');
+Route::post('/negocio/ubicacion', [NegocioController::class, 'guardarUbicacion'])->name('negocio.ubicacion.store');
+Route::get('/negocio/verificar-direccion', [NegocioController::class, 'verificarDireccion'])->name('negocio.verificacion');
+Route::post('/negocio/verificar-direccion', [NegocioController::class, 'guardarVerificacion'])->name('negocio.verificacion.store');
+
+// Empresa Routes
+Route::get('/empresa/dashboard', function () {
+    return view('empresa.dashboard');
+})->name('empresa.dashboard');
+
 
 
 require __DIR__.'/auth.php';

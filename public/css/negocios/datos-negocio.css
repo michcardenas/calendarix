@@ -1,0 +1,331 @@
+/* public/css/negocio-nombre.css */
+
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* Colores */
+    --primary: #8B5FBF;
+    --primary-light: #A67FCF;
+    --primary-dark: #6B3F9F;
+    --secondary: #E8D5F2;
+    --background: #F5F1FA;
+    --white: #FFFFFF;
+    --text-primary: #2D1B3D;
+    --text-secondary: #6B5B7B;
+    --border: #D1C4E9;
+    --error: #e74c3c;
+    
+    /* Sombras */
+    --shadow-sm: 0 4px 20px rgba(139, 95, 191, 0.1);
+    --shadow-md: 0 8px 30px rgba(139, 95, 191, 0.15);
+    --shadow-lg: 0 15px 40px rgba(139, 95, 191, 0.2);
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 30%, #F5F1FA 100%);
+    
+    /* Espaciado */
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    
+    /* Bordes y transiciones */
+    --radius: 12px;
+    --radius-lg: 20px;
+    --transition: all 0.3s ease;
+}
+
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ===== FONDO ANIMADO ===== */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: var(--gradient-bg);
+}
+
+.particle {
+    position: absolute;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: float 20s infinite linear;
+}
+
+.particle:nth-child(1) { width: 18px; height: 18px; left: 10%; animation-delay: 0s; animation-duration: 22s; }
+.particle:nth-child(2) { width: 14px; height: 14px; left: 20%; animation-delay: 3s; animation-duration: 26s; }
+.particle:nth-child(3) { width: 20px; height: 20px; left: 30%; animation-delay: 6s; animation-duration: 24s; }
+.particle:nth-child(4) { width: 16px; height: 16px; left: 50%; animation-delay: 9s; animation-duration: 28s; }
+.particle:nth-child(5) { width: 22px; height: 22px; left: 70%; animation-delay: 12s; animation-duration: 20s; }
+.particle:nth-child(6) { width: 15px; height: 15px; left: 80%; animation-delay: 15s; animation-duration: 25s; }
+.particle:nth-child(7) { width: 19px; height: 19px; left: 90%; animation-delay: 18s; animation-duration: 23s; }
+.particle:nth-child(8) { width: 17px; height: 17px; left: 5%; animation-delay: 21s; animation-duration: 27s; }
+
+@keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10%, 90% { opacity: 0.5; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+/* ===== CONTENEDOR ===== */
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+}
+
+.form-wrapper {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    box-shadow: var(--shadow-lg);
+    max-width: 600px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+/* ===== CONTENIDO ===== */
+.form-content {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Estilizar el h3 existente */
+h3 {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--space-sm);
+}
+
+/* Estilizar el h1 existente */
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    line-height: 1.2;
+}
+
+h1 strong {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Estilizar el p existente */
+p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: var(--space-2xl);
+}
+
+/* ===== FORMULARIO ===== */
+#neg_form_nombre {
+    width: 100%;
+}
+
+/* Estilizar los labels existentes */
+label[for="neg_nombre_comercial"],
+label[for="neg_sitio_web"] {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: var(--space-sm);
+}
+
+/* Estilizar los inputs existentes */
+#neg_nombre_comercial,
+#neg_sitio_web {
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 16px;
+    transition: var(--transition);
+    background: var(--white);
+    color: var(--text-primary);
+    font-family: inherit;
+    margin-bottom: var(--space-md);
+}
+
+#neg_nombre_comercial::placeholder,
+#neg_sitio_web::placeholder {
+    color: #9B8BAB;
+    opacity: 1;
+}
+
+#neg_nombre_comercial:focus,
+#neg_sitio_web:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 95, 191, 0.1);
+    transform: translateY(-2px);
+}
+
+#neg_nombre_comercial:hover,
+#neg_sitio_web:hover {
+    border-color: var(--primary-light);
+}
+
+/* Estados de error */
+#neg_nombre_comercial.error,
+#neg_sitio_web.error {
+    border-color: var(--error) !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+}
+
+/* ===== BOTÓN ===== */
+button[type="submit"] {
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: 18px var(--space-xl);
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: var(--space-lg);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+button[type="submit"]:active {
+    transform: translateY(-1px);
+}
+
+/* Efecto shimmer en el botón */
+button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+button[type="submit"]:hover::after {
+    left: 100%;
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+.error-message {
+    color: var(--error);
+    font-size: 12px;
+    margin-top: 4px;
+    margin-bottom: var(--space-md);
+    animation: slideDown 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.error-message::before {
+    content: '⚠️';
+    font-size: 10px;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animación para inputs cuando se enfocan */
+#neg_nombre_comercial:focus,
+#neg_sitio_web:focus {
+    animation: inputFocus 0.3s ease-out;
+}
+
+@keyframes inputFocus {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1) translateY(-2px); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .form-wrapper {
+        padding: var(--space-xl) var(--space-lg);
+        margin: 10px;
+        border-radius: var(--radius);
+    }
+    
+    h1 { font-size: 24px; }
+    p { font-size: 14px; }
+    
+    #neg_nombre_comercial,
+    #neg_sitio_web {
+        padding: 14px var(--space-md);
+        font-size: 14px;
+    }
+    
+    button[type="submit"] {
+        padding: var(--space-md) var(--space-lg);
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container { padding: 10px; }
+    
+    .form-wrapper { 
+        padding: 25px 15px; 
+    }
+    
+    h1 { font-size: 20px; }
+}

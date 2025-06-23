@@ -1,0 +1,453 @@
+/* public/css/negocio-equipo.css */
+
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* Colores */
+    --primary: #8B5FBF;
+    --primary-light: #A67FCF;
+    --primary-dark: #6B3F9F;
+    --secondary: #E8D5F2;
+    --background: #F5F1FA;
+    --white: #FFFFFF;
+    --text-primary: #2D1B3D;
+    --text-secondary: #6B5B7B;
+    --border: #D1C4E9;
+    --error: #e74c3c;
+    --radio-bg: #F8F6FC;
+    --radio-hover: #F3F0FF;
+    --radio-checked: var(--primary);
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.08);
+    --shadow-md: 0 4px 20px rgba(139, 95, 191, 0.12);
+    --shadow-lg: 0 8px 30px rgba(139, 95, 191, 0.15);
+    --shadow-xl: 0 15px 40px rgba(139, 95, 191, 0.2);
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 30%, #F5F1FA 100%);
+    --gradient-card: linear-gradient(135deg, var(--white) 0%, #FDFCFF 100%);
+    
+    /* Espaciado */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    
+    /* Bordes y transiciones */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 50px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease-out;
+}
+
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ===== FONDO ANIMADO ===== */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: var(--gradient-bg);
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    opacity: 0.4;
+    animation: float 25s infinite linear;
+    filter: blur(0.5px);
+}
+
+.particle:nth-child(1) { width: 16px; height: 16px; left: 8%; animation-delay: 0s; animation-duration: 22s; }
+.particle:nth-child(2) { width: 12px; height: 12px; left: 18%; animation-delay: 2s; animation-duration: 28s; }
+.particle:nth-child(3) { width: 20px; height: 20px; left: 28%; animation-delay: 4s; animation-duration: 24s; }
+.particle:nth-child(4) { width: 14px; height: 14px; left: 38%; animation-delay: 6s; animation-duration: 26s; }
+.particle:nth-child(5) { width: 18px; height: 18px; left: 48%; animation-delay: 8s; animation-duration: 30s; }
+.particle:nth-child(6) { width: 13px; height: 13px; left: 58%; animation-delay: 10s; animation-duration: 23s; }
+.particle:nth-child(7) { width: 21px; height: 21px; left: 68%; animation-delay: 12s; animation-duration: 27s; }
+.particle:nth-child(8) { width: 15px; height: 15px; left: 78%; animation-delay: 14s; animation-duration: 25s; }
+.particle:nth-child(9) { width: 19px; height: 19px; left: 88%; animation-delay: 16s; animation-duration: 29s; }
+.particle:nth-child(10) { width: 17px; height: 17px; left: 98%; animation-delay: 18s; animation-duration: 21s; }
+
+@keyframes float {
+    0% { transform: translateY(100vh) scale(0) rotate(0deg); opacity: 0; }
+    15% { opacity: 0.4; transform: scale(1); }
+    85% { opacity: 0.4; }
+    100% { transform: translateY(-100px) scale(1.1) rotate(360deg); opacity: 0; }
+}
+
+/* ===== CONTENEDOR ===== */
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+}
+
+.form-wrapper {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    box-shadow: var(--shadow-xl);
+    max-width: 600px;
+    width: 100%;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* ===== CONTENIDO ===== */
+.form-content {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilizar el h3 existente */
+h3 {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--space-sm);
+}
+
+/* Estilizar el h1 existente */
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    line-height: 1.3;
+}
+
+h1 strong {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Estilizar el p existente */
+p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: var(--space-2xl);
+}
+
+/* ===== FORMULARIO ===== */
+form {
+    width: 100%;
+}
+
+/* ===== RADIO BUTTONS CON TU ESTRUCTURA EXACTA ===== */
+
+/* Estilizar los labels que tienes con style inline */
+label[style*="display: block"] {
+    display: flex !important;
+    align-items: center;
+    padding: var(--space-lg) var(--space-xl);
+    margin: var(--space-md) 0 !important;
+    background: var(--gradient-card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--text-primary);
+    min-height: 60px;
+}
+
+label[style*="display: block"]:hover {
+    border-color: var(--primary-light);
+    background: var(--radio-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+label[style*="display: block"]:has(input:checked) {
+    border-color: var(--radio-checked);
+    background: var(--radio-hover);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+label[style*="display: block"]:has(input:checked)::after {
+    content: '✓';
+    position: absolute;
+    right: var(--space-lg);
+    background: var(--primary);
+    color: var(--white);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkPop {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Estilizar los radio buttons */
+input[type="radio"][name="neg_equipo"] {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--space-md);
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Radio button personalizado más bonito */
+input[type="radio"][name="neg_equipo"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    margin-right: var(--space-md);
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--white);
+}
+
+input[type="radio"][name="neg_equipo"]:hover {
+    border-color: var(--primary-light);
+    transform: scale(1.1);
+}
+
+input[type="radio"][name="neg_equipo"]:checked {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+input[type="radio"][name="neg_equipo"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--white);
+    animation: radioPop 0.2s ease-out;
+}
+
+@keyframes radioPop {
+    0% { transform: translate(-50%, -50%) scale(0); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ===== BOTÓN ===== */
+button[type="submit"] {
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: 18px var(--space-2xl);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 16px;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: var(--space-xl);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+button[type="submit"]:active {
+    transform: translateY(-1px);
+}
+
+button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Efecto shimmer en el botón */
+button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+button[type="submit"]:hover::after {
+    left: 100%;
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+.error-message {
+    color: var(--error);
+    font-size: 14px;
+    margin-top: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    border-radius: var(--radius-md);
+    animation: slideDown 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.error-message::before {
+    content: '⚠️';
+    font-size: 16px;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animación para los labels */
+label[style*="display: block"] {
+    animation: slideInLeft 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+label[style*="display: block"]:nth-of-type(1) { animation-delay: 0.1s; }
+label[style*="display: block"]:nth-of-type(2) { animation-delay: 0.2s; }
+label[style*="display: block"]:nth-of-type(3) { animation-delay: 0.3s; }
+label[style*="display: block"]:nth-of-type(4) { animation-delay: 0.4s; }
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .form-wrapper {
+        padding: var(--space-xl) var(--space-lg);
+        margin: var(--space-md);
+        border-radius: var(--radius-lg);
+    }
+    
+    h1 { 
+        font-size: 24px; 
+        margin-bottom: var(--space-lg);
+    }
+    
+    p { 
+        font-size: 14px; 
+        margin-bottom: var(--space-xl);
+    }
+    
+    label[style*="display: block"] {
+        padding: var(--space-md) var(--space-lg);
+        font-size: 14px;
+        min-height: 50px;
+    }
+    
+    button[type="submit"] {
+        padding: var(--space-md) var(--space-lg);
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container { padding: var(--space-md); }
+    
+    .form-wrapper { 
+        padding: var(--space-lg) var(--space-md); 
+    }
+    
+    h1 { font-size: 20px; }
+    
+    label[style*="display: block"] {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 13px;
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .particle {
+        animation: none;
+        opacity: 0.1;
+    }
+}
+
+/* ===== EFECTOS PARA FOCUS ===== */
+input[type="radio"][name="neg_equipo"]:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+label[style*="display: block"]:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}

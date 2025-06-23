@@ -70,29 +70,11 @@
                     </div>
                     <ul class="admin-nav-items">
                         <li class="admin-nav-item">
-                            <a href="#" class="admin-nav-link" data-demo="users">
+                            <a href="{{ route('admin.users.index') }}" class="admin-nav-link" id="usr_nav_index">
                                 <i class="fas fa-users admin-nav-icon"></i>
                                 <div class="admin-nav-content">
                                     <span>Gestionar Usuarios</span>
                                     <small>Ver y editar usuarios</small>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="admin-nav-item">
-                            <a href="#" class="admin-nav-link" data-demo="roles">
-                                <i class="fas fa-user-shield admin-nav-icon"></i>
-                                <div class="admin-nav-content">
-                                    <span>Roles y Permisos</span>
-                                    <small>Configurar accesos</small>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="admin-nav-item">
-                            <a href="#" class="admin-nav-link" data-demo="businesses">
-                                <i class="fas fa-store admin-nav-icon"></i>
-                                <div class="admin-nav-content">
-                                    <span>Gestionar Empresas</span>
-                                    <small>Aprobar y supervisar</small>
                                 </div>
                             </a>
                         </li>
@@ -188,7 +170,7 @@
 
 
 
-                    
+
                         <i class="fas fa-arrow-up"></i> +12%
                     </div>
                 </div>

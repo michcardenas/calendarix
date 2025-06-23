@@ -1,0 +1,526 @@
+/* ============================================
+   VARIABLES CSS PARA FORMULARIO DE EDICIÓN
+   ============================================ */
+
+:root {
+  /* === COLORES === */
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: #dbeafe;
+  --success-color: #10b981;
+  --success-hover: #059669;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  
+  /* === COLORES DE FONDO === */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-input-focus: #f8fafc;
+  
+  /* === COLORES DE TEXTO === */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-white: #ffffff;
+  --text-label: #374151;
+  
+  /* === BORDES === */
+  --border-color: #e2e8f0;
+  --border-focus: #3b82f6;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --border-radius-lg: 16px;
+  --border-width: 1px;
+  
+  /* === SOMBRAS === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
+  
+  /* === ESPACIADO === */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* === TIPOGRAFÍA === */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* === TRANSICIONES === */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL CON MANCHITAS
+   ============================================ */
+
+.form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  font-family: var(--font-family);
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === MANCHITAS DE FONDO ANIMADAS === */
+.form-container::before,
+.form-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50% 40% 60% 30%;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.form-container::before {
+  width: 400px;
+  height: 350px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+  top: -150px;
+  right: -100px;
+  transform: rotate(-15deg);
+  animation: floatForm 8s ease-in-out infinite;
+}
+
+.form-container::after {
+  width: 300px;
+  height: 280px;
+  background: linear-gradient(225deg, #10b981, #06b6d4, #3b82f6);
+  bottom: -80px;
+  left: -80px;
+  transform: rotate(25deg);
+  animation: floatForm 10s ease-in-out infinite reverse;
+}
+
+/* Manchitas adicionales de fondo */
+.form-container {
+  background-image: 
+    /* Manchitas grandes */
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+    /* Manchitas medianas */
+    radial-gradient(circle at 70% 70%, rgba(245, 158, 11, 0.05) 0%, transparent 30%),
+    radial-gradient(circle at 25% 25%, rgba(236, 72, 153, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 35%);
+}
+
+/* Animación flotante */
+@keyframes floatForm {
+  0%, 100% {
+    transform: translateY(0px) rotate(-15deg) scale(1);
+  }
+  33% {
+    transform: translateY(-20px) rotate(-10deg) scale(1.05);
+  }
+  66% {
+    transform: translateY(-10px) rotate(-20deg) scale(0.95);
+  }
+}
+
+/* Asegurar que el contenido esté por encima */
+.form-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   TARJETA DEL FORMULARIO
+   ============================================ */
+
+.form-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-card);
+  border: var(--border-width) solid var(--border-color);
+  max-width: 500px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de brillo sutil en la tarjeta */
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left var(--transition-slow);
+  z-index: 1;
+}
+
+.form-card:hover::before {
+  left: 100%;
+}
+
+/* ============================================
+   TÍTULO DEL FORMULARIO
+   ============================================ */
+
+.form-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.form-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  margin: var(--spacing-md) auto 0;
+  border-radius: 2px;
+}
+
+/* ============================================
+   CAMPOS DEL FORMULARIO
+   ============================================ */
+
+.form-group {
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  z-index: 2;
+}
+
+.form-label {
+  display: block;
+  color: var(--text-label);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--transition-fast);
+}
+
+.form-control {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-control:focus {
+  outline: none;
+  color: var(--text-primary);
+  background-color: var(--bg-input-focus);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.form-control:hover:not(:focus) {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+/* === ESTILOS ESPECÍFICOS PARA SELECT === */
+select.form-control {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right var(--spacing-sm) center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+select.form-control:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-sm);
+  border: var(--border-width) solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left var(--transition-normal);
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+/* === VARIANTES DE BOTONES === */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: var(--text-white);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-hover), #1d4ed8);
+  border-color: var(--primary-hover);
+  color: var(--text-white);
+}
+
+.btn-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--text-secondary);
+  color: var(--text-white);
+  border-color: var(--text-secondary);
+}
+
+/* === BOTÓN CON ÍCONO === */
+.btn-with-icon::before {
+  content: none;
+}
+
+.btn-with-icon .btn-icon {
+  margin-right: var(--spacing-sm);
+  transition: transform var(--transition-fast);
+}
+
+.btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   ESTADOS DE VALIDACIÓN
+   ============================================ */
+
+.form-control.is-valid {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-control.is-invalid {
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.feedback-message {
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+}
+
+.feedback-message.valid {
+  color: var(--success-color);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.feedback-message.invalid {
+  color: var(--danger-color);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ============================================
+   BOTONES DE ACCIÓN
+   ============================================ */
+
+.form-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-top: var(--spacing-xl);
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================
+   RESPONSIVO
+   ============================================ */
+
+@media (max-width: 768px) {
+  .form-container {
+    padding: var(--spacing-md);
+    align-items: flex-start;
+    padding-top: var(--spacing-xl);
+  }
+  
+  .form-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+  }
+  
+  .form-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .form-card {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* ============================================
+   ANIMACIONES ADICIONALES
+   ============================================ */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-card {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.form-group {
+  animation: slideInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+
+.form-actions {
+  animation: slideInUp 0.6s ease-out 0.5s both;
+}
+
+/* ============================================
+   EFECTOS DE LOADING
+   ============================================ */
+
+.btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid transparent;
+  border-top-color: var(--text-white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   EFECTOS HOVER ADICIONALES
+   ============================================ */
+
+.form-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.form-label:hover {
+  color: var(--primary-color);
+}

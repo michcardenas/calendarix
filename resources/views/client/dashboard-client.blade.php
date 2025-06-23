@@ -1,83 +1,171 @@
 
-@auth
-    @role('cliente')
+{{-- CSS específico del dashboard cliente --}}
 
-        {{-- CSS específico del dashboard admin --}}
-        @push('styles')
-        <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
-        @endpush
-
-        {{-- Container principal del dashboard --}}
-        <div id="admin-dash-container" class="admin-dash-layout">
-
-            {{-- Header del dashboard --}}
-            <header id="admin-dash-header" class="admin-dash-header">
-                <div class="admin-dash-header-content">
-                    <h1 id="admin-dash-title" class="admin-dash-main-title">
-                        <i class="fas fa-tachometer-alt admin-dash-title-icon"></i>
-                        Dashboard cliente 
-                    </h1>
-
-                    <div id="admin-dash-breadcrumb" class="admin-dash-breadcrumb">
-                        <span class="admin-dash-breadcrumb-item">
-                            <i class="fas fa-home"></i> Inicio
-                        </span>
-                        <i class="fas fa-chevron-right admin-dash-breadcrumb-separator"></i>
-                        <span class="admin-dash-breadcrumb-item active">Dashboard</span>
-                    </div>
-                </div>
-
-                <div id="admin-dash-header-actions" class="admin-dash-header-actions">
-                    <div id="admin-dash-admin-profile" class="admin-dash-admin-profile">
-                        <div id="admin-dash-admin-avatar" class="admin-dash-admin-avatar">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-                        </div>
-                        <div id="admin-dash-admin-info" class="admin-dash-admin-info">
-                            <h4>{{ auth()->user()->name }}</h4>
-                            <p>Administrador</p>
-                        </div>
-                        <i class="fas fa-chevron-down admin-dash-profile-arrow"></i>
-                    </div>
-                </div>
-            </header>
-
-            {{-- Contenido principal --}}
-            <div id="admin-dash-content" class="admin-dash-main-content">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/cliente/cliente-dashboard.css') }}">
 
 
-            </div>
-        </div>
 
-        {{-- JavaScript específico del dashboard admin --}}
-        @push('scripts')
-        <script src="{{ asset('js/admin-dashboard.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-        @endpush
+{{-- Container principal del dashboard --}}
+<div id="clx-dash-container" class="clx-container">
 
-    @else
-        {{-- Usuario autenticado, pero no es administrador --}}
-        <div class="admin-dash-access-denied">
-            <div class="admin-dash-access-denied-content">
-                <i class="fas fa-exclamation-triangle admin-dash-access-denied-icon"></i>
-                <h2>Acceso Denegado</h2>
-                <p>No tienes permisos de administrador para acceder a esta página.</p>
-                <a href="{{ route('dashboard') }}" class="admin-dash-back-button">
-                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
-                </a>
-            </div>
-        </div>
-    @endrole
-@else
-    {{-- Usuario no autenticado --}}
-    <div class="admin-dash-access-denied">
-        <div class="admin-dash-access-denied-content">
-            <i class="fas fa-lock admin-dash-access-denied-icon"></i>
-            <h2>Acceso Restringido</h2>
-            <p>Necesitas iniciar sesión como administrador.</p>
-            <a href="{{ route('login') }}" class="admin-dash-back-button">
-                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-            </a>
-        </div>
+    <!-- Fondo animado -->
+    <div class="clx-bg-shapes">
+        <div class="clx-shape clx-shape-1"></div>
+        <div class="clx-shape clx-shape-2"></div>
+        <div class="clx-shape clx-shape-3"></div>
+        <div class="clx-shape clx-shape-4"></div>
+        <div class="clx-shape clx-shape-5"></div>
     </div>
-@endauth
+
+    <!-- Sidebar -->
+    <aside class="clx-sidebar">
+        <div class="clx-logo">
+            <h1><i class="fas fa-calendar-alt"></i> Calendarix</h1>
+        </div>
+
+        <div class="clx-user-info">
+            <div class="clx-user-avatar">
+                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+            </div>
+            <div class="clx-user-name">{{ auth()->user()->name }}</div>
+            <div class="clx-user-email">{{ auth()->user()->email }}</div>
+        </div>
+
+        <nav>
+            <ul class="clx-nav">
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link active" data-clx-page="dashboard">
+                        <i class="fas fa-home clx-nav-icon"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="appointments">
+                        <i class="fas fa-calendar-check clx-nav-icon"></i>
+                        Mis Citas
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="businesses">
+                        <i class="fas fa-store clx-nav-icon"></i>
+                        Negocios
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="favorites">
+                        <i class="fas fa-heart clx-nav-icon"></i>
+                        Favoritos
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="history">
+                        <i class="fas fa-history clx-nav-icon"></i>
+                        Historial
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="profile">
+                        <i class="fas fa-user-cog clx-nav-icon"></i>
+                        Mi Perfil
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="notifications">
+                        <i class="fas fa-bell clx-nav-icon"></i>
+                        Notificaciones
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="clx-main">
+        <!-- Header de bienvenida -->
+        <header class="clx-header">
+            <div class="clx-welcome">
+                <div>
+                    <h2>¡Bienvenido de vuelta, {{ explode(' ', auth()->user()->name)[0] }}!</h2>
+                    <p>Tienes <span id="clx-pending-count">3 citas</span> pendientes para esta semana</p>
+                </div>
+                <div class="clx-quick-actions">
+                    <button class="clx-btn clx-btn-primary" id="clx-btn-book">
+                        <i class="fas fa-plus"></i>
+                        Agendar Cita
+                    </button>
+                    <button class="clx-btn clx-btn-secondary" id="clx-btn-search">
+                        <i class="fas fa-search"></i>
+                        Buscar Servicios
+                    </button>
+                </div>
+                <div class="text-center mt-6">
+                <a href="{{ route('negocio.create') }}" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-md transition">
+                    Registra tu negocio
+                </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Estadísticas -->
+        <section class="clx-stats">
+            <div class="clx-stat-card">
+                <div class="clx-stat-icon primary">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="clx-stat-number" id="clx-stat-appointments">8</div>
+                <div class="clx-stat-label">Citas este mes</div>
+            </div>
+            <div class="clx-stat-card">
+                <div class="clx-stat-icon success">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="clx-stat-number" id="clx-stat-favorites">5</div>
+                <div class="clx-stat-label">Negocios favoritos</div>
+            </div>
+            <div class="clx-stat-card">
+                <div class="clx-stat-icon warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="clx-stat-number" id="clx-stat-pending">3</div>
+                <div class="clx-stat-label">Citas pendientes</div>
+            </div>
+        </section>
+
+        <!-- Contenido principal -->
+        <section class="clx-content-grid">
+            <!-- Próximas citas -->
+            <div class="clx-card">
+                <div class="clx-card-header">
+                    <h3 class="clx-card-title">Próximas Citas</h3>
+                    <button class="clx-btn clx-btn-ghost">Ver todas</button>
+                </div>
+                <div class="clx-card-body">
+                    <div id="clx-appointments-list">
+                        <!-- Se llena dinámicamente con JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Negocios recomendados -->
+            <div class="clx-card">
+                <div class="clx-card-header">
+                    <h3 class="clx-card-title">Recomendados</h3>
+                    <button class="clx-btn clx-btn-ghost">
+                        <i class="fas fa-refresh"></i>
+                    </button>
+                </div>
+                <div class="clx-card-body">
+                    <div id="clx-recommendations-list">
+                        <!-- Se llena dinámicamente con JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+
+{{-- JavaScript específico del dashboard cliente --}}
+
+<script src="{{ asset('js/cliente/cliente-dashboard.js') }}"></script>

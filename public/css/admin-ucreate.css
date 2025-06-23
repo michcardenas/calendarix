@@ -1,0 +1,660 @@
+/* ============================================
+   VARIABLES CSS PARA FORMULARIO DE CREACIÓN
+   ============================================ */
+
+:root {
+  /* === COLORES === */
+  --primary-color: #10b981;
+  --primary-hover: #059669;
+  --primary-light: #d1fae5;
+  --secondary-color: #3b82f6;
+  --secondary-hover: #2563eb;
+  --success-color: #10b981;
+  --success-hover: #059669;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  
+  /* === COLORES DE FONDO === */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0fdf4;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-input-focus: #f0fdf4;
+  
+  /* === COLORES DE TEXTO === */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-white: #ffffff;
+  --text-label: #374151;
+  --text-success: #065f46;
+  
+  /* === BORDES === */
+  --border-color: #e2e8f0;
+  --border-focus: #10b981;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --border-radius-lg: 16px;
+  --border-width: 1px;
+  
+  /* === SOMBRAS === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 8px 32px rgba(16, 185, 129, 0.12);
+  
+  /* === ESPACIADO === */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* === TIPOGRAFÍA === */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* === TRANSICIONES === */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL CON MANCHITAS VERDES
+   ============================================ */
+
+.create-form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  font-family: var(--font-family);
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === MANCHITAS DE FONDO ANIMADAS CON TEMÁTICA VERDE === */
+.create-form-container::before,
+.create-form-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50% 40% 60% 30%;
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.create-form-container::before {
+  width: 450px;
+  height: 400px;
+  background: linear-gradient(135deg, #10b981, #059669, #34d399);
+  top: -180px;
+  right: -120px;
+  transform: rotate(-20deg);
+  animation: floatCreateForm 9s ease-in-out infinite;
+}
+
+.create-form-container::after {
+  width: 350px;
+  height: 320px;
+  background: linear-gradient(225deg, #10b981, #06b6d4, #3b82f6);
+  bottom: -100px;
+  left: -100px;
+  transform: rotate(30deg);
+  animation: floatCreateForm 11s ease-in-out infinite reverse;
+}
+
+/* Manchitas adicionales de fondo con temática verde */
+.create-form-container {
+  background-image: 
+    /* Manchitas grandes verdes */
+    radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 85% 15%, rgba(52, 211, 153, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 45% 45%, rgba(5, 150, 105, 0.05) 0%, transparent 50%),
+    /* Manchitas medianas */
+    radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.05) 0%, transparent 30%),
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 40%, rgba(16, 185, 129, 0.04) 0%, transparent 35%),
+    /* Manchitas pequeñas */
+    radial-gradient(circle at 60% 10%, rgba(34, 197, 94, 0.06) 0%, transparent 25%),
+    radial-gradient(circle at 10% 60%, rgba(52, 211, 153, 0.05) 0%, transparent 30%),
+    radial-gradient(circle at 40% 90%, rgba(16, 185, 129, 0.04) 0%, transparent 20%);
+}
+
+/* Animación flotante mejorada */
+@keyframes floatCreateForm {
+  0%, 100% {
+    transform: translateY(0px) rotate(-20deg) scale(1);
+  }
+  25% {
+    transform: translateY(-25px) rotate(-15deg) scale(1.08);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-25deg) scale(0.92);
+  }
+  75% {
+    transform: translateY(-30px) rotate(-18deg) scale(1.05);
+  }
+}
+
+/* Asegurar que el contenido esté por encima */
+.create-form-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   TARJETA DEL FORMULARIO DE CREACIÓN
+   ============================================ */
+
+.create-form-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-card);
+  border: var(--border-width) solid rgba(16, 185, 129, 0.2);
+  max-width: 520px;
+  width: 100%;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de brillo verde sutil en la tarjeta */
+.create-form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(16, 185, 129, 0.08),
+    transparent
+  );
+  transition: left var(--transition-slow);
+  z-index: 1;
+}
+
+.create-form-card:hover::before {
+  left: 100%;
+}
+
+.create-form-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 48px rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* ============================================
+   TÍTULO DEL FORMULARIO CON ÍCONO
+   ============================================ */
+
+.create-form-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.create-form-title::after {
+  content: '';
+  display: block;
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  margin: var(--spacing-md) auto 0;
+  border-radius: 2px;
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.title-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--primary-color);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* ============================================
+   CAMPOS DEL FORMULARIO MEJORADOS
+   ============================================ */
+
+.create-form-group {
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  z-index: 2;
+}
+
+.create-form-label {
+  display: flex;
+  align-items: center;
+  color: var(--text-label);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--transition-fast);
+}
+
+.create-form-label:hover {
+  color: var(--primary-color);
+}
+
+.create-form-label .field-icon {
+  margin-right: var(--spacing-sm);
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-fast);
+}
+
+.create-form-label:hover .field-icon {
+  transform: scale(1.1);
+}
+
+.create-form-control {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.create-form-control:focus {
+  outline: none;
+  color: var(--text-primary);
+  background-color: var(--bg-input-focus);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12), var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.create-form-control:hover:not(:focus) {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+/* === CAMPO DE CONTRASEÑA CON INDICADOR DE FORTALEZA === */
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.password-toggle:hover {
+  color: var(--primary-color);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.password-strength {
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) 0;
+}
+
+.strength-bar {
+  height: 4px;
+  background-color: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.strength-fill {
+  height: 100%;
+  transition: all var(--transition-normal);
+  border-radius: 2px;
+}
+
+.strength-weak { background-color: var(--danger-color); width: 25%; }
+.strength-fair { background-color: var(--warning-color); width: 50%; }
+.strength-good { background-color: #3b82f6; width: 75%; }
+.strength-strong { background-color: var(--success-color); width: 100%; }
+
+.strength-text {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* === ESTILOS ESPECÍFICOS PARA SELECT === */
+select.create-form-control {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2310b981' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right var(--spacing-sm) center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+select.create-form-control:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23059669' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* ============================================
+   BOTONES VERDE TEMÁTICO
+   ============================================ */
+
+.create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-sm);
+  border: var(--border-width) solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.create-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left var(--transition-normal);
+}
+
+.create-btn:hover::before {
+  left: 100%;
+}
+
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  text-decoration: none;
+}
+
+.create-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+/* === VARIANTE ÉXITO (VERDE) === */
+.create-btn-success {
+  background: linear-gradient(135deg, var(--success-color), var(--success-hover));
+  color: var(--text-white);
+  border-color: var(--success-color);
+}
+
+.create-btn-success:hover {
+  background: linear-gradient(135deg, var(--success-hover), #047857);
+  border-color: var(--success-hover);
+  color: var(--text-white);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+/* === VARIANTE SECUNDARIA === */
+.create-btn-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.create-btn-secondary:hover {
+  background-color: var(--text-secondary);
+  color: var(--text-white);
+  border-color: var(--text-secondary);
+}
+
+/* === BOTÓN CON ÍCONO === */
+.create-btn-with-icon .btn-icon {
+  margin-right: var(--spacing-sm);
+  transition: transform var(--transition-fast);
+}
+
+.create-btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   ESTADOS DE VALIDACIÓN MEJORADOS
+   ============================================ */
+
+.create-form-control.is-valid {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2310b981'%3e%3cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.create-form-control.is-invalid {
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23ef4444'%3e%3cpath fill-rule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z' clip-rule='evenodd'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.create-feedback-message {
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.create-feedback-message.valid {
+  color: var(--success-color);
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.create-feedback-message.invalid {
+  color: var(--danger-color);
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ============================================
+   BOTONES DE ACCIÓN
+   ============================================ */
+
+.create-form-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-top: var(--spacing-xl);
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================
+   RESPONSIVO
+   ============================================ */
+
+@media (max-width: 768px) {
+  .create-form-container {
+    padding: var(--spacing-md);
+    align-items: flex-start;
+    padding-top: var(--spacing-xl);
+  }
+  
+  .create-form-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+  }
+  
+  .create-form-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .create-form-actions {
+    flex-direction: column;
+  }
+  
+  .create-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-form-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .create-form-card {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* ============================================
+   ANIMACIONES ADICIONALES
+   ============================================ */
+
+@keyframes slideInUpCreate {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.create-form-card {
+  animation: slideInUpCreate 0.7s ease-out;
+}
+
+.create-form-group {
+  animation: slideInUpCreate 0.7s ease-out;
+  animation-fill-mode: both;
+}
+
+.create-form-group:nth-child(1) { animation-delay: 0.1s; }
+.create-form-group:nth-child(2) { animation-delay: 0.2s; }
+.create-form-group:nth-child(3) { animation-delay: 0.3s; }
+.create-form-group:nth-child(4) { animation-delay: 0.4s; }
+.create-form-group:nth-child(5) { animation-delay: 0.5s; }
+
+.create-form-actions {
+  animation: slideInUpCreate 0.7s ease-out 0.6s both;
+}
+
+/* ============================================
+   EFECTOS DE LOADING VERDE
+   ============================================ */
+
+.create-btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.create-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid transparent;
+  border-top-color: var(--text-white);
+  border-radius: 50%;
+  animation: spinCreate 1s linear infinite;
+}
+
+@keyframes spinCreate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   EFECTOS HOVER ADICIONALES
+   ============================================ */
+
+.create-form-group:hover {
+  transform: translateX(2px);
+}
+
+.create-form-label:hover {
+  transform: translateX(3px);
+}
+
+/* ============================================
+   ANIMACIÓN SHAKE PARA ERRORES
+   ============================================ */
+
+@keyframes shakeCreate {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
+}

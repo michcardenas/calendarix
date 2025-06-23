@@ -1,0 +1,496 @@
+/* public/css/negocio-verificacion.css */
+
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* Colores */
+    --primary: #8B5FBF;
+    --primary-light: #A67FCF;
+    --primary-dark: #6B3F9F;
+    --secondary: #E8D5F2;
+    --background: #F5F1FA;
+    --white: #FFFFFF;
+    --text-primary: #2D1B3D;
+    --text-secondary: #6B5B7B;
+    --text-muted: #9B8BAB;
+    --border: #D1C4E9;
+    --map-bg: #F8F9FA;
+    --map-border: #E3E6F0;
+    --map-text: #6C757D;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.08);
+    --shadow-md: 0 4px 20px rgba(139, 95, 191, 0.12);
+    --shadow-lg: 0 8px 30px rgba(139, 95, 191, 0.15);
+    --shadow-xl: 0 15px 40px rgba(139, 95, 191, 0.2);
+    --shadow-map: 0 6px 25px rgba(139, 95, 191, 0.1);
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 30%, #F5F1FA 100%);
+    --gradient-card: linear-gradient(135deg, var(--white) 0%, #FDFCFF 100%);
+    --gradient-map: linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 50%, #F8F9FA 100%);
+    
+    /* Espaciado */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    
+    /* Bordes y transiciones */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 50px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease-out;
+}
+
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ===== FONDO ANIMADO ===== */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: var(--gradient-bg);
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    opacity: 0.4;
+    animation: float 28s infinite linear;
+    filter: blur(0.5px);
+}
+
+.particle:nth-child(1) { width: 16px; height: 16px; left: 6%; animation-delay: 0s; animation-duration: 24s; }
+.particle:nth-child(2) { width: 12px; height: 12px; left: 16%; animation-delay: 2s; animation-duration: 30s; }
+.particle:nth-child(3) { width: 20px; height: 20px; left: 26%; animation-delay: 4s; animation-duration: 26s; }
+.particle:nth-child(4) { width: 14px; height: 14px; left: 36%; animation-delay: 6s; animation-duration: 28s; }
+.particle:nth-child(5) { width: 18px; height: 18px; left: 46%; animation-delay: 8s; animation-duration: 22s; }
+.particle:nth-child(6) { width: 13px; height: 13px; left: 56%; animation-delay: 10s; animation-duration: 32s; }
+.particle:nth-child(7) { width: 21px; height: 21px; left: 66%; animation-delay: 12s; animation-duration: 25s; }
+.particle:nth-child(8) { width: 15px; height: 15px; left: 76%; animation-delay: 14s; animation-duration: 29s; }
+.particle:nth-child(9) { width: 19px; height: 19px; left: 86%; animation-delay: 16s; animation-duration: 23s; }
+.particle:nth-child(10) { width: 17px; height: 17px; left: 96%; animation-delay: 18s; animation-duration: 31s; }
+.particle:nth-child(11) { width: 22px; height: 22px; left: 3%; animation-delay: 20s; animation-duration: 27s; }
+.particle:nth-child(12) { width: 11px; height: 11px; left: 93%; animation-delay: 22s; animation-duration: 33s; }
+
+@keyframes float {
+    0% { transform: translateY(100vh) scale(0) rotate(0deg); opacity: 0; }
+    15% { opacity: 0.4; transform: scale(1); }
+    85% { opacity: 0.4; }
+    100% { transform: translateY(-100px) scale(1.1) rotate(360deg); opacity: 0; }
+}
+
+/* ===== CONTENEDOR ===== */
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+}
+
+.form-wrapper {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    box-shadow: var(--shadow-xl);
+    max-width: 700px;
+    width: 100%;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* ===== CONTENIDO ===== */
+.form-content {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilizar el h3 existente */
+h3 {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--space-sm);
+}
+
+/* Estilizar el h1 existente */
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    line-height: 1.3;
+}
+
+h1 strong {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Estilizar el p existente */
+p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: var(--space-2xl);
+}
+
+/* ===== MAPA CON TU ESTRUCTURA EXACTA ===== */
+
+/* Mejorar el div del mapa manteniendo tus estilos inline */
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] {
+    background: var(--gradient-map) !important;
+    border: 2px solid var(--map-border) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-map) !important;
+    transition: var(--transition) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin: 0 auto var(--space-xl) auto !important;
+}
+
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-color: var(--primary-light) !important;
+}
+
+/* Efecto de shimmer en el mapa */
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 95, 191, 0.1), transparent);
+    animation: mapShimmer 3s infinite;
+    z-index: 1;
+}
+
+@keyframes mapShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Mejorar el párrafo dentro del mapa */
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] p[style*="color: #777"] {
+    color: var(--map-text) !important;
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    position: relative !important;
+    z-index: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--space-sm) !important;
+}
+
+/* Agregar icono de mapa al texto */
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] p[style*="color: #777"]::before {
+    content: '🗺️';
+    font-size: 24px;
+    animation: mapPulse 2s infinite;
+}
+
+@keyframes mapPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Agregar algunos elementos decorativos al mapa */
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"]::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: mapDot 4s infinite;
+}
+
+@keyframes mapDot {
+    0%, 100% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(1.5); opacity: 0.3; }
+}
+
+/* ===== FORMULARIO ===== */
+form {
+    width: 100%;
+    text-align: center;
+}
+
+/* ===== BOTÓN ===== */
+button[type="submit"] {
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: 20px var(--space-2xl);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 18px;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    min-width: 280px;
+    margin-top: var(--space-lg);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+button[type="submit"]:active {
+    transform: translateY(-2px);
+}
+
+button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Efecto shimmer en el botón */
+button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+button[type="submit"]:hover::after {
+    left: 100%;
+}
+
+/* Icono en el botón */
+button[type="submit"]::before {
+    content: '📍';
+    margin-right: var(--space-sm);
+    font-size: 20px;
+    animation: pinBounce 2s infinite;
+}
+
+@keyframes pinBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animación para elementos del formulario */
+h3 {
+    animation: slideInLeft 0.5s ease-out;
+    animation-delay: 0.1s;
+    animation-fill-mode: both;
+}
+
+h1 {
+    animation: slideInLeft 0.5s ease-out;
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+
+p {
+    animation: slideInLeft 0.5s ease-out;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+}
+
+div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] {
+    animation: scaleIn 0.6s ease-out;
+    animation-delay: 0.4s;
+    animation-fill-mode: both;
+}
+
+form {
+    animation: slideInUp 0.5s ease-out;
+    animation-delay: 0.5s;
+    animation-fill-mode: both;
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .form-wrapper {
+        padding: var(--space-xl) var(--space-lg);
+        margin: var(--space-md);
+        border-radius: var(--radius-lg);
+        max-width: 90%;
+    }
+    
+    h1 { 
+        font-size: 24px; 
+        margin-bottom: var(--space-lg);
+    }
+    
+    p { 
+        font-size: 14px; 
+        margin-bottom: var(--space-xl);
+    }
+    
+    /* Ajustar mapa para móviles */
+    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] {
+        max-width: 100% !important;
+        height: 250px !important;
+        margin-bottom: var(--space-lg) !important;
+    }
+    
+    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] p[style*="color: #777"] {
+        font-size: 16px !important;
+    }
+    
+    button[type="submit"] {
+        padding: var(--space-lg) var(--space-xl);
+        font-size: 16px;
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container { padding: var(--space-md); }
+    
+    .form-wrapper { 
+        padding: var(--space-lg) var(--space-md); 
+        max-width: 95%;
+    }
+    
+    h1 { font-size: 20px; }
+    
+    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] {
+        height: 200px !important;
+    }
+    
+    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] p[style*="color: #777"] {
+        font-size: 14px !important;
+    }
+    
+    button[type="submit"] {
+        padding: var(--space-md) var(--space-lg);
+        font-size: 14px;
+        min-width: 200px;
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .particle {
+        animation: none;
+        opacity: 0.1;
+    }
+    
+    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"]::before {
+        animation: none;
+    }
+    
+}
+
+/* ===== EFECTOS PARA FOCUS ===== */
+button[type="submit"]:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* ===== ESTADOS DE LOADING ===== */
+.loading button[type="submit"] {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.loading button[type="submit"]::before {
+    content: '';
+    margin-right: 0;
+    animation: none;
+}
+
+.loading button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
