@@ -16,25 +16,26 @@ class DashboardController extends Controller
     {
         return view('admin.dashboard-admin'); 
     }
-   public function dashboard()
-{
-    $user = Auth::user();
-    $user->load('roles'); // fuerza la carga de roles
+    
+    public function dashboard()
+    {
+        $user = Auth::user();
+        $user->load('roles');
 
-    // Debug opcional (puedes comentar o eliminar luego)
-    // dd($user->roles->pluck('name'));
+        if ($user->hasRole('Administrador', 'web')) {
+            return view('admin.dashboard-admin', [
+                'user' => $user,
+            ]);
+        }
 
-    if ($user->hasRole('Administrador', 'web')) {
-        return view('admin.dashboard-admin', [
-            'user' => $user,
-        ]);
+        if ($user->hasRole('Cliente', 'web')) {
+            $misEmpresas = \App\Models\Negocio::where('user_id', $user->id)->get();
+
+            return view('client.dashboard-client', compact('misEmpresas'));
+        }
+
+        abort(403, 'No tienes permisos suficientes.');
     }
 
-    if ($user->hasRole('Cliente', 'web')) {
-        return view('client.dashboard-client');
-    }
-
-    abort(403, 'No tienes permisos suficientes.');
-}
 
 }

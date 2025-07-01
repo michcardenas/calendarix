@@ -35,7 +35,8 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="neg_nombre" class="form-label">Nombre</label>
-                    <input type="text" name="neg_nombre" id="neg_nombre" required class="form-input" value="{{ old('neg_nombre') }}">
+                    <input type="text" name="neg_nombre" id="neg_nombre" required class="form-input" value="{{ old('neg_nombre', explode(' ', $user->name)[0] ?? '') }}"
+>
                     @error('neg_nombre')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -43,7 +44,7 @@
 
                 <div class="form-group">
                     <label for="neg_apellido" class="form-label">Apellido</label>
-                    <input type="text" name="neg_apellido" id="neg_apellido" required class="form-input" value="{{ old('neg_apellido') }}">
+                    <input type="text" name="neg_apellido" id="neg_apellido" required class="form-input" value="{{ old('neg_apellido', explode(' ', $user->name)[1] ?? '') }}">
                     @error('neg_apellido')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -51,7 +52,7 @@
 
                 <div class="form-group full-width">
                     <label for="neg_email" class="form-label">Email</label>
-                    <input type="email" name="neg_email" id="neg_email" required class="form-input" value="{{ old('neg_email') }}">
+                    <input type="email" name="neg_email" id="neg_email" required class="form-input" value="{{ old('neg_email', $user->email ?? '') }}">
                     @error('neg_email')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -59,7 +60,7 @@
 
                 <div class="form-group">
                     <label for="neg_telefono" class="form-label">Número de teléfono móvil</label>
-                    <input type="text" name="neg_telefono" id="neg_telefono" required class="form-input" value="{{ old('neg_telefono') }}">
+                    <input type="text" name="neg_telefono" id="neg_telefono" required class="form-input" value="{{ old('neg_telefono', $user->phone ?? '') }}">
                     @error('neg_telefono')
                         <span class="error-message">{{ $message }}</span>
                     @enderror

@@ -71,6 +71,24 @@
                     </a>
                 </li>
                 <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-toggle="empresa-submenu">
+                        <i class="fas fa-briefcase clx-nav-icon"></i>
+                        Mi Empresa <i class="fas fa-chevron-down float-end"></i>
+                    </a>
+
+                    <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
+                        @forelse ($misEmpresas as $empresa)
+                            <li>
+                                <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
+                                    {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
+                                </a>
+                            </li>
+                        @empty
+                            <li><span class="text-sm text-gray-400">Sin empresas aún</span></li>
+                        @endforelse
+                    </ul>
+                </li>
+                <li class="clx-nav-item">
                     <a href="#" class="clx-nav-link" data-clx-page="notifications">
                         <i class="fas fa-bell clx-nav-icon"></i>
                         Notificaciones
@@ -164,6 +182,20 @@
         </section>
     </main>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleLink = document.querySelector('[data-clx-toggle="empresa-submenu"]');
+        const submenu = document.getElementById('empresa-submenu');
+
+        if (toggleLink && submenu) {
+            toggleLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+    });
+</script>
 
 
 {{-- JavaScript específico del dashboard cliente --}}

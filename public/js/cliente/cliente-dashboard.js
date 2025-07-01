@@ -200,23 +200,27 @@ function clxUpdateStats() {
 
 function clxSetupEventListeners() {
     // Navegación del sidebar
-    document.querySelectorAll('.clx-nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
+    // Navegación del sidebar
+document.querySelectorAll('.clx-nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const page = this.dataset.clxPage;
+
+        if (page) {
             e.preventDefault();
-            
+
             // Remover clase active de todos los links
             document.querySelectorAll('.clx-nav-link').forEach(l => l.classList.remove('active'));
-            
+
             // Agregar clase active al link clickeado
             this.classList.add('active');
-            
-            const page = this.dataset.clxPage;
+
             console.log(`📍 Navegando a: ${page}`);
-            
-            // Implementar navegación
             clxNavigateTo(page);
-        });
+        }
+        // ⚠️ Si no hay data-clx-page, dejar que el link funcione normalmente
     });
+});
+;
 
     // Botones de acción rápida
     const btnBook = document.getElementById('clx-btn-book');

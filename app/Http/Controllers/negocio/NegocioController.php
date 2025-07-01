@@ -4,12 +4,16 @@ namespace App\Http\Controllers\negocio;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Negocio;
 
 class NegocioController extends Controller
 {
     public function create()
     {
-        return view('negocio.creacion-negocio');
+        $user = auth()->user();
+
+        return view('negocio.creacion-negocio', compact('user'));
+
     }
 
     public function store(Request $request)
@@ -31,9 +35,13 @@ class NegocioController extends Controller
 
         $validated['neg_acepto'] = true;
 
+        // ✅ Aquí agregamos el ID del usuario autenticado
+        $validated['user_id'] = auth()->id();
+
+        // ✅ Guardamos el negocio
         $negocio = \App\Models\Negocio::create($validated);
 
-        // ✅ Redirección correcta al segundo formulario:
+        // ✅ Redirección al siguiente paso
         return redirect()->route('negocio.datos');
     }
 
@@ -114,8 +122,41 @@ class NegocioController extends Controller
 
     public function guardarVerificacion(Request $request)
     {
-        // Aquí podrías guardar confirmación (ej: campo 'direccion_confirmada' en la tabla)
-        return redirect()->route('empresa.dashboard');
+        // Recuperar el último negocio creado por el usuario
+        $empresa = Negocio::where('user_id', auth()->id())->latest()->first();
+
+        if (!$empresa) {
+            return redirect()->route('negocio.create')->withErrors(['No se encontró ningún negocio para este usuario.']);
+        }
+
+        return redirect()->route('empresa.dashboard', ['id' => $empresa->id]);
+    }
+
+    public function index()
+    {
+        $misEmpresas = \App\Models\Negocio::where('user_id', auth()->id())->get();
+
+        return view('empresa.dashboard', compact('misEmpresas'));
+    }
+
+    public function show($id)
+    {
+        $empresa = \App\Models\Negocio::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail(); // Seguridad: solo puede ver empresas propias
+
+        return view('empresa.dashboard-empresa', compact('empresa'));
+    }
+
+        public function destroy(Negocio $negocio)
+    {
+        if ($negocio->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $negocio->delete();
+
+        return back()->with('status', 'negocio-eliminado');
     }
 
 

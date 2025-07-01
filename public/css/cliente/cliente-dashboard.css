@@ -533,6 +533,29 @@ body {
     color: var(--clx-warning);
 }
 
+.clx-submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.clx-submenu li {
+    margin: 5px 0;
+}
+
+.clx-submenu-link {
+    color: #575353;
+    font-size: 16px;
+    display: block;
+    padding-left: 61px;
+    transition: color 0.3s;
+}
+
+.clx-submenu-link:hover {
+    color: #bfa074;
+}
+
+
 /* ===============================================
    EFECTOS RIPPLE PARA BOTONES
    =============================================== */

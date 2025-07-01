@@ -1,0 +1,568 @@
+/* public/css/empresa/empresa-styles.css */
+
+/* =================================
+   VARIABLES CSS
+   ================================= */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --white-alpha-1: rgba(255, 255, 255, 0.1);
+    --white-alpha-2: rgba(255, 255, 255, 0.2);
+    --white-alpha-6: rgba(255, 255, 255, 0.6);
+    --black-alpha-3: rgba(0, 0, 0, 0.3);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 15px;
+    --transition: all 0.3s ease;
+    --shadow-hover: 0 5px 15px rgba(0,0,0,0.3);
+    --shadow-card: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* =================================
+   BOTONES
+   ================================= */
+.btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1.5rem;
+    display: inline-block;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.btn-secondary {
+    background: var(--white-alpha-1);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1.5rem;
+    display: inline-block;
+    transition: var(--transition);
+    border: 1px solid var(--white-alpha-2);
+    font-weight: 500;
+}
+
+.btn-info {
+    background: var(--info-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1.5rem;
+    display: inline-block;
+    transition: var(--transition);
+    border: none;
+    font-weight: 500;
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1.5rem;
+    display: inline-block;
+    transition: var(--transition);
+    border: none;
+    font-weight: 500;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1.5rem;
+    display: inline-block;
+    transition: var(--transition);
+    border: none;
+    font-weight: 500;
+}
+
+.btn-primary:hover, 
+.btn-secondary:hover, 
+.btn-info:hover,
+.btn-success:hover,
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    text-decoration: none;
+    color: white;
+}
+
+/* Botones pequeños para acciones */
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+.btn-view, .btn-edit, .btn-delete {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.btn-view {
+    background: var(--info-color);
+    color: white;
+}
+
+.btn-edit {
+    background: var(--warning-color);
+    color: #212529;
+}
+
+.btn-delete {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-view:hover, .btn-edit:hover, .btn-delete:hover {
+    transform: scale(1.1);
+    text-decoration: none;
+    color: inherit;
+}
+
+/* =================================
+   ALERTAS
+   ================================= */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    animation: slideIn 0.5s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.alert-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.alert-info {
+    background: var(--info-color);
+    color: white;
+}
+
+.alert-warning {
+    background: var(--warning-color);
+    color: #212529;
+}
+
+/* =================================
+   GRID DE ELEMENTOS
+   ================================= */
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.item-card {
+    background: var(--white-alpha-1);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--white-alpha-1);
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card);
+}
+
+.item-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.item-card:hover .item-image img {
+    transform: scale(1.05);
+}
+
+.item-image.placeholder {
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+
+.item-content {
+    padding: 1.5rem;
+}
+
+.item-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: white;
+    font-size: 1.3rem;
+}
+
+.item-description {
+    color: #ccc;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.item-details {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Tags y etiquetas */
+.tag {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.tag-price {
+    background: var(--success-color);
+    color: white;
+}
+
+.tag-duration {
+    background: var(--info-color);
+    color: white;
+}
+
+.tag-stock {
+    background: var(--warning-color);
+    color: #212529;
+}
+
+.tag-category {
+    background: var(--white-alpha-2);
+    color: white;
+}
+
+.tag-discount {
+    background: var(--danger-color);
+    color: white;
+}
+
+.tag-status {
+    font-weight: bold;
+}
+
+.tag-status.active {
+    background: var(--success-color);
+    color: white;
+}
+
+.tag-status.inactive {
+    background: var(--danger-color);
+    color: white;
+}
+
+.tag-status.vigente {
+    background: var(--success-color);
+    color: white;
+}
+
+.tag-status.vencida {
+    background: #6c757d;
+    color: white;
+}
+
+/* =================================
+   FORMULARIOS
+   ================================= */
+.form-container {
+    background: var(--white-alpha-1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-xl);
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 1px solid var(--white-alpha-1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: white;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--white-alpha-2);
+    border-radius: var(--border-radius);
+    background: var(--white-alpha-1);
+    color: white;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--white-alpha-6);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--white-alpha-1);
+}
+
+/* =================================
+   UPLOAD DE ARCHIVOS
+   ================================= */
+.file-upload-area {
+    position: relative;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.file-upload-area:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.file-upload-area.dragover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.file-upload-area input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-text {
+    color: white;
+}
+
+.upload-text i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #667eea;
+}
+
+.upload-text span {
+    color: #667eea;
+    text-decoration: underline;
+}
+
+.image-preview {
+    position: relative;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.image-preview img {
+    width: 100%;
+    border-radius: var(--border-radius);
+}
+
+.remove-image {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.remove-image:hover {
+    transform: scale(1.1);
+}
+
+.current-image img {
+    border: 2px solid var(--white-alpha-2);
+}
+
+/* =================================
+   ESTADO VACÍO
+   ================================= */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #ccc;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #ccc;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #999;
+    margin-bottom: 2rem;
+}
+
+/* =================================
+   SIDEBAR ACTIVO
+   ================================= */
+.sidebar a.active {
+    background: var(--primary-gradient);
+    transform: translateX(5px);
+}
+
+/* =================================
+   PAGINACIÓN
+   ================================= */
+.pagination-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* =================================
+   ANIMACIONES
+   ================================= */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* =================================
+   RESPONSIVE
+   ================================= */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .items-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .item-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 1rem;
+    }
+    
+    .item-content {
+        padding: 1rem;
+    }
+    
+    .file-upload-area {
+        padding: 1rem;
+    }
+}
