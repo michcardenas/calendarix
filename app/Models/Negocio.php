@@ -25,6 +25,8 @@ class Negocio extends Model
         'neg_virtual',
         'neg_direccion_confirmada',
         'configuracion_bloques',
+        'neg_facebook',
+        'neg_instagram', 
     ];
 
     protected $casts = [

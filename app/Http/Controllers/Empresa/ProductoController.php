@@ -1,0 +1,195 @@
+<?php
+
+namespace App\Http\Controllers\Empresa;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Negocio;
+use App\Models\Producto;
+use App\Models\ImagenProducto;
+
+
+class ProductoController extends Controller
+{
+    public function create()
+    {
+        $empresa = Negocio::where('user_id', auth()->id())->latest()->first();
+
+        return view('empresa.catalogo.crear_producto', [
+            'empresa' => $empresa,
+            'currentPage' => 'catalogo',
+            'currentSubPage' => 'productos',
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'codigo_barras' => 'nullable|string|max:100',
+            'marca' => 'nullable|string|max:100',
+            'unidad_medida' => 'required|string|max:20',
+            'cantidad' => 'nullable|numeric',
+            'descripcion_breve' => 'nullable|string|max:255',
+            'descripcion_larga' => 'nullable|string',
+            'categoria' => 'nullable|string|max:100',
+            'precio_compra' => 'nullable|numeric',
+            'precio_venta' => 'nullable|numeric',
+            'precio_promocional' => 'nullable|numeric',
+            'stock' => 'nullable|integer',
+            'stock_minimo' => 'nullable|integer',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+         $datos = $request->only([
+            'nombre', 'codigo_barras', 'marca', 'unidad_medida', 'cantidad',
+            'descripcion_breve', 'descripcion_larga', 'categoria',
+            'precio_compra', 'precio_venta', 'precio_promocional',
+            'stock', 'stock_minimo'
+        ]);
+
+        $datos['user_id'] = auth()->id();
+        $datos['activar_oferta'] = $request->has('activar_oferta');
+        $datos['controla_inventario'] = $request->has('controla_inventario');
+        $datos['estado_publicado'] = $request->has('estado_publicado');
+        $datos['mostrar_en_catalogo'] = $request->has('mostrar_en_catalogo');
+
+        // Si subió imagen
+        if ($request->hasFile('imagen')) {
+            $path = $request->file('imagen')->store('productos', 'public');
+            $datos['imagen'] = $path;
+        }
+
+        $producto = Producto::create([
+            'user_id' => auth()->id(),
+            'nombre' => $request->nombre,
+            'codigo_barras' => $request->codigo_barras,
+            'marca' => $request->marca,
+            'unidad_medida' => $request->unidad_medida,
+            'cantidad' => $request->cantidad,
+            'descripcion_breve' => $request->descripcion_breve,
+            'descripcion_larga' => $request->descripcion_larga,
+            'categoria' => $request->categoria,
+            'precio_compra' => $request->precio_compra,
+            'precio_venta' => $request->precio_venta,
+            'precio_promocional' => $request->precio_promocional,
+            'activar_oferta' => $request->has('activar_oferta'),
+            'controla_inventario' => $request->has('controla_inventario'),
+            'stock' => $request->stock,
+            'stock_minimo' => $request->stock_minimo,
+            'estado_publicado' => $request->has('estado_publicado'),
+            'mostrar_en_catalogo' => $request->has('mostrar_en_catalogo'),
+            'imagen' => $request->file('imagen') ? $request->file('imagen')->store('productos', 'public') : null,
+        ]);
+
+
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('productos', 'public');
+
+                \App\Models\ImagenProducto::create([
+                    'producto_id' => $producto->id,
+                    'ruta' => $path,
+                ]);
+            }
+        }
+
+        return redirect()->route('producto.crear')->with('success', 'Producto creado correctamente.');
+    }
+
+    public function panel()
+    {
+        $negocios = Negocio::where('user_id', auth()->id())->get();
+        $productos = Producto::where('user_id', auth()->id())->get();
+        $empresa = Negocio::where('user_id', auth()->id())->latest()->first(); // <--- esta línea es la clave
+
+        return view('empresa.catalogo.panel_productos', [
+            'negocios' => $negocios,
+            'productos' => $productos,
+            'empresa' => $empresa, // <--- ahora sí estará disponible en la vista
+            'currentPage' => 'catalogo',
+            'currentSubPage' => 'productos_ver',
+        ]);
+    }
+
+    public function edit(Producto $producto)
+    {
+        $empresa = Negocio::where('user_id', auth()->id())->latest()->first();
+
+        return view('empresa.catalogo.editar_producto', [
+            'producto' => $producto,
+            'empresa' => $empresa,
+            'currentPage' => 'catalogo',
+            'currentSubPage' => 'productos',
+        ]);
+    }
+
+    public function update(Request $request, Producto $producto)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'codigo_barras' => 'nullable|string|max:100',
+            'marca' => 'nullable|string|max:100',
+            'unidad_medida' => 'required|string|max:20',
+            'cantidad' => 'nullable|numeric',
+            'descripcion_breve' => 'nullable|string|max:255',
+            'descripcion_larga' => 'nullable|string',
+            'categoria' => 'nullable|string|max:100',
+            'precio_compra' => 'nullable|numeric',
+            'precio_venta' => 'nullable|numeric',
+            'precio_promocional' => 'nullable|numeric',
+            'stock' => 'nullable|integer',
+            'stock_minimo' => 'nullable|integer',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $producto->fill($request->except(['imagen', 'imagenes']));
+
+        $producto->activar_oferta = $request->has('activar_oferta');
+        $producto->controla_inventario = $request->has('controla_inventario');
+        $producto->estado_publicado = $request->has('estado_publicado');
+        $producto->mostrar_en_catalogo = $request->has('mostrar_en_catalogo');
+
+        // Imagen principal
+        if ($request->hasFile('imagen')) {
+            $path = $request->file('imagen')->store('productos', 'public');
+            $producto->imagen = $path;
+        }
+
+        $producto->save();
+
+        // Imágenes adicionales
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $img) {
+                $ruta = $img->store('productos', 'public');
+                ImagenProducto::create([
+                    'producto_id' => $producto->id,
+                    'ruta' => $ruta,
+                ]);
+            }
+        }
+
+        return redirect()->route('producto.panel')->with('success', 'Producto actualizado.');
+    }
+
+    public function destroy(Producto $producto)
+    {
+        $producto->delete();
+
+        return redirect()->route('producto.panel')->with('success', 'Producto eliminado correctamente.');
+    }
+
+    public function eliminarImagen($id)
+    {
+        $imagen = \App\Models\ImagenProducto::findOrFail($id);
+
+        // Elimina el archivo físico del storage
+        \Storage::disk('public')->delete($imagen->ruta);
+
+        // Elimina el registro de la BD
+        $imagen->delete();
+
+        return back()->with('success', 'Imagen eliminada correctamente.');
+    }
+
+}

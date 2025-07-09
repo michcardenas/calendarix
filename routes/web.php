@@ -17,6 +17,12 @@ use App\Http\Controllers\negocio\NegocioController;
 use App\Http\Controllers\Empresa\DashboardEmpresaController;
 use App\Http\Controllers\Empresa\FotoController;
 use App\Http\Controllers\Empresa\ServicioEmpresaController;
+use App\Http\Controllers\Empresa\EmpresaController;
+use App\Http\Controllers\empresa\NegocioConfiguracionController;
+use App\Http\Controllers\Empresa\CatalogoController;
+use App\Http\Controllers\Empresa\ProductoController;
+use App\Http\Controllers\Empresa\AgendaController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -152,5 +158,73 @@ Route::post('/empresa/{id}/servicios', [App\Http\Controllers\Empresa\ServicioEmp
 | INCLUYE RUTAS DE AUTENTICACIÓN DE LARAVEL BREEZE
 |--------------------------------------------------------------------------
 */
+
+
+// Rutas para el dashboard de empresa
+Route::prefix('empresa')->name('empresa.')->group(function () {
+    Route::get('/{id}/dashboard', [EmpresaController::class, 'dashboard'])->name('dashboard');
+    Route::get('/{id}/configuracion', [EmpresaController::class, 'configuracion'])->name('configuracion');
+    Route::get('/{id}/agenda', [EmpresaController::class, 'agenda'])->name('agenda');
+    Route::get('/{id}/clientes', [EmpresaController::class, 'clientes'])->name('clientes');
+    
+    // Rutas para las subsecciones de configuración (para el futuro)
+    Route::prefix('{id}/configuracion')->name('configuracion.')->group(function () {
+        Route::get('/negocio', [EmpresaController::class, 'configNegocio'])->name('negocio');
+        Route::get('/citas', [EmpresaController::class, 'configCitas'])->name('citas');
+        Route::get('/ventas', [EmpresaController::class, 'configVentas'])->name('ventas');
+        Route::get('/facturacion', [EmpresaController::class, 'configFacturacion'])->name('facturacion');
+        Route::get('/equipo', [EmpresaController::class, 'configEquipo'])->name('equipo');
+        Route::get('/formularios', [EmpresaController::class, 'configFormularios'])->name('formularios');
+        Route::get('/pagos', [EmpresaController::class, 'configPagos'])->name('pagos');
+    });
+});
+
+// Rutas para la configuración de empresa
+Route::get('/empresa/{id}/configuracion/negocio', [EmpresaController::class, 'negocio'])
+    ->name('empresa.configuracion.negocio');
+
+Route::post('/empresa/configuracion/negocio/guardar', [NegocioConfiguracionController::class, 'guardar'])
+    ->middleware(['auth'])
+    ->name('negocio.guardar');
+
+// resources/views/empresa/configuracion/
+Route::get('/empresa/configuracion/centros', [NegocioConfiguracionController::class, 'centros'])->name('empresa.configuracion.centros');
+Route::get('/empresa/configuracion/procedencia', [NegocioConfiguracionController::class, 'procedencia'])->name('empresa.configuracion.procedencia');
+Route::put('/empresa/configuracion/centros/{id}', [NegocioConfiguracionController::class, 'actualizarCentro'])
+    ->name('empresa.configuracion.centros.update');
+Route::get('/empresa/configuracion/procedencia', [NegocioConfiguracionController::class, 'procedencia'])->name('empresa.configuracion.procedencia');
+Route::put('/empresa/configuracion/procedencia/{id}', [NegocioConfiguracionController::class, 'actualizarProcedencia'])->name('empresa.configuracion.procedencia.update');
+Route::post('/empresa/configuracion/procedencia', [NegocioConfiguracionController::class, 'actualizarProcedencia'])
+    ->name('empresa.configuracion.procedencia.update');
+Route::get('/empresa/negocio/catalogo/servicios', [CatalogoController::class, 'menuServicios'])->name('catalogo.servicios');
+Route::post('/empresa/servicio/guardar', [CatalogoController::class, 'guardarServicio'])->name('catalogo.servicio.guardar');
+Route::post('/empresa/negocio/catalogo/servicios', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
+Route::post('/catalogo/servicios/guardar', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
+Route::get('/catalogo/servicios/{id}/editar', [CatalogoController::class, 'editarServicio'])->name('servicios.editar');
+Route::put('/catalogo/servicios/{id}', [CatalogoController::class, 'actualizarServicio'])->name('servicios.actualizar');
+Route::post('/catalogo/servicios/{id}/duplicar', [CatalogoController::class, 'duplicarServicio'])->name('servicios.duplicar');
+Route::delete('/catalogo/servicios/{id}', [CatalogoController::class, 'eliminarServicio'])->name('servicios.eliminar');
+Route::get('/empresa/servicio/crear', [CatalogoController::class, 'formCrearServicio'])->name('servicios.crear');
+Route::post('/empresa/catalogo/categorias/guardar', [CatalogoController::class, 'guardarCategoria'])
+    ->name('catalogo.categorias.guardar');
+Route::post('/empresa/servicio/guardar', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
+
+//productos
+Route::get('/empresa/catalogo/producto/crear', [ProductoController::class, 'create'])->name('producto.crear');
+Route::post('/empresa/catalogo/producto', [ProductoController::class, 'store'])->name('producto.store');
+Route::post('/empresa/catalogo/producto/guardar', [ProductoController::class, 'guardar'])->name('producto.guardar');
+Route::get('/empresa/catalogo/productos', [ProductoController::class, 'panel'])->name('producto.panel');
+// Mostrar el formulario de edición
+Route::get('/empresa/catalogo/producto/{producto}/editar', [ProductoController::class, 'edit'])->name('producto.editar');
+// Guardar cambios del producto
+Route::put('/empresa/catalogo/producto/{producto}', [ProductoController::class, 'update'])->name('producto.actualizar');
+// Eliminar un producto
+Route::delete('/empresa/catalogo/producto/{producto}', [ProductoController::class, 'destroy'])->name('producto.eliminar');
+Route::delete('/empresa/productos/imagen/{id}', [ProductoController::class, 'eliminarImagen'])->name('producto.imagen.eliminar');
+Route::put('/empresa/catalogo/producto/{producto}/actualizar', [ProductoController::class, 'update'])->name('producto.actualizar');
+
+//agenda
+Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('empresa.agenda');
+
 
 require __DIR__.'/auth.php';
