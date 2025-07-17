@@ -1,148 +1,139 @@
-<aside class="sidebar" style="z-index: 10; width: 240px; background-color: #3b1d6b; color: white; height: 100vh; padding: 1rem; position: fixed; top: 0; left: 0;">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Empresa</title>
 
-    {{-- Título y correo --}}
-    <h2 style="font-size: 1.2rem; margin-bottom: 0.5rem;">
-        <i class="fas fa-store"></i> {{ $empresa->neg_nombre_comercial }}
-    </h2>
-    <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 2rem;">{{ $empresa->neg_email }}</p>
+    {{-- Vite: Tailwind + JS --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    {{-- Navegación principal --}}
-    <nav class="sidebar-nav d-flex flex-column gap-2">
+    {{-- FontAwesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+<aside class="fixed top-0 left-0 h-screen w-64 bg-gradient-to-b from-[#3b1d6b] to-[#2a1250] text-white z-10 p-5 shadow-2xl rounded-r-3xl">
+
+    {{-- Encabezado --}}
+    <div class="mb-6 border-b border-white/10 pb-4">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+            <i class="fas fa-store"></i> {{ $empresa->neg_nombre_comercial }}
+        </h2>
+        <p class="text-sm text-purple-200 mt-1">{{ $empresa->neg_email }}</p>
+    </div>
+
+    {{-- Navegación --}}
+    <nav class="flex flex-col gap-2 text-sm">
         <a href="{{ route('empresa.agenda', $empresa->id) }}"
-           class="nav-link {{ $currentPage === 'agenda' ? 'active' : '' }}">
-            <i class="fas fa-calendar-alt me-2"></i> Agenda
+           class="flex items-center px-4 py-2 rounded-lg transition hover:bg-white/10 {{ $currentPage === 'agenda' ? 'bg-white/20 font-semibold' : '' }}">
+            <i class="fas fa-calendar-alt mr-2"></i> Agenda
         </a>
 
         <a href="{{ route('empresa.clientes', $empresa->id) }}"
-           class="nav-link {{ $currentPage === 'clientes' ? 'active' : '' }}">
-            <i class="fas fa-users me-2"></i> Clientes
+           class="flex items-center px-4 py-2 rounded-lg transition hover:bg-white/10 {{ $currentPage === 'clientes' ? 'bg-white/20 font-semibold' : '' }}">
+            <i class="fas fa-users mr-2"></i> Clientes
         </a>
 
         <a href="{{ route('empresa.configuracion', $empresa->id) }}"
-           class="nav-link {{ $currentPage === 'configuracion' ? 'active' : '' }}">
-            <i class="fas fa-cog me-2"></i> Configuración
+           class="flex items-center px-4 py-2 rounded-lg transition hover:bg-white/10 {{ $currentPage === 'configuracion' ? 'bg-white/20 font-semibold' : '' }}">
+            <i class="fas fa-cog mr-2"></i> Configuración
         </a>
 
-            {{-- Grupo: Catálogo --}}
-        <div class="submenu-item {{ in_array($currentPage, ['catalogo']) ? 'active' : '' }}">
-            <i class="fas fa-box-open me-2"></i> Catálogo
+        {{-- Separador --}}
+        <div class="mt-4 mb-2 text-xs text-purple-300 uppercase tracking-wide">Catálogo</div>
 
-            <div class="submenu ps-3 mt-2">
+        {{-- Catálogo --}}
+        <div class="{{ in_array($currentPage, ['catalogo']) ? 'bg-white/10 rounded-lg' : '' }}">
+            <div class="flex items-center px-4 py-2 font-medium">
+                <i class="fas fa-box-open mr-2"></i> Catálogo
+            </div>
+
+            <div class="ml-6 mt-2 space-y-1 border-l border-white/10 pl-3">
                 <a href="{{ route('catalogo.servicios') }}"
-                    class="{{ $currentSubPage === 'servicios' ? 'submenu-item active' : 'submenu-item' }}">
-                    <i class="fas fa-cut me-2"></i> Menú de servicios
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'servicios' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-cut mr-2"></i> Menú de servicios
                 </a>
 
-                <div class="submenu-item {{ in_array($currentSubPage, ['productos_crear', 'productos_ver']) ? 'active' : '' }}">
-                    <i class="fas fa-box me-2"></i> Productos
-
-                    <div class="submenu ps-3 mt-2">
+                <div class="{{ in_array($currentSubPage, ['productos_crear', 'productos_ver']) ? 'bg-white/10 rounded-lg' : '' }}">
+                    <div class="flex items-center px-3 py-1.5">
+                        <i class="fas fa-box mr-2"></i> Productos
+                    </div>
+                    <div class="ml-5 mt-1 space-y-1 border-l border-white/10 pl-3">
                         <a href="{{ route('producto.crear') }}"
-                        class="{{ $currentSubPage === 'productos_crear' ? 'submenu-item active' : 'submenu-item' }}">
-                            <i class="fas fa-plus me-2"></i> Crear producto
+                           class="flex items-center px-2 py-1 rounded hover:bg-white/10 transition {{ $currentSubPage === 'productos_crear' ? 'bg-white/20 font-semibold' : '' }}">
+                            <i class="fas fa-plus mr-2"></i> Crear producto
                         </a>
-
                         <a href="{{ route('producto.panel') }}"
-                        class="{{ $currentSubPage === 'productos_ver' ? 'submenu-item active' : 'submenu-item' }}">
-                            <i class="fas fa-eye me-2"></i> Ver productos
+                           class="flex items-center px-2 py-1 rounded hover:bg-white/10 transition {{ $currentSubPage === 'productos_ver' ? 'bg-white/20 font-semibold' : '' }}">
+                            <i class="fas fa-eye mr-2"></i> Ver productos
                         </a>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        {{-- Submenú de configuración --}}
+        {{-- Configuración avanzada --}}
         @if($currentPage === 'configuracion')
-        <div class="submenu mt-2">
+        <div class="mt-5 border-t border-white/10 pt-4 space-y-1 text-sm">
+            <div class="text-xs text-purple-300 uppercase tracking-wide">Negocio</div>
 
-            {{-- Subgrupo: Configuración del negocio --}}
-            <div class="submenu-item {{ in_array($currentSubPage, ['negocio', 'centros', 'procedencia']) ? 'active' : '' }}">
-                <i class="fas fa-building me-2"></i> Configuración del negocio
-
-                <div class="submenu ps-3 mt-2">
-                    <a href="{{ route('empresa.configuracion.negocio', $empresa->id) }}"
-                       class="{{ $currentSubPage === 'negocio' ? 'submenu-item active' : 'submenu-item' }}">
-                        <i class="fas fa-info-circle me-2"></i> Datos del negocio
-                    </a>
-
-                    <a href="{{ route('empresa.configuracion.centros', $empresa->id) }}"
-                       class="{{ $currentSubPage === 'centros' ? 'submenu-item active' : 'submenu-item' }}">
-                        <i class="fas fa-store-alt me-2"></i> Centros
-                    </a>
-
-                    <a href="{{ route('empresa.configuracion.procedencia', $empresa->id) }}"
-                       class="{{ $currentSubPage === 'procedencia' ? 'submenu-item active' : 'submenu-item' }}">
-                        <i class="fas fa-map-marked-alt me-2"></i> Procedencia
-                    </a>
-                </div>
+            <div class="ml-2 space-y-1 border-l border-white/10 pl-3">
+                <a href="{{ route('empresa.configuracion.negocio', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'negocio' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-info-circle mr-2"></i> Datos del negocio
+                </a>
+                <a href="{{ route('empresa.configuracion.centros', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'centros' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-store-alt mr-2"></i> Centros
+                </a>
+                <a href="{{ route('empresa.configuracion.procedencia', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'procedencia' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-map-marked-alt mr-2"></i> Procedencia
+                </a>
             </div>
 
-            {{-- Otras opciones de configuración --}}
-            <a href="{{ route('empresa.configuracion.citas', $empresa->id) }}"
-               class="{{ $currentSubPage === 'citas' ? 'submenu-item active' : 'submenu-item' }}">
-                <i class="fas fa-calendar-check me-2"></i> Gestión de citas
-            </a>
-            <a href="{{ route('empresa.configuracion.ventas', $empresa->id) }}"
-               class="{{ $currentSubPage === 'ventas' ? 'submenu-item active' : 'submenu-item' }}">
-                <i class="fas fa-tags me-2"></i> Ventas
-            </a>
-            <a href="{{ route('empresa.configuracion.facturacion', $empresa->id) }}"
-               class="{{ $currentSubPage === 'facturacion' ? 'submenu-item active' : 'submenu-item' }}">
-                <i class="fas fa-file-invoice me-2"></i> Facturación
-            </a>
-            <a href="{{ route('empresa.configuracion.equipo', $empresa->id) }}"
-               class="{{ $currentSubPage === 'equipo' ? 'submenu-item active' : 'submenu-item' }}">
-                <i class="fas fa-users-cog me-2"></i> Equipo
-            </a>
-            <a href="{{ route('empresa.configuracion.formularios', $empresa->id) }}"
-               class="{{ $currentSubPage === 'formularios' ? 'submenu-item active' : 'submenu-item' }}">
-                <i class="fas fa-clipboard-list me-2"></i> Formularios
-            </a>
-            <a href="{{ route('empresa.configuracion.pagos', $empresa->id) }}"
-               class="{{ $currentSubPage === 'pagos' ? 'submenu-item active' : 'submenu-item' }}">
-                <i class="fas fa-credit-card me-2"></i> Pagos
-            </a>
+            <div class="text-xs text-purple-300 uppercase tracking-wide mt-3">Opciones</div>
+
+            <div class="ml-2 space-y-1 border-l border-white/10 pl-3">
+                <a href="{{ route('empresa.configuracion.citas', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'citas' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-calendar-check mr-2"></i> Gestión de citas
+                </a>
+                <a href="{{ route('empresa.configuracion.ventas', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'ventas' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-tags mr-2"></i> Ventas
+                </a>
+                <a href="{{ route('empresa.configuracion.facturacion', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'facturacion' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-file-invoice mr-2"></i> Facturación
+                </a>
+                <a href="{{ route('empresa.configuracion.equipo', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'equipo' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-users-cog mr-2"></i> Equipo
+                </a>
+                <a href="{{ route('empresa.configuracion.formularios', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'formularios' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-clipboard-list mr-2"></i> Formularios
+                </a>
+                <a href="{{ route('empresa.configuracion.pagos', $empresa->id) }}"
+                   class="flex items-center px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentSubPage === 'pagos' ? 'bg-white/20 font-semibold' : '' }}">
+                    <i class="fas fa-credit-card mr-2"></i> Pagos
+                </a>
+            </div>
         </div>
         @endif
     </nav>
 
     {{-- Botón salir --}}
-    <a href="{{ url('/dashboard') }}" class="btn btn-outline-light w-100 mt-4">
-        <i class="fas fa-sign-out-alt me-2"></i> Salir
-    </a>
+    <div class="mt-8 border-t border-white/10 pt-4">
+        <a href="{{ url('/dashboard') }}"
+           class="w-full block text-center px-4 py-2 rounded-lg bg-white text-[#3b1d6b] hover:bg-purple-100 font-semibold transition">
+            <i class="fas fa-sign-out-alt mr-2"></i> Salir
+        </a>
+        <p class="text-xs text-purple-300 mt-4 text-center">Compilado con <span class="text-white font-bold">Vite</span></p>
+    </div>
 </aside>
 
-
-{{-- Estilos necesarios --}}
-<style>
-.sidebar a.nav-link,
-.sidebar a.submenu-item,
-.quick-btn-sidebar {
-    display: flex;
-    align-items: center;
-    padding: 0.6rem 1rem;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background 0.2s ease;
-}
-
-.sidebar a.nav-link:hover,
-.sidebar a.submenu-item:hover,
-.quick-btn-sidebar:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar a.active,
-.submenu-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    font-weight: bold;
-}
-
-.submenu {
-    border-left: 2px solid rgba(255, 255, 255, 0.2);
-    margin-left: 1rem;
-    padding-left: 0.5rem;
-}
-</style>
+</body>
+</html>
