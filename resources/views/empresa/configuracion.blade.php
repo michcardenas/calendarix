@@ -1,3 +1,4 @@
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/empresa/configuracion-empresa.css') }}">
 
@@ -11,15 +12,14 @@
 <!-- Contenedor general con sidebar y contenido -->
 <div class="d-flex" style="min-height: 100vh; position: relative;">
     
-    {{-- Sidebar fijo --}}
-    @include('empresa.partials.sidebar', ['empresa' => $empresa, 'currentPage' => 'configuracion', 'currentSubPage' => null])
-
-
-
+    @php
+    $currentPage = 'configuracion';
+    $currentSubPage = null;
+@endphp
  
     <a href="{{ url('dashboard') }}" class="logout-btn">Salir</a>
 
-    <main class="flex-grow-1" style="margin-left: 240px; padding: 2rem; position: relative; z-index: 1;">
+    <main class="flex-grow-1" style="margin-left: 120px; padding: 3rem; position: relative; z-index: 1;">
 
         <div class="header">
             <h1>Configuración de {{ $empresa->neg_nombre_comercial }}</h1>
@@ -229,5 +229,7 @@
         </div>
     </main>
 </div>
-
+<script>
+    window.empresaId = {{ isset($empresa) ? $empresa->id : 'null' }};
+</script>
 <script src="{{ asset('js/empresa/configuracion-empresa.js') }}"></script>

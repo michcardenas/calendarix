@@ -2,101 +2,68 @@
 
 @section('title', 'Centros')
 
-@push('styles')
-<style>
-    .cof-cent-wrapper {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        margin-left: 20rem;
-    }
-
-    .cof-cent-card {
-        border-radius: 0.5rem;
-        padding: 1.5rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
-    }
-
-    .cof-cent-list-item {
-        border: none;
-        border-bottom: 1px solid #eee;
-        padding: 1rem 0;
-    }
-
-    .cof-cent-boton {
-        background-color: #6d28d9;
-        border: none;
-        color: white;
-        padding: 0.5rem 1.25rem;
-        border-radius: 0.375rem;
-    }
-
-    .cof-cent-boton:hover {
-        background-color: #5b21b6;
-    }
-</style>
-@endpush
-
 @section('content')
-<div class="cof-cent-wrapper">
-    <div class="mb-4">
-        <h2 class="fw-bold">Centros</h2>
-        <p class="text-muted">Gestiona la información y las ubicaciones de los centros de tu negocio.</p>
+<div class="px-8 py-10  min-h-screen ">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-indigo-600">🏢 Centros</h2>
+        <p class="text-sm text-gray-600">Gestiona la información y las ubicaciones de los centros de tu negocio.</p>
     </div>
 
-    <div class="cof-cent-card">
+    <div class="bg-white shadow-md rounded-lg p-6">
         @if($centros->isEmpty())
-            <p class="text-center text-muted">No hay centros registrados aún.</p>
+            <p class="text-center text-gray-400">No hay centros registrados aún.</p>
         @else
-            <ul class="list-group mb-3">
+            <ul class="divide-y divide-gray-200 mb-6">
                 @foreach($centros as $centro)
-    <li class="cof-cent-list-item" id="centro-principal">
-        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <div>
-                <strong>{{ $centro['nombre'] }}</strong><br>
+                    <li class="py-4" id="centro-principal">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <p class="font-semibold text-gray-800">{{ $centro['nombre'] }}</p>
+                                <p class="text-sm text-gray-600" id="direccion-text-principal">
+                                    Dirección: {{ $centro['direccion'] }}
+                                </p>
 
-                <span id="direccion-text-principal">
-                    Dirección: {{ $centro['direccion'] }}
-                </span>
+                                <form method="POST"
+                                      action="{{ route('empresa.configuracion.centros.update', 'principal') }}"
+                                      class="hidden mt-2 space-y-2"
+                                      id="form-direccion-principal">
+                                    @csrf
+                                    @method('PUT')
 
-                <form method="POST"
-                      action="{{ route('empresa.configuracion.centros.update', 'principal') }}"
-                      class="d-none mt-2"
-                      id="form-direccion-principal">
-                    @csrf
-                    @method('PUT')
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <input type="text" name="direccion"
+                                               value="{{ $centro['direccion'] }}"
+                                               class="form-input px-4 py-2 rounded-md border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full sm:w-auto"
+                                               required>
 
-                    <div class="d-flex gap-2 align-items-center">
-                        <input type="text" name="direccion"
-                               value="{{ $centro['direccion'] }}"
-                               class="form-control form-control-sm" required>
-                        <button type="submit" class="btn btn-sm btn-success">
-                            💾 Guardar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-secondary"
-                                onclick="cancelarEdicion('principal')">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
+                                        <button type="submit"
+                                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm">
+                                            💾 Guardar
+                                        </button>
+                                        <button type="button"
+                                                onclick="cancelarEdicion('principal')"
+                                                class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-md text-sm">
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
 
-                <small class="text-muted d-block mt-1">Centro principal</small>
-            </div>
+                                <span class="text-xs text-gray-500 mt-1 block">Centro principal</span>
+                            </div>
 
-            <button class="btn btn-sm btn-outline-primary"
-                    onclick="editarDireccion('principal')">
-                ✏️ Editar
-            </button>
-        </div>
-    </li>
-@endforeach
-
+                            <button class="text-indigo-600 hover:underline text-sm font-medium"
+                                    onclick="editarDireccion('principal')">
+                                ✏️ Editar
+                            </button>
+                        </div>
+                    </li>
+                @endforeach
             </ul>
         @endif
 
-        <div class="text-end">
-            <button class="cof-cent-boton">
-                <i class="fas fa-plus me-1"></i> Añadir Centro
+        <div class="text-right mt-4">
+            <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                <i class="fas fa-plus mr-1"></i> Añadir Centro
             </button>
         </div>
     </div>
@@ -107,12 +74,12 @@
 <script>
     function editarDireccion(id) {
         document.getElementById('direccion-text-' + id).style.display = 'none';
-        document.getElementById('form-direccion-' + id).classList.remove('d-none');
+        document.getElementById('form-direccion-' + id).classList.remove('hidden');
     }
 
     function cancelarEdicion(id) {
-        document.getElementById('direccion-text-' + id).style.display = 'inline';
-        document.getElementById('form-direccion-' + id).classList.add('d-none');
+        document.getElementById('direccion-text-' + id).style.display = 'block';
+        document.getElementById('form-direccion-' + id).classList.add('hidden');
     }
 </script>
 @endpush

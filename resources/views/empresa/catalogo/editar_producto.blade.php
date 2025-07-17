@@ -1,16 +1,19 @@
 @extends('layouts.empresa')
 
 @section('content')
-<div class="container py-4">
-    <div class="mb-4">
-        <h2 class="fw-bold">✏️ Editar Producto</h2>
-        <p class="text-muted">Actualiza los datos de tu producto y gestiona su visibilidad, precios e inventario.</p>
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+    {{-- Encabezado --}}
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-indigo-600">✏️ Editar Producto</h2>
+        <p class="text-sm text-gray-500">Actualiza los datos de tu producto y gestiona su visibilidad, precios e inventario.</p>
     </div>
 
+    {{-- Errores --}}
     @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>⚠️ Ocurrió un error:</strong> Revisa los campos marcados.
-            <ul class="mb-0 mt-2">
+        <div class="bg-red-50 border border-red-300 text-red-700 rounded p-4 mb-6">
+            <strong class="font-semibold">⚠️ Ocurrió un error:</strong>
+            <ul class="list-disc pl-5 mt-2 text-sm space-y-1">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -18,147 +21,166 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('producto.actualizar', $producto->id) }}" enctype="multipart/form-data" class="mb-5">
+    <form method="POST" action="{{ route('producto.actualizar', $producto->id) }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
 
-        {{-- DATOS GENERALES --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
-            <div class="card-header bg-white fw-semibold fs-5">🧾 Información general</div>
-            <div class="card-body row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" required value="{{ old('nombre', $producto->nombre) }}">
+        {{-- Información General --}}
+        <div class="bg-white shadow rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">🧾 Información general</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Nombre</label>
+                    <input type="text" name="nombre" class="mt-1 w-full border-gray-300 rounded" required value="{{ old('nombre', $producto->nombre) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Código de barras</label>
-                    <input type="text" name="codigo_barras" class="form-control" value="{{ old('codigo_barras', $producto->codigo_barras) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Código de barras</label>
+                    <input type="text" name="codigo_barras" class="mt-1 w-full border-gray-300 rounded" value="{{ old('codigo_barras', $producto->codigo_barras) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Marca</label>
-                    <input type="text" name="marca" class="form-control" value="{{ old('marca', $producto->marca) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Marca</label>
+                    <input type="text" name="marca" class="mt-1 w-full border-gray-300 rounded" value="{{ old('marca', $producto->marca) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Unidad de medida</label>
-                    <input type="text" name="unidad_medida" class="form-control" required value="{{ old('unidad_medida', $producto->unidad_medida) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Unidad de medida</label>
+                    <input type="text" name="unidad_medida" class="mt-1 w-full border-gray-300 rounded" value="{{ old('unidad_medida', $producto->unidad_medida) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Cantidad</label>
-                    <input type="number" step="0.01" name="cantidad" class="form-control" value="{{ old('cantidad', $producto->cantidad) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Cantidad</label>
+                    <input type="number" step="0.01" name="cantidad" class="mt-1 w-full border-gray-300 rounded" value="{{ old('cantidad', $producto->cantidad) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Categoría</label>
-                    <input type="text" name="categoria" class="form-control" value="{{ old('categoria', $producto->categoria) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Categoría</label>
+                    <input type="text" name="categoria" class="mt-1 w-full border-gray-300 rounded" value="{{ old('categoria', $producto->categoria) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Descripción breve</label>
-                    <input type="text" name="descripcion_breve" class="form-control" value="{{ old('descripcion_breve', $producto->descripcion_breve) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Descripción breve</label>
+                    <input type="text" name="descripcion_breve" class="mt-1 w-full border-gray-300 rounded" value="{{ old('descripcion_breve', $producto->descripcion_breve) }}">
                 </div>
-                <div class="col-md-12">
-                    <label class="form-label">Descripción larga</label>
-                    <textarea name="descripcion_larga" class="form-control" rows="3">{{ old('descripcion_larga', $producto->descripcion_larga) }}</textarea>
-                </div>
-            </div>
-        </div>
-
-        {{-- PRECIOS --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
-            <div class="card-header bg-white fw-semibold fs-5">💰 Precios</div>
-            <div class="card-body row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Precio de compra</label>
-                    <input type="text" name="precio_compra" class="form-control" inputmode="numeric" value="{{ old('precio_compra', $producto->precio_compra) }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Precio de venta</label>
-                    <input type="text" name="precio_venta" class="form-control" inputmode="numeric" value="{{ old('precio_venta', $producto->precio_venta) }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Precio promocional</label>
-                    <input type="text" name="precio_promocional" class="form-control" inputmode="numeric" value="{{ old('precio_promocional', $producto->precio_promocional) }}">
-                </div>
-                <div class="col-md-12 form-check form-switch ps-4 mt-2">
-                    <input class="form-check-input" type="checkbox" id="activar_oferta_producto" name="activar_oferta" {{ old('activar_oferta', $producto->activar_oferta) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="activar_oferta_producto">Activar oferta</label>
+                <div class="md:col-span-2">
+                    <label class="text-sm font-medium text-gray-700">Descripción larga</label>
+                    <textarea name="descripcion_larga" rows="3" class="mt-1 w-full border-gray-300 rounded">{{ old('descripcion_larga', $producto->descripcion_larga) }}</textarea>
                 </div>
             </div>
         </div>
 
-        {{-- INVENTARIO --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
-            <div class="card-header bg-white fw-semibold fs-5">📦 Inventario</div>
-            <div class="card-body row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Stock</label>
-                    <input type="number" name="stock" class="form-control" value="{{ old('stock', $producto->stock) }}">
+        {{-- Precios --}}
+        <div class="bg-white shadow rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">💰 Precios</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Precio de compra</label>
+                    <input type="text" name="precio_compra" class="mt-1 w-full border-gray-300 rounded" value="{{ old('precio_compra', $producto->precio_compra) }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Stock mínimo</label>
-                    <input type="number" name="stock_minimo" class="form-control" value="{{ old('stock_minimo', $producto->stock_minimo) }}">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Precio de venta</label>
+                    <input type="text" name="precio_venta" class="mt-1 w-full border-gray-300 rounded" value="{{ old('precio_venta', $producto->precio_venta) }}">
                 </div>
-                <div class="col-md-12 form-check form-switch ps-4">
-                    <input type="checkbox" name="controla_inventario" class="form-check-input" id="controla_inventario" {{ old('controla_inventario', $producto->controla_inventario) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="controla_inventario">Controla inventario</label>
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Precio promocional</label>
+                    <input type="text" name="precio_promocional" class="mt-1 w-full border-gray-300 rounded" value="{{ old('precio_promocional', $producto->precio_promocional) }}">
                 </div>
+            </div>
+            <div class="mt-4">
+                <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" name="activar_oferta" class="rounded border-gray-300 text-indigo-600"
+                           {{ old('activar_oferta', $producto->activar_oferta) ? 'checked' : '' }}>
+                    <span class="text-sm text-gray-700">Activar oferta</span>
+                </label>
             </div>
         </div>
 
-        {{-- VISIBILIDAD --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
-            <div class="card-header bg-white fw-semibold fs-5">👁️ Visibilidad del producto</div>
-            <div class="card-body row ps-4">
-                <div class="form-check form-switch mb-2">
-                    <input type="checkbox" name="estado_publicado" class="form-check-input" id="estado_publicado" {{ old('estado_publicado', $producto->estado_publicado) ? 'checked' : '' }}>
-                    <label for="estado_publicado" class="form-check-label">Publicado</label>
+        {{-- Inventario --}}
+        <div class="bg-white shadow rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">📦 Inventario</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Stock</label>
+                    <input type="number" name="stock" class="mt-1 w-full border-gray-300 rounded" value="{{ old('stock', $producto->stock) }}">
                 </div>
-                <div class="form-check form-switch">
-                    <input type="checkbox" name="mostrar_en_catalogo" class="form-check-input" id="mostrar_en_catalogo" {{ old('mostrar_en_catalogo', $producto->mostrar_en_catalogo) ? 'checked' : '' }}>
-                    <label for="mostrar_en_catalogo" class="form-check-label">Mostrar en catálogo</label>
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Stock mínimo</label>
+                    <input type="number" name="stock_minimo" class="mt-1 w-full border-gray-300 rounded" value="{{ old('stock_minimo', $producto->stock_minimo) }}">
                 </div>
+            </div>
+            <div class="mt-4">
+                <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" name="controla_inventario" class="rounded border-gray-300 text-indigo-600"
+                           {{ old('controla_inventario', $producto->controla_inventario) ? 'checked' : '' }}>
+                    <span class="text-sm text-gray-700">Controla inventario</span>
+                </label>
             </div>
         </div>
 
-        {{-- IMAGEN PRINCIPAL --}}
+        {{-- Visibilidad --}}
+        <div class="bg-white shadow rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">👁️ Visibilidad del producto</h3>
+            <div class="space-y-3">
+                <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" name="estado_publicado" class="rounded border-gray-300 text-indigo-600"
+                           {{ old('estado_publicado', $producto->estado_publicado) ? 'checked' : '' }}>
+                    <span class="text-sm text-gray-700">Publicado</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" name="mostrar_en_catalogo" class="rounded border-gray-300 text-indigo-600"
+                           {{ old('mostrar_en_catalogo', $producto->mostrar_en_catalogo) ? 'checked' : '' }}>
+                    <span class="text-sm text-gray-700">Mostrar en catálogo</span>
+                </label>
+            </div>
+        </div>
+
+        {{-- Imagen principal --}}
         @if($producto->imagen)
-            <div class="mb-3">
-                <label class="form-label">Imagen actual:</label><br>
-                <img src="{{ asset('storage/' . $producto->imagen) }}" class="img-thumbnail rounded" style="max-height: 150px;">
-            </div>
+        <div>
+            <label class="text-sm font-medium text-gray-700">Imagen actual:</label><br>
+            <img src="{{ asset('storage/' . $producto->imagen) }}" class="mt-2 rounded border border-gray-300 shadow" style="max-height: 150px;">
+        </div>
         @endif
 
-        <div class="mb-3">
-            <label class="form-label">Nueva imagen (opcional)</label>
-            <input type="file" name="imagen" class="form-control">
+        <div>
+            <label class="text-sm font-medium text-gray-700">Nueva imagen (opcional)</label>
+            <input type="file" name="imagen" class="mt-1 block w-full text-sm border border-gray-300 rounded">
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Agregar nuevas imágenes</label>
-            <input type="file" name="imagenes[]" multiple class="form-control">
+        <div>
+            <label class="text-sm font-medium text-gray-700">Agregar nuevas imágenes</label>
+            <input type="file" name="imagenes[]" multiple class="mt-1 block w-full text-sm border border-gray-300 rounded">
         </div>
 
-        <div class="text-end mt-4">
-            <a href="{{ route('producto.panel') }}" class="btn btn-outline-secondary me-2">Cancelar</a>
-            <button type="submit" class="btn btn-primary">💾 Guardar cambios</button>
+        <div class="text-right pt-6">
+            <a href="{{ route('producto.panel') }}"
+               class="inline-block px-5 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50 transition">Cancelar</a>
+            <button type="submit"
+                    class="inline-block px-5 py-2 ml-3 text-sm font-semibold bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                💾 Guardar cambios
+            </button>
         </div>
     </form>
 
-    {{-- GALERÍA --}}
+    {{-- Galería --}}
     @if($producto->imagenes && $producto->imagenes->count())
-        <div class="mt-5">
-            <h5 class="fw-semibold">🖼️ Galería de Imágenes</h5>
-            <div class="d-flex flex-wrap gap-3">
-                @foreach($producto->imagenes as $img)
-                    <div class="position-relative">
-                        <img src="{{ asset('storage/' . $img->ruta) }}" class="img-thumbnail border" style="width: 110px; height: 110px; object-fit: cover;">
-                        <form action="{{ route('producto.imagen.eliminar', $img->id) }}" method="POST" style="position: absolute; top: 4px; right: 4px;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger btn-close" title="Eliminar imagen"></button>
-                        </form>
-                    </div>
-                @endforeach
-            </div>
+    <div class="mt-10">
+        <h4 class="text-lg font-semibold text-gray-700 mb-4">🖼️ Galería de Imágenes</h4>
+        <div class="flex flex-wrap gap-4">
+            @foreach($producto->imagenes as $img)
+                <div class="relative">
+                    <img src="{{ asset('storage/' . $img->ruta) }}"
+                         class="rounded border border-gray-300 shadow object-cover"
+                         style="width: 110px; height: 110px;">
+                    <form action="{{ route('producto.imagen.eliminar', $img->id) }}" method="POST"
+                          class="absolute top-1 right-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white rounded-full p-1 text-xs shadow"
+                                title="Eliminar imagen">
+                            ✕
+                        </button>
+                    </form>
+                </div>
+            @endforeach
         </div>
+    </div>
     @endif
 </div>
 @endsection

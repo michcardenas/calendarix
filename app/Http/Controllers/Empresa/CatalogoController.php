@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Empresa;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Negocio;
 use App\Models\Empresa\ServicioEmpresa;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class CatalogoController extends Controller
 {
@@ -39,21 +40,35 @@ class CatalogoController extends Controller
 
     public function guardarCategoria(Request $request)
     {
+        Log::debug('📝 Ingresando a guardarCategoria');
+
         $request->validate([
             'nueva_categoria' => 'required|string|max:255',
         ]);
+        Log::debug('✅ Validación pasada', ['nueva_categoria' => $request->nueva_categoria]);
 
         $negocio = \App\Models\Negocio::where('user_id', auth()->id())->first();
+        if (!$negocio) {
+            Log::error('❌ No se encontró el negocio del usuario', ['user_id' => auth()->id()]);
+            return redirect()->back()->with('error', 'No se encontró el negocio del usuario.');
+        }
+
+        Log::debug('🔍 Negocio encontrado', ['negocio_id' => $negocio->id]);
 
         $categorias = is_string($negocio->neg_categorias)
             ? json_decode($negocio->neg_categorias, true)
             : [];
 
+        Log::debug('📂 Categorías actuales', ['categorias' => $categorias]);
+
         $categorias[] = $request->nueva_categoria;
 
-        // Guardar de nuevo como JSON
         $negocio->neg_categorias = json_encode($categorias);
         $negocio->save();
+
+        Log::info('✅ Categoría añadida correctamente', [
+            'categorias_actualizadas' => $negocio->neg_categorias,
+        ]);
 
         return redirect()->back()->with('success', 'Categoría añadida correctamente.');
     }
@@ -77,7 +92,7 @@ class CatalogoController extends Controller
         $categoria = $request->categoria_nueva ?: $request->categoria_existente;
 
         ServicioEmpresa::create([
-            'negocio_id' => $negocio->id, 
+            'negocio_id' => $negocio->id,
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'precio' => $request->precio,
@@ -157,5 +172,4 @@ class CatalogoController extends Controller
             'currentSubPage' => 'servicios',
         ]);
     }
-
 }

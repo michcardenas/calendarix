@@ -130,72 +130,80 @@ function handleCardClick(section, cardElement) {
     }
 }
 
-// Funciones específicas para cada sección de configuración
+// Suponiendo que ya tienes esta variable en JS
+const empresaId = window.empresaId || 1; // ⚠️ Ajusta el fallback si es necesario
+
 function handleNegocioConfig() {
     showNotification('Abriendo configuración del negocio...', 'info');
-    // Aquí puedes redirigir a la página específica o abrir un modal
-    // window.location.href = '/empresa/configuracion/negocio';
+    window.location.href = `/empresa/${empresaId}/configuracion/negocio`;
 }
 
 function handleCitasConfig() {
     showNotification('Abriendo gestión de citas...', 'info');
-    // window.location.href = '/empresa/configuracion/citas';
+    window.location.href = `/empresa/${empresaId}/configuracion/citas`;
 }
 
 function handleVentasConfig() {
     showNotification('Abriendo configuración de ventas...', 'info');
-    // window.location.href = '/empresa/configuracion/ventas';
+    window.location.href = `/empresa/${empresaId}/configuracion/ventas`;
 }
 
 function handleFacturacionConfig() {
     showNotification('Abriendo configuración de facturación...', 'info');
-    // window.location.href = '/empresa/configuracion/facturacion';
+    window.location.href = `/empresa/${empresaId}/configuracion/facturacion`;
 }
 
 function handleEquipoConfig() {
     showNotification('Abriendo gestión de equipo...', 'info');
-    // window.location.href = '/empresa/configuracion/equipo';
+    window.location.href = `/empresa/${empresaId}/configuracion/equipo`;
 }
 
 function handleFormulariosConfig() {
     showNotification('Abriendo configuración de formularios...', 'info');
-    // window.location.href = '/empresa/configuracion/formularios';
+    window.location.href = `/empresa/${empresaId}/configuracion/formularios`;
 }
 
 function handlePagosConfig() {
     showNotification('Abriendo configuración de pagos...', 'info');
-    // window.location.href = '/empresa/configuracion/pagos';
+    window.location.href = `/empresa/${empresaId}/configuracion/pagos`;
 }
 
 function handleWebsiteConfig() {
     showNotification('Abriendo configuración del sitio web...', 'info');
-    // window.location.href = '/empresa/configuracion/website';
+    // ⚠️ Ajustar si existe esa ruta
+    window.location.href = `/empresa/${empresaId}/configuracion/website`;
 }
 
 function handleRedesConfig() {
     showNotification('Abriendo configuración de redes sociales...', 'info');
-    // window.location.href = '/empresa/configuracion/redes';
+    // ⚠️ Ajustar si existe esa ruta
+    window.location.href = `/empresa/${empresaId}/configuracion/redes`;
 }
 
 function handlePromocionesConfig() {
     showNotification('Abriendo configuración de promociones...', 'info');
-    // window.location.href = '/empresa/configuracion/promociones';
+    // ⚠️ Ajustar si existe esa ruta
+    window.location.href = `/empresa/${empresaId}/configuracion/promociones`;
 }
 
 function handleEmailMarketingConfig() {
     showNotification('Abriendo configuración de email marketing...', 'info');
-    // window.location.href = '/empresa/configuracion/email-marketing';
+    // ⚠️ Ajustar si existe esa ruta
+    window.location.href = `/empresa/${empresaId}/configuracion/email-marketing`;
 }
 
 function handleNotificacionesConfig() {
     showNotification('Abriendo configuración de notificaciones...', 'info');
-    // window.location.href = '/empresa/configuracion/notificaciones';
+    // ⚠️ Ajustar si existe esa ruta
+    window.location.href = `/empresa/${empresaId}/configuracion/notificaciones`;
 }
 
 function handleIntegracionesConfig() {
     showNotification('Abriendo configuración de integraciones...', 'info');
-    // window.location.href = '/empresa/configuracion/integraciones';
+    // ⚠️ Ajustar si existe esa ruta
+    window.location.href = `/empresa/${empresaId}/configuracion/integraciones`;
 }
+
 
 // Sistema de notificaciones
 function showNotification(message, type = 'info') {

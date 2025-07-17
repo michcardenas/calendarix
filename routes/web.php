@@ -230,6 +230,8 @@ Route::get('/empresa/{id}/agenda/configurar', [AgendaController::class, 'configu
 
 Route::post('/empresa/{id}/agenda/bloqueados', [AgendaController::class, 'guardarBloqueados'])->name('agenda.guardar_bloqueados');
 
+Route::get('/negocios/{id}-{slug}', [\App\Http\Controllers\NegocioController::class, 'show'])
+    ->name('negocios.show');
 
 
 require __DIR__.'/auth.php';

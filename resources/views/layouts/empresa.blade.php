@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>@yield('title', 'Panel de Empresa')</title>
@@ -8,7 +9,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
@@ -18,15 +20,6 @@
         .layout-container {
             display: flex;
             min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: #3b0764;
-            color: #fff;
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
         }
 
         .content-area {
@@ -46,12 +39,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
+
     @stack('styles')
 </head>
 
 <body>
     <div class="layout-container">
-        @include('empresa.partials.sidebar')
+        @include('empresa.partials.sidebar', [
+        'empresa' => $empresa ,
+        'currentPage' => $currentPage ?? null,
+        'currentSubPage' => $currentSubPage ?? null
+        ])
 
         <div class="content-area">
             @yield('content')
@@ -68,7 +66,7 @@
 
     {{-- 🧠 Script de formateo de precios --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const ids = [
                 'precioServicio',
                 'precio_compra_producto',
@@ -80,14 +78,14 @@
                 const input = document.getElementById(id);
                 if (!input) return;
 
-                input.addEventListener('input', function () {
+                input.addEventListener('input', function() {
                     const valorNumerico = this.value.replace(/\D/g, '');
                     this.value = valorNumerico ? new Intl.NumberFormat('es-CO').format(valorNumerico) : '';
                 });
 
                 const form = input.closest('form');
                 if (form && !form.dataset.hasFormatListenerId) {
-                    form.addEventListener('submit', function () {
+                    form.addEventListener('submit', function() {
                         ids.forEach(inputId => {
                             const campo = document.getElementById(inputId);
                             if (campo) {
@@ -109,14 +107,14 @@
                 const inputs = document.querySelectorAll('.' + clase);
 
                 inputs.forEach(input => {
-                    input.addEventListener('input', function () {
+                    input.addEventListener('input', function() {
                         const valorNumerico = this.value.replace(/\D/g, '');
                         this.value = valorNumerico ? new Intl.NumberFormat('es-CO').format(valorNumerico) : '';
                     });
 
                     const form = input.closest('form');
                     if (form && !form.dataset.hasFormatListenerClass) {
-                        form.addEventListener('submit', function () {
+                        form.addEventListener('submit', function() {
                             clases.forEach(cl => {
                                 const campos = form.querySelectorAll('.' + cl);
                                 campos.forEach(campo => {
@@ -131,4 +129,5 @@
         });
     </script>
 </body>
+
 </html>

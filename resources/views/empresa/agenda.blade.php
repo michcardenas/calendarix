@@ -15,7 +15,7 @@ $diasSemana = [
 @endphp
 
 @section('content')
-<div class="ml-[16.25rem]  min-h-screen px-6 py-10 text-gray-800">
+<div class="min-h-screen px-6 py-10 text-gray-800">
     <div class="max-w-7xl mx-auto space-y-10">
         {{-- Encabezado --}}
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">

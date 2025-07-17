@@ -2,91 +2,57 @@
 
 @section('title', 'Procedencia de los clientes')
 
-@push('styles')
-<style>
-    .fof-proc-wrapper {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        margin-left: 20rem;
-    }
-
-    .fof-proc-card {
-        border-radius: 0.5rem;
-        padding: 1.5rem;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        background-color: #fff;
-    }
-
-    .fof-proc-boton {
-        background-color: #6d28d9;
-        border: none;
-        color: white;
-        padding: 0.5rem 1.25rem;
-        border-radius: 0.375rem;
-    }
-
-    .fof-proc-boton:hover {
-        background-color: #5b21b6;
-    }
-</style>
-@endpush
-
 @section('content')
-<div class="fof-proc-wrapper">
-    <div class="mb-4">
-        <h2 class="fw-bold">Procedencia de los clientes</h2>
-        <p class="text-muted">Gestiona cómo tus clientes descubren tu negocio.</p>
+<div class="px-8 py-10 min-h-screen">
+    {{-- Encabezado --}}
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-indigo-700">📊 Procedencia de los clientes</h2>
+        <p class="text-sm text-gray-600">Gestiona cómo tus clientes descubren tu negocio.</p>
     </div>
 
-    <div class="fof-proc-card">
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        {{-- Mensaje de éxito --}}
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded mb-4 relative">
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                <button type="button" class="absolute top-2 right-2 text-green-900" onclick="this.parentElement.remove()">
+                    ✕
+                </button>
             </div>
         @endif
 
-        <form method="POST" action="{{ route('empresa.configuracion.procedencia.update') }}">
+        {{-- Formulario --}}
+        <form method="POST" action="{{ route('empresa.configuracion.procedencia.update') }}" class="space-y-4">
             @csrf
 
-            <div class="mb-3">
-                <label for="neg_instagram" class="form-label">Instagram</label>
-                <input type="text" name="neg_instagram" id="neg_instagram" class="form-control"
-                       value="{{ $empresa->neg_instagram }}">
+            <div>
+                <label for="neg_instagram" class="block text-sm font-medium text-gray-700">Instagram</label>
+                <input type="text" name="neg_instagram" id="neg_instagram"
+                       value="{{ $empresa->neg_instagram }}"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
 
-            <div class="mb-3">
-                <label for="neg_facebook" class="form-label">Facebook</label>
-                <input type="text" name="neg_facebook" id="neg_facebook" class="form-control"
-                       value="{{ $empresa->neg_facebook }}">
+            <div>
+                <label for="neg_facebook" class="block text-sm font-medium text-gray-700">Facebook</label>
+                <input type="text" name="neg_facebook" id="neg_facebook"
+                       value="{{ $empresa->neg_facebook }}"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
 
-            <div class="mb-3">
-                <label for="neg_sitio_web" class="form-label">Sitio Web</label>
-                <input type="text" name="neg_sitio_web" id="neg_sitio_web" class="form-control"
-                       value="{{ $empresa->neg_sitio_web }}">
+            <div>
+                <label for="neg_sitio_web" class="block text-sm font-medium text-gray-700">Sitio Web</label>
+                <input type="text" name="neg_sitio_web" id="neg_sitio_web"
+                       value="{{ $empresa->neg_sitio_web }}"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
 
-            <div class="text-end">
-                <button type="submit" class="fof-proc-boton">
-                    <i class="fas fa-save me-1"></i> Guardar Procedencia
+            <div class="text-end pt-4">
+                <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-md text-sm">
+                    💾 Guardar Procedencia
                 </button>
             </div>
         </form>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    function editarFofProc(id) {
-        document.getElementById('fof-proc-text-' + id).style.display = 'none';
-        document.getElementById('fof-proc-form-' + id).classList.remove('d-none');
-    }
-
-    function cancelarFofProc(id) {
-        document.getElementById('fof-proc-text-' + id).style.display = 'inline';
-        document.getElementById('fof-proc-form-' + id).classList.add('d-none');
-    }
-</script>
-@endpush

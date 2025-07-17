@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Empresa\FotoEmpresa;
-use App\Models\Empresa\ServicioEmpresa; 
+use App\Models\Empresa\ServicioEmpresa;
+use App\Models\Empresa\Empresa;
 
 class Negocio extends Model
 {
@@ -26,7 +27,7 @@ class Negocio extends Model
         'neg_direccion_confirmada',
         'configuracion_bloques',
         'neg_facebook',
-        'neg_instagram', 
+        'neg_instagram',
     ];
 
     protected $casts = [
@@ -60,5 +61,18 @@ class Negocio extends Model
         return $this->hasMany(ServicioEmpresa::class);
     }
 
+    public function horarios()
+    {
+        return $this->hasMany(HorarioLaboral::class, 'negocio_id');
+    }
 
+    public function bloqueos()
+    {
+        return $this->hasMany(DiaBloqueado::class, 'negocio_id');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
 }

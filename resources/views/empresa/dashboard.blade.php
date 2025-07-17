@@ -1,4 +1,4 @@
-
+@extends('layouts.base')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/empresa/dashboard-empresa.css') }}">
 
@@ -18,7 +18,7 @@
     ])
 
 
-    <main class="content" style="margin-left: 240px; padding: 2rem;">
+    <main class="content" style="padding: 2rem;">
         <div class="header">Dashboard de {{ $empresa->neg_nombre_comercial }}</div>
 
         <!-- Alerta informativa para el editor (opcional) -->
