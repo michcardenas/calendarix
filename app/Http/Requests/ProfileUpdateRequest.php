@@ -33,7 +33,14 @@ class ProfileUpdateRequest extends FormRequest
 
         // Procesar imagen si existe
         if ($this->hasFile('foto')) {
-            $data['foto'] = $this->file('foto')->store('uploads/fotos', 'public');
+            $archivo = $this->file('foto');
+            $nombreArchivo = 'usuario_' . $user->id . '_' . time() . '.' . $archivo->getClientOriginalExtension();
+
+            // Ruta destino fuera de Laravel storage
+            $archivo->move('/home/u533926615/domains/calendarix.uy/public_html/images/perfiles/', $nombreArchivo);
+
+            // Ruta pública completa
+            $data['foto'] = 'https://calendarix.uy/images/perfiles/' . $nombreArchivo;
         }
 
         // Verifica si cambió el email
@@ -43,5 +50,4 @@ class ProfileUpdateRequest extends FormRequest
 
         $user->update($data);
     }
-
 }
