@@ -23,7 +23,7 @@
                 <div class="mb-3" id="group_photo_perfil">
                     <label for="foto" class="form-label">Foto de perfil</label><br>
                     @if (auth()->user()->foto)
-                        <img src="{{ asset('storage/' . auth()->user()->foto) }}" width="100" class="rounded mb-2" id="preview_photo_perfil">
+                        <img src="{{ auth()->user()->foto }}" width="100" class="rounded mb-2" id="preview_photo_perfil">
                     @endif
                     <input type="file" class="form-control" name="foto" id="foto" accept="image/*">
                     @error('foto')

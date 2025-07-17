@@ -131,9 +131,13 @@
 
         {{-- Imagen principal --}}
         @if($producto->imagen)
-        <div>
-            <label class="text-sm font-medium text-gray-700">Imagen actual:</label><br>
-            <img src="{{ asset('storage/' . $producto->imagen) }}" class="mt-2 rounded border border-gray-300 shadow" style="max-height: 150px;">
+        <div class="mt-6">
+            <label class="text-sm font-medium text-gray-700 block mb-2">📸 Imagen actual:</label>
+            <div class="relative w-full max-w-xs rounded overflow-hidden border border-gray-300 shadow group">
+                <img src="{{ $producto->imagen }}"
+                    alt="Imagen actual del producto"
+                    class="object-cover w-full h-40 transition-transform duration-300 group-hover:scale-105 rounded">
+            </div>
         </div>
         @endif
 
@@ -183,6 +187,5 @@
         </div>
     </div>
     @endif
-
 </div>
 @endsection
