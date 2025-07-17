@@ -39,9 +39,19 @@ class NegocioController extends Controller
 
         // Imagen de negocio
         if ($request->hasFile('neg_imagen')) {
-            $path = $request->file('neg_imagen')->store('negocios', 'public');
-            $validated['neg_imagen'] = $path;
+            $file = $request->file('neg_imagen');
+            $filename = uniqid('negocio_') . '.' . $file->getClientOriginalExtension();
+
+            // Ruta destino absoluta
+            $destination = '/home/u533926615/domains/calendarix.uy/public_html/images';
+
+            // Mover archivo
+            $file->move($destination, $filename);
+
+            // Guardar la ruta relativa accesible públicamente (ej: para <img src>)
+            $validated['neg_imagen'] = '/images/' . $filename;
         }
+
 
         // Valores booleanos (marcados por checkbox o similares)
         $validated['neg_virtual'] = $request->has('neg_virtual');

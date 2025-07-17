@@ -66,9 +66,13 @@ class ProductoController extends Controller
 
         // Si subió imagen
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('productos', 'public');
-            $datos['imagen'] = $path;
+            $file = $request->file('imagen');
+            $filename = uniqid('producto_') . '.' . $file->getClientOriginalExtension();
+            $destination = '/home/u533926615/domains/calendarix.uy/public_html/images';
+            $file->move($destination, $filename);
+            $datos['imagen'] = '/images/' . $filename;
         }
+
 
         $producto = Producto::create([
             'user_id' => auth()->id(),
@@ -89,20 +93,23 @@ class ProductoController extends Controller
             'stock_minimo' => $request->stock_minimo,
             'estado_publicado' => $request->has('estado_publicado'),
             'mostrar_en_catalogo' => $request->has('mostrar_en_catalogo'),
-            'imagen' => $request->file('imagen') ? $request->file('imagen')->store('productos', 'public') : null,
+            'imagen' => $datos['imagen'] ?? null,
         ]);
 
 
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
-                $path = $imagen->store('productos', 'public');
+                $filename = uniqid('producto_multi_') . '.' . $imagen->getClientOriginalExtension();
+                $destination = '/home/u533926615/domains/calendarix.uy/public_html/images';
+                $imagen->move($destination, $filename);
 
                 \App\Models\ImagenProducto::create([
                     'producto_id' => $producto->id,
-                    'ruta' => $path,
+                    'ruta' => '/images/' . $filename, // Ruta accesible desde el navegador
                 ]);
             }
         }
+
 
         return redirect()->route('producto.crear')->with('success', 'Producto creado correctamente.');
     }
@@ -138,7 +145,6 @@ class ProductoController extends Controller
     {
         Log::debug('📩 Entró al método update del producto', $request->all());
 
-        // Limpiar campos numéricos antes de validar
         $request->merge([
             'precio_compra' => self::parseMoneda($request->precio_compra),
             'precio_venta' => self::parseMoneda($request->precio_venta),
@@ -169,27 +175,32 @@ class ProductoController extends Controller
         $producto->estado_publicado = $request->has('estado_publicado');
         $producto->mostrar_en_catalogo = $request->has('mostrar_en_catalogo');
 
-        // Imagen principal
+        // Imagen principal (con ruta fija)
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('productos', 'public');
-            $producto->imagen = $path;
+            $filename = 'producto_' . uniqid() . '.' . $request->file('imagen')->getClientOriginalExtension();
+            $request->file('imagen')->move('/home/u533926615/domains/calendarix.uy/public_html/images', $filename);
+            $producto->imagen = '/images/' . $filename;
         }
 
         $producto->save();
 
-        // Imágenes adicionales
+        // Imágenes adicionales (con ruta fija)
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $img) {
-                $ruta = $img->store('productos', 'public');
-                ImagenProducto::create([
+                $filename = 'producto_multi_' . uniqid() . '.' . $img->getClientOriginalExtension();
+                $img->move('/home/u533926615/domains/calendarix.uy/public_html/images', $filename);
+
+                \App\Models\ImagenProducto::create([
                     'producto_id' => $producto->id,
-                    'ruta' => $ruta,
+                    'ruta' => '/images/' . $filename,
                 ]);
             }
         }
 
-        return redirect()->route('producto.panel')->with('success', 'Producto actualizado.');
+        return redirect()->route('producto.panel')->with('success', 'Producto actualizado correctamente.');
     }
+
+
 
 
     public function destroy(Producto $producto)
