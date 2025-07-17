@@ -11,14 +11,14 @@
 
     {{-- Errores --}}
     @if ($errors->any())
-        <div class="bg-red-50 border border-red-300 text-red-700 rounded p-4 mb-6">
-            <strong class="font-semibold">⚠️ Ocurrió un error:</strong>
-            <ul class="list-disc pl-5 mt-2 text-sm space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="bg-red-50 border border-red-300 text-red-700 rounded p-4 mb-6">
+        <strong class="font-semibold">⚠️ Ocurrió un error:</strong>
+        <ul class="list-disc pl-5 mt-2 text-sm space-y-1">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     <form method="POST" action="{{ route('producto.actualizar', $producto->id) }}" enctype="multipart/form-data" class="space-y-6">
@@ -84,7 +84,7 @@
             <div class="mt-4">
                 <label class="inline-flex items-center gap-2">
                     <input type="checkbox" name="activar_oferta" class="rounded border-gray-300 text-indigo-600"
-                           {{ old('activar_oferta', $producto->activar_oferta) ? 'checked' : '' }}>
+                        {{ old('activar_oferta', $producto->activar_oferta) ? 'checked' : '' }}>
                     <span class="text-sm text-gray-700">Activar oferta</span>
                 </label>
             </div>
@@ -106,7 +106,7 @@
             <div class="mt-4">
                 <label class="inline-flex items-center gap-2">
                     <input type="checkbox" name="controla_inventario" class="rounded border-gray-300 text-indigo-600"
-                           {{ old('controla_inventario', $producto->controla_inventario) ? 'checked' : '' }}>
+                        {{ old('controla_inventario', $producto->controla_inventario) ? 'checked' : '' }}>
                     <span class="text-sm text-gray-700">Controla inventario</span>
                 </label>
             </div>
@@ -118,12 +118,12 @@
             <div class="space-y-3">
                 <label class="inline-flex items-center gap-2">
                     <input type="checkbox" name="estado_publicado" class="rounded border-gray-300 text-indigo-600"
-                           {{ old('estado_publicado', $producto->estado_publicado) ? 'checked' : '' }}>
+                        {{ old('estado_publicado', $producto->estado_publicado) ? 'checked' : '' }}>
                     <span class="text-sm text-gray-700">Publicado</span>
                 </label>
                 <label class="inline-flex items-center gap-2">
                     <input type="checkbox" name="mostrar_en_catalogo" class="rounded border-gray-300 text-indigo-600"
-                           {{ old('mostrar_en_catalogo', $producto->mostrar_en_catalogo) ? 'checked' : '' }}>
+                        {{ old('mostrar_en_catalogo', $producto->mostrar_en_catalogo) ? 'checked' : '' }}>
                     <span class="text-sm text-gray-700">Mostrar en catálogo</span>
                 </label>
             </div>
@@ -149,9 +149,9 @@
 
         <div class="text-right pt-6">
             <a href="{{ route('producto.panel') }}"
-               class="inline-block px-5 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50 transition">Cancelar</a>
+                class="inline-block px-5 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50 transition">Cancelar</a>
             <button type="submit"
-                    class="inline-block px-5 py-2 ml-3 text-sm font-semibold bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                class="inline-block px-5 py-2 ml-3 text-sm font-semibold bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
                 💾 Guardar cambios
             </button>
         </div>
@@ -161,26 +161,28 @@
     @if($producto->imagenes && $producto->imagenes->count())
     <div class="mt-10">
         <h4 class="text-lg font-semibold text-gray-700 mb-4">🖼️ Galería de Imágenes</h4>
-        <div class="flex flex-wrap gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             @foreach($producto->imagenes as $img)
-                <div class="relative">
-                    <img src="{{ asset('storage/' . $img->ruta) }}"
-                         class="rounded border border-gray-300 shadow object-cover"
-                         style="width: 110px; height: 110px;">
-                    <form action="{{ route('producto.imagen.eliminar', $img->id) }}" method="POST"
-                          class="absolute top-1 right-1">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                                class="bg-red-500 hover:bg-red-600 text-white rounded-full p-1 text-xs shadow"
-                                title="Eliminar imagen">
-                            ✕
-                        </button>
-                    </form>
-                </div>
+            <div class="relative group overflow-hidden rounded-lg border border-gray-300 shadow bg-white">
+                <img src="{{ $img->ruta }}"
+                    alt="Imagen del producto"
+                    class="object-cover w-full h-32 transition-transform duration-300 group-hover:scale-105">
+
+                <form action="{{ route('producto.imagen.eliminar', $img->id) }}" method="POST"
+                    class="absolute top-1 right-1 z-10">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                        class="bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow"
+                        title="Eliminar imagen">
+                        ✕
+                    </button>
+                </form>
+            </div>
             @endforeach
         </div>
     </div>
     @endif
+
 </div>
 @endsection

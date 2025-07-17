@@ -18,7 +18,7 @@ use App\Http\Controllers\Empresa\DashboardEmpresaController;
 use App\Http\Controllers\Empresa\FotoController;
 use App\Http\Controllers\Empresa\ServicioEmpresaController;
 use App\Http\Controllers\Empresa\EmpresaController;
-use App\Http\Controllers\empresa\NegocioConfiguracionController;
+use App\Http\Controllers\Empresa\NegocioConfiguracionController;
 use App\Http\Controllers\Empresa\CatalogoController;
 use App\Http\Controllers\Empresa\ProductoController;
 use App\Http\Controllers\Empresa\AgendaController;
