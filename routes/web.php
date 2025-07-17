@@ -225,6 +225,11 @@ Route::put('/empresa/catalogo/producto/{producto}/actualizar', [ProductoControll
 
 //agenda
 Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('empresa.agenda');
+// routes/web.php
+Route::get('/empresa/{id}/agenda/configurar', [AgendaController::class, 'configurar'])->name('empresa.agenda.configurar');
+
+Route::post('/empresa/{id}/agenda/bloqueados', [AgendaController::class, 'guardarBloqueados'])->name('agenda.guardar_bloqueados');
+
 
 
 require __DIR__.'/auth.php';

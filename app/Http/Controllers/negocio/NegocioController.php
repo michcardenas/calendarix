@@ -13,7 +13,6 @@ class NegocioController extends Controller
         $user = auth()->user();
 
         return view('negocio.creacion-negocio', compact('user'));
-
     }
 
     public function store(Request $request)
@@ -24,28 +23,42 @@ class NegocioController extends Controller
             'neg_email' => 'required|email|max:255|unique:negocios',
             'neg_telefono' => 'required|string|max:20',
             'neg_pais' => 'nullable|string|max:100',
-            'neg_acepto' => 'accepted',
+            'neg_facebook' => 'nullable|string|max:255',
+            'neg_instagram' => 'nullable|string|max:255',
             'neg_imagen' => 'nullable|image|max:2048',
+            'neg_nombre_comercial' => 'nullable|string|max:255',
+            'neg_sitio_web' => 'nullable|string|max:255',
+            'neg_categorias' => 'nullable|string',
+            'neg_equipo' => 'nullable|string|max:255',
+            'neg_direccion' => 'nullable|string|max:255',
+            'neg_virtual' => 'nullable|boolean',
+            'neg_direccion_confirmada' => 'nullable|boolean',
+            'configuracion_bloques' => 'nullable|string',
+            'neg_acepto' => 'accepted',
         ]);
 
+        // Imagen de negocio
         if ($request->hasFile('neg_imagen')) {
             $path = $request->file('neg_imagen')->store('negocios', 'public');
             $validated['neg_imagen'] = $path;
         }
 
+        // Valores booleanos (marcados por checkbox o similares)
+        $validated['neg_virtual'] = $request->has('neg_virtual');
+        $validated['neg_direccion_confirmada'] = $request->has('neg_direccion_confirmada');
         $validated['neg_acepto'] = true;
 
-        // ✅ Aquí agregamos el ID del usuario autenticado
+        // ID del usuario autenticado
         $validated['user_id'] = auth()->id();
 
-        // ✅ Guardamos el negocio
+        // Guardar en base de datos
         $negocio = \App\Models\Negocio::create($validated);
 
-        // ✅ Redirección al siguiente paso
         return redirect()->route('negocio.datos');
     }
 
-        public function datosNegocio()
+
+    public function datosNegocio()
     {
         return view('negocio.datos-negocio');
     }
@@ -57,13 +70,17 @@ class NegocioController extends Controller
             'neg_sitio_web' => 'nullable|url|max:255',
         ]);
 
-        // Aquí puedes guardar estos datos en otra tabla o en la misma si ya existe
+        $negocio = \App\Models\Negocio::where('user_id', auth()->id())->firstOrFail();
 
-        return redirect()->route('negocio.categorias');
+        $negocio->update([
+            'neg_nombre_comercial' => $request->neg_nombre_comercial,
+            'neg_sitio_web' => $request->neg_sitio_web,
+        ]);
 
+        return redirect()->route('negocio.categorias')->with('success', 'Datos guardados correctamente.');
     }
 
-        public function categorias()
+    public function categorias()
     {
         return view('negocio.categorias');
     }
@@ -79,7 +96,7 @@ class NegocioController extends Controller
         return redirect()->route('negocio.equipo');
     }
 
-        public function equipo()
+    public function equipo()
     {
         return view('negocio.equipo');
     }
@@ -148,7 +165,7 @@ class NegocioController extends Controller
         return view('empresa.dashboard-empresa', compact('empresa'));
     }
 
-        public function destroy(Negocio $negocio)
+    public function destroy(Negocio $negocio)
     {
         if ($negocio->user_id !== auth()->id()) {
             abort(403);
@@ -158,6 +175,4 @@ class NegocioController extends Controller
 
         return back()->with('status', 'negocio-eliminado');
     }
-
-
 }

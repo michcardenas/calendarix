@@ -118,7 +118,7 @@
                     </button>
                 </div>
                 <div class="text-center mt-6">
-                <a href="{{ route('negocio.create') }}" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-md transition">
+                <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-md transition">
                     Registra tu negocio
                 </a>
                 </div>

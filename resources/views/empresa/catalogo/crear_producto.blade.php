@@ -1,164 +1,142 @@
 @extends('layouts.empresa')
 
 @section('content')
-<style>
-    .content-area {
-        margin-left: 14rem;
-    }
-</style>
-<div class="container-fluid px-4 py-4">
-    <h3 class="mb-4 fw-bold">Añadir un nuevo producto</h3>
+<div class="container py-4">
+    <h2 class="fw-bold mb-3">🆕 Añadir nuevo producto</h2>
+    <p class="text-muted">Completa la información del producto para registrarlo en tu catálogo.</p>
 
     <form action="{{ route('producto.store') }}" method="POST" id="form_producto_crear" enctype="multipart/form-data">
         @csrf
 
-        <div class="row">
-            {{-- Información básica --}}
-            <div class="col-md-8">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light fw-bold">Información básica</div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="nombre_producto" class="form-label">Nombre del producto</label>
-                            <input type="text" name="nombre" id="nombre_producto" class="form-control" required>
+        <div class="row g-4">
+            {{-- Panel izquierdo: información --}}
+            <div class="col-lg-8">
+
+                {{-- Información básica --}}
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white fw-semibold fs-5">📄 Información básica</div>
+                    <div class="card-body row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Nombre del producto</label>
+                            <input type="text" name="nombre" class="form-control" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="codigo_barras_producto" class="form-label">Código de barras</label>
-                            <input type="text" name="codigo_barras" id="codigo_barras_producto" class="form-control">
+                        <div class="col-md-6">
+                            <label class="form-label">Código de barras</label>
+                            <input type="text" name="codigo_barras" class="form-control">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="marca_producto" class="form-label">Marca del producto</label>
-                            <input type="text" name="marca" id="marca_producto" class="form-control">
+                        <div class="col-md-6">
+                            <label class="form-label">Marca</label>
+                            <input type="text" name="marca" class="form-control">
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="unidad_medida_producto" class="form-label">Unidad de medida</label>
-                                <select name="unidad_medida" id="unidad_medida_producto" class="form-control">
-                                    <option value="unidad">Unidad</option>
-                                    <option value="ml">Mililitros (ml)</option>
-                                    <option value="g">Gramos (g)</option>
-                                    <option value="kg">Kilogramos (kg)</option>
-                                    <option value="lt">Litros (lt)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="cantidad_producto" class="form-label">Cantidad</label>
-                                <input type="number" step="0.01" name="cantidad" id="cantidad_producto" class="form-control">
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Unidad de medida</label>
+                            <select name="unidad_medida" class="form-control">
+                                <option value="unidad">Unidad</option>
+                                <option value="ml">Mililitros (ml)</option>
+                                <option value="g">Gramos (g)</option>
+                                <option value="kg">Kilogramos (kg)</option>
+                                <option value="lt">Litros (lt)</option>
+                            </select>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="descripcion_breve_producto" class="form-label">Breve descripción</label>
-                            <input type="text" name="descripcion_breve" id="descripcion_breve_producto" maxlength="100" class="form-control">
+                        <div class="col-md-6">
+                            <label class="form-label">Cantidad</label>
+                            <input type="number" step="0.01" name="cantidad" class="form-control">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="descripcion_larga_producto" class="form-label">Descripción detallada</label>
-                            <textarea name="descripcion_larga" id="descripcion_larga_producto" rows="4" class="form-control"></textarea>
+                        <div class="col-md-6">
+                            <label class="form-label">Descripción breve</label>
+                            <input type="text" name="descripcion_breve" maxlength="100" class="form-control">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="categoria_producto" class="form-label">Categoría del producto</label>
-                            <input type="text" name="categoria" id="categoria_producto" class="form-control">
+                        <div class="col-md-12">
+                            <label class="form-label">Descripción detallada</label>
+                            <textarea name="descripcion_larga" rows="3" class="form-control"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Categoría</label>
+                            <input type="text" name="categoria" class="form-control">
                         </div>
                     </div>
                 </div>
 
                 {{-- Precios --}}
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light fw-bold">Precios</div>
-                    <div class="card-body row">
-                        <div class="col-md-4 mb-3">
-                            <label for="precio_compra_producto" class="form-label">Precio de compra</label>
-                            <input type="number" name="precio_compra" id="precio_compra_producto" class="form-control">
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white fw-semibold fs-5">💰 Precios</div>
+                    <div class="card-body row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Precio de compra</label>
+                            <input type="text" name="precio_compra" class="form-control" inputmode="numeric">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="precio_venta_producto" class="form-label">Precio de venta</label>
-                            <input type="number" name="precio_venta" id="precio_venta_producto" class="form-control">
+                        <div class="col-md-4">
+                            <label class="form-label">Precio de venta</label>
+                            <input type="text" name="precio_venta" class="form-control" inputmode="numeric">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="precio_promocional_producto" class="form-label">Precio promocional</label>
-                            <input type="number" name="precio_promocional" id="precio_promocional_producto" class="form-control">
+                        <div class="col-md-4">
+                            <label class="form-label">Precio promocional</label>
+                            <input type="text" name="precio_promocional" class="form-control" inputmode="numeric">
                         </div>
-
-                        <div class="col-md-12 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="activar_oferta_producto" name="activar_oferta">
-                            <label class="form-check-label" for="activar_oferta_producto">Activar oferta</label>
+                        <div class="col-md-12 form-check form-switch ps-4">
+                            <input type="checkbox" name="activar_oferta" class="form-check-input" id="activar_oferta_producto">
+                            <label for="activar_oferta_producto" class="form-check-label">Activar oferta</label>
                         </div>
                     </div>
                 </div>
 
                 {{-- Inventario --}}
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light fw-bold">Inventario</div>
-                    <div class="card-body row">
-                        <div class="col-md-6 form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" id="controla_inventario_producto" name="controla_inventario">
-                            <label class="form-check-label" for="controla_inventario_producto">Controlar inventario</label>
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white fw-semibold fs-5">📦 Inventario</div>
+                    <div class="card-body row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Stock</label>
+                            <input type="number" name="stock" class="form-control">
                         </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="stock_producto" class="form-label">Stock actual</label>
-                            <input type="number" name="stock" id="stock_producto" class="form-control">
+                        <div class="col-md-6">
+                            <label class="form-label">Stock mínimo</label>
+                            <input type="number" name="stock_minimo" class="form-control">
                         </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="stock_minimo_producto" class="form-label">Stock mínimo</label>
-                            <input type="number" name="stock_minimo" id="stock_minimo_producto" class="form-control">
+                        <div class="col-md-12 form-check form-switch ps-4">
+                            <input type="checkbox" name="controla_inventario" class="form-check-input" id="controla_inventario_producto">
+                            <label for="controla_inventario_producto" class="form-check-label">Controla inventario</label>
                         </div>
                     </div>
                 </div>
 
                 {{-- Estado --}}
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light fw-bold">Visibilidad</div>
-                    <div class="card-body row">
-                        <div class="col-md-6 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="estado_publicado_producto" name="estado_publicado" checked>
-                            <label class="form-check-label" for="estado_publicado_producto">Publicado</label>
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white fw-semibold fs-5">👁️ Visibilidad</div>
+                    <div class="card-body row ps-4">
+                        <div class="form-check form-switch mb-2">
+                            <input type="checkbox" name="estado_publicado" class="form-check-input" id="estado_publicado_producto" checked>
+                            <label for="estado_publicado_producto" class="form-check-label">Publicado</label>
                         </div>
-
-                        <div class="col-md-6 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="mostrar_catalogo_producto" name="mostrar_en_catalogo" checked>
-                            <label class="form-check-label" for="mostrar_catalogo_producto">Mostrar en catálogo</label>
+                        <div class="form-check form-switch">
+                            <input type="checkbox" name="mostrar_en_catalogo" class="form-check-input" id="mostrar_catalogo_producto" checked>
+                            <label for="mostrar_catalogo_producto" class="form-check-label">Mostrar en catálogo</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">Guardar producto</button>
+                    <button type="submit" class="btn btn-primary px-4">💾 Guardar producto</button>
                 </div>
             </div>
 
-           {{-- Fotos del producto --}}
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light fw-bold">Foto del producto</div>
-                    <div class="card-body text-center">
-
-                        {{-- Vista previa si ya existe (al editar) --}}
-                        @if(isset($producto) && $producto->imagen)
-                            <div class="mb-3">
-                                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Foto actual" class="img-fluid rounded mb-2" style="max-height: 200px;">
-                                <p class="text-muted">Imagen actual</p>
-                            </div>
-                        @endif
-
-                        {{-- Campo para cargar nueva imagen --}}
+            {{-- Panel derecho: imágenes --}}
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-header bg-white fw-semibold fs-5">🖼️ Imágenes del producto</div>
+                    <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Subir imágenes</label>
-                            <input type="file" name="imagenes[]" class="form-control" multiple accept="image/*">
+                            <label class="form-label">Subir imágenes</label>
+                            <input type="file" name="imagenes[]" class="form-control" multiple accept="image/*" onchange="previewMultipleImages(event)">
                         </div>
 
-                        {{-- Vista previa en tiempo real --}}
-                        <div id="preview-container" class="border rounded py-3 text-muted" style="background-color: #f8f9fa; display: none;">
-                            <img id="preview" src="#" class="img-fluid rounded" style="max-height: 200px;">
-                            <p class="mt-2">Vista previa</p>
-                        </div>
-
+                        <div id="preview-container" class="d-flex flex-wrap gap-2 mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -168,27 +146,23 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/catalogo/producto.js') }}"></script>
-
 <script>
-    function previewImage(event) {
-        const preview = document.getElementById('preview');
-        const container = document.getElementById('preview-container');
+function previewMultipleImages(event) {
+    const container = document.getElementById('preview-container');
+    container.innerHTML = '';
 
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                container.style.display = 'block';
-            };
-
-            reader.readAsDataURL(file);
-        } else {
-            container.style.display = 'none';
-        }
-    }
+    Array.from(event.target.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'img-thumbnail rounded';
+            img.style.height = '120px';
+            img.style.objectFit = 'cover';
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+}
 </script>
-
 @endpush

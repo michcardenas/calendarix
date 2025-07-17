@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Negocio;
 use App\Models\Producto;
 use App\Models\ImagenProducto;
+use Illuminate\Support\Facades\Log;
 
 
 class ProductoController extends Controller
@@ -41,11 +42,20 @@ class ProductoController extends Controller
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-         $datos = $request->only([
-            'nombre', 'codigo_barras', 'marca', 'unidad_medida', 'cantidad',
-            'descripcion_breve', 'descripcion_larga', 'categoria',
-            'precio_compra', 'precio_venta', 'precio_promocional',
-            'stock', 'stock_minimo'
+        $datos = $request->only([
+            'nombre',
+            'codigo_barras',
+            'marca',
+            'unidad_medida',
+            'cantidad',
+            'descripcion_breve',
+            'descripcion_larga',
+            'categoria',
+            'precio_compra',
+            'precio_venta',
+            'precio_promocional',
+            'stock',
+            'stock_minimo'
         ]);
 
         $datos['user_id'] = auth()->id();
@@ -126,6 +136,15 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto)
     {
+        Log::debug('📩 Entró al método update del producto', $request->all());
+
+        // Limpiar campos numéricos antes de validar
+        $request->merge([
+            'precio_compra' => self::parseMoneda($request->precio_compra),
+            'precio_venta' => self::parseMoneda($request->precio_venta),
+            'precio_promocional' => self::parseMoneda($request->precio_promocional),
+        ]);
+
         $request->validate([
             'nombre' => 'required|string|max:255',
             'codigo_barras' => 'nullable|string|max:100',
@@ -172,6 +191,7 @@ class ProductoController extends Controller
         return redirect()->route('producto.panel')->with('success', 'Producto actualizado.');
     }
 
+
     public function destroy(Producto $producto)
     {
         $producto->delete();
@@ -192,4 +212,11 @@ class ProductoController extends Controller
         return back()->with('success', 'Imagen eliminada correctamente.');
     }
 
+    private static function parseMoneda($valor)
+    {
+        // Elimina cualquier símbolo de moneda, puntos de miles y cambia comas por puntos
+        return $valor !== null
+            ? floatval(str_replace([',', '$', ' '], ['.', '', ''], preg_replace('/[^\d,\.]/', '', $valor)))
+            : null;
+    }
 }
