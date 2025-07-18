@@ -37,7 +37,7 @@
                                 <button onclick="document.getElementById('modalEditarCliente{{ $cliente->id }}').classList.remove('hidden')"
                                     class="text-blue-600 hover:underline">Editar</button>
 
-                                <form action="{{ route('empresa.clientes.destroy', [$empresa->id, $cliente->id]) }}"
+                                <form action="{{ route('empresa.clientes.destroy', ['empresa' => $empresa->id, 'cliente' => $cliente->id]) }}"
                                     method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')

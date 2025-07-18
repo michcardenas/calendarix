@@ -96,13 +96,14 @@ class EmpresaController extends Controller
 
 
     // 🔴 Eliminar cliente
-    public function destroyCliente($id)
+    public function destroyCliente($empresaId, $clienteId)
     {
-        $cliente = Cliente::findOrFail($id);
+        $cliente = Cliente::where('negocio_id', $empresaId)->where('id', $clienteId)->firstOrFail();
         $cliente->delete();
 
-        return redirect()->back()->with('success', 'Cliente eliminado correctamente.');
+        return back()->with('success', 'Cliente eliminado correctamente.');
     }
+
 
     // Métodos para las subsecciones de configuración
     public function configCentros($id)
