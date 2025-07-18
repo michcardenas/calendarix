@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Empresa;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Negocio; 
+use App\Models\Negocio;
+use App\Models\Cliente;
+use App\Models\Empresa\Empresa;
 
 class EmpresaController extends Controller
 {
@@ -12,7 +14,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.dashboard', [
             'empresa' => $empresa,
             'currentPage' => 'dashboard'
@@ -23,7 +25,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion'
@@ -34,22 +36,72 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.agenda', [
             'empresa' => $empresa,
             'currentPage' => 'agenda'
         ]);
     }
 
-    public function clientes($id)
+    public function clientes($empresaId)
     {
-        $empresa = Negocio::findOrFail($id);
+        $empresa = Empresa::with('clientes')->findOrFail($empresaId); // Asegúrate que tenga la relación
+        $clientes = $empresa->clientes ?? [];
 
-        
-        return view('empresa.clientes', [
+        return view('empresa.clientes.index', [
             'empresa' => $empresa,
-            'currentPage' => 'clientes'
+            'clientes' => $clientes,
+            'currentPage' => 'clientes',
+            'currentSubPage' => null
         ]);
+    }
+
+    // 🟢 Crear cliente
+    public function storeCliente(Request $request)
+    {
+        $request->validate([
+            'negocio_id' => 'required|exists:negocios,id',
+            'nombre'     => 'required|string|max:255',
+            'email'      => 'nullable|email|max:255',
+            'telefono'   => 'nullable|string|max:20',
+        ]);
+
+        Cliente::create([
+            'negocio_id' => $request->negocio_id,
+            'nombre'     => $request->nombre,
+            'email'      => $request->email,
+            'telefono'   => $request->telefono,
+        ]);
+
+        return redirect()->back()->with('success', 'Cliente creado correctamente.');
+    }
+
+    public function updateCliente(Request $request, $empresa, $cliente)
+    {
+        $request->validate([
+            'nombre'   => 'required|string|max:255',
+            'email'    => 'nullable|email|max:255',
+            'telefono' => 'nullable|string|max:20',
+        ]);
+
+        $cliente = Cliente::findOrFail($cliente);
+        $cliente->update([
+            'nombre'   => $request->nombre,
+            'email'    => $request->email,
+            'telefono' => $request->telefono,
+        ]);
+
+        return redirect()->back()->with('success', 'Cliente actualizado correctamente.');
+    }
+
+
+    // 🔴 Eliminar cliente
+    public function destroyCliente($id)
+    {
+        $cliente = Cliente::findOrFail($id);
+        $cliente->delete();
+
+        return redirect()->back()->with('success', 'Cliente eliminado correctamente.');
     }
 
     // Métodos para las subsecciones de configuración
@@ -88,7 +140,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion.citas', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion',
@@ -100,7 +152,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion.ventas', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion',
@@ -112,7 +164,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion.facturacion', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion',
@@ -124,7 +176,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion.equipo', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion',
@@ -136,7 +188,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion.formularios', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion',
@@ -148,7 +200,7 @@ class EmpresaController extends Controller
     {
         $empresa = Negocio::findOrFail($id);
 
-        
+
         return view('empresa.configuracion.pagos', [
             'empresa' => $empresa,
             'currentPage' => 'configuracion',

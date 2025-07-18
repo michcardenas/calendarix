@@ -5,6 +5,7 @@ namespace App\Http\Controllers\negocio;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Negocio;
+use Illuminate\Support\Facades\Log;
 
 class NegocioController extends Controller
 {
@@ -37,35 +38,28 @@ class NegocioController extends Controller
             'neg_acepto' => 'accepted',
         ]);
 
-        // Imagen de negocio
+        // Imagen
         if ($request->hasFile('neg_imagen')) {
             $file = $request->file('neg_imagen');
             $filename = uniqid('negocio_') . '.' . $file->getClientOriginalExtension();
-
-            // Ruta destino absoluta
             $destination = '/home/u533926615/domains/calendarix.uy/public_html/images';
-
-            // Mover archivo
             $file->move($destination, $filename);
-
-            // Guardar la ruta relativa accesible públicamente (ej: para <img src>)
             $validated['neg_imagen'] = '/images/' . $filename;
         }
 
-
-        // Valores booleanos (marcados por checkbox o similares)
         $validated['neg_virtual'] = $request->has('neg_virtual');
         $validated['neg_direccion_confirmada'] = $request->has('neg_direccion_confirmada');
         $validated['neg_acepto'] = true;
-
-        // ID del usuario autenticado
         $validated['user_id'] = auth()->id();
 
-        // Guardar en base de datos
         $negocio = \App\Models\Negocio::create($validated);
+
+        // ✅ Guardar ID en sesión
+        session(['negocio_id' => $negocio->id]);
 
         return redirect()->route('negocio.datos');
     }
+
 
 
     public function datosNegocio()
@@ -131,16 +125,19 @@ class NegocioController extends Controller
     {
         $request->validate([
             'neg_direccion' => 'nullable|string|max:255',
-            'neg_virtual' => 'nullable|in:1',
+            'neg_virtual'   => 'nullable|in:1',
         ]);
 
         session([
             'negocio_direccion' => $request->neg_direccion,
-            'negocio_virtual' => $request->neg_virtual ? true : false,
+            'negocio_virtual'   => $request->neg_virtual ? true : false,
         ]);
 
         return redirect()->route('negocio.verificacion');
     }
+
+
+
 
     public function verificarDireccion()
     {
@@ -149,12 +146,34 @@ class NegocioController extends Controller
 
     public function guardarVerificacion(Request $request)
     {
-        // Recuperar el último negocio creado por el usuario
-        $empresa = Negocio::where('user_id', auth()->id())->latest()->first();
+        $negocioId = session('negocio_id');
+
+        $empresa = Negocio::where('id', $negocioId)
+            ->where('user_id', auth()->id())
+            ->first();
 
         if (!$empresa) {
-            return redirect()->route('negocio.create')->withErrors(['No se encontró ningún negocio para este usuario.']);
+            return redirect()->route('negocio.create')
+                ->withErrors(['No se encontró ningún negocio válido en progreso.']);
         }
+
+        $direccion = session('negocio_direccion');
+        $esVirtual = session('negocio_virtual');
+
+        if ($direccion !== null || $esVirtual !== null) {
+            $empresa->neg_direccion = $direccion;
+            $empresa->neg_virtual   = $esVirtual ? 1 : 0;
+            $empresa->save();
+
+            Log::debug('✅ Negocio actualizado desde sesión', [
+                'id' => $empresa->id,
+                'neg_direccion' => $empresa->neg_direccion,
+                'neg_virtual' => $empresa->neg_virtual,
+            ]);
+        }
+
+        // Limpieza de sesión
+        session()->forget(['negocio_direccion', 'negocio_virtual', 'negocio_id']);
 
         return redirect()->route('empresa.dashboard', ['id' => $empresa->id]);
     }

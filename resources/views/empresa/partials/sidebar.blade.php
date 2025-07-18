@@ -28,7 +28,7 @@
                 <i class="fas fa-calendar-alt w-4 text-sm"></i> Agenda
             </a>
 
-            <a href="{{ route('empresa.clientes', $empresa->id) }}"
+            <a href="{{ route('empresa.clientes.index', $empresa->id) }}"
                 class="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-white/10 transition {{ $currentPage === 'clientes' ? 'bg-white/20 font-semibold' : '' }}">
                 <i class="fas fa-users w-4 text-sm"></i> Clientes
             </a>

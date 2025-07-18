@@ -222,7 +222,14 @@ Route::put('/empresa/catalogo/producto/{producto}', [ProductoController::class, 
 Route::delete('/empresa/catalogo/producto/{producto}', [ProductoController::class, 'destroy'])->name('producto.eliminar');
 Route::delete('/empresa/productos/imagen/{id}', [ProductoController::class, 'eliminarImagen'])->name('producto.imagen.eliminar');
 Route::put('/empresa/catalogo/producto/{producto}/actualizar', [ProductoController::class, 'update'])->name('producto.actualizar');
+Route::get('/empresa/{empresa}/clientes', [EmpresaController::class, 'clientes'])
+    ->name('empresa.clientes.index');
 
+    Route::prefix('empresa/{empresa}/clientes')->group(function () {
+    Route::post('/crear', [EmpresaController::class, 'storeCliente'])->name('empresa.clientes.store');
+    Route::put('/{cliente}/editar', [EmpresaController::class, 'updateCliente'])->name('empresa.clientes.update');
+    Route::delete('/{cliente}/eliminar', [EmpresaController::class, 'destroyCliente'])->name('empresa.clientes.destroy');
+});
 //agenda
 Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('empresa.agenda');
 // routes/web.php

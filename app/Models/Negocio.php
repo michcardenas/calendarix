@@ -23,6 +23,7 @@ class Negocio extends Model
         'neg_categorias',
         'neg_equipo',
         'neg_direccion',
+        'neg_portada',
         'neg_virtual',
         'neg_direccion_confirmada',
         'configuracion_bloques',
