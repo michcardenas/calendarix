@@ -1,6 +1,6 @@
 <div class="modal fade" id="modalCategoria" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('catalogo.categorias.guardar') }}" class="modal-content" style="background-color: #fef8e8;">
+        <form method="POST" action="{{ route('catalogo.categorias.guardar') }}" class="modal-content" style="background-color: #f6f5f7;">
             @csrf
             <div class="modal-header" style="background-color: #455392;">
                 <h5 class="modal-title text-white font-bold">Añadir categoría</h5>
