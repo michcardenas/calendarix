@@ -3,15 +3,56 @@
 @section('title', $negocio->neg_nombre_comercial ?? 'Perfil del Negocio')
 
 @section('content')
-<div class="bg-gray-100 py-10">
+{{-- Fondo animado con bolitas --}}
+<style>
+/* 🫧 BOLITAS DE FONDO */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle 150px at 10% 20%, rgba(246, 245, 247, 0.4) 0%, rgba(246, 245, 247, 0.1) 30%, transparent 60%),
+    radial-gradient(circle 120px at 90% 15%, rgba(246, 245, 247, 0.35) 0%, rgba(246, 245, 247, 0.08) 35%, transparent 65%),
+    radial-gradient(circle 180px at 15% 85%, rgba(246, 245, 247, 0.38) 0%, rgba(246, 245, 247, 0.06) 40%, transparent 70%),
+    radial-gradient(circle 140px at 85% 80%, rgba(246, 245, 247, 0.42) 0%, rgba(246, 245, 247, 0.09) 35%, transparent 65%);
+  animation: floatingBubbles 15s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle 110px at 70% 25%, rgba(246, 245, 247, 0.3) 0%, rgba(246, 245, 247, 0.08) 40%, transparent 70%),
+    radial-gradient(circle 160px at 25% 50%, rgba(246, 245, 247, 0.25) 0%, rgba(246, 245, 247, 0.05) 45%, transparent 75%),
+    radial-gradient(circle 100px at 80% 60%, rgba(246, 245, 247, 0.32) 0%, rgba(246, 245, 247, 0.07) 40%, transparent 70%),
+    radial-gradient(circle 130px at 30% 15%, rgba(246, 245, 247, 0.28) 0%, rgba(246, 245, 247, 0.06) 45%, transparent 75%);
+  animation: floatingBubbles 20s ease-in-out infinite reverse;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes floatingBubbles {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+</style>
+
+<div class="py-10 relative z-10">
     <div class="max-w-6xl mx-auto">
 
-        {{-- Portada con imagen o color institucional --}}
-        <div class="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl mb-14 bg-purple-700">
+        {{-- Portada --}}
+        <div class="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl mb-14" style="background-color: #7E79C9;">
             @if($negocio->neg_portada)
                 <img src="{{ $negocio->neg_portada }}" class="absolute inset-0 w-full h-full object-cover" alt="Portada">
-            @else
-                <div class="w-full h-full bg-purple-700"></div>
             @endif
         </div>
 
@@ -23,7 +64,7 @@
                      alt="Avatar">
             </div>
             <div>
-                <h1 class="text-4xl font-extrabold text-purple-700">{{ $negocio->neg_nombre_comercial }}</h1>
+                <h1 class="text-4xl font-extrabold" style="color: #5A4EBB;">{{ $negocio->neg_nombre_comercial }}</h1>
                 <p class="text-lg text-gray-600">{{ $negocio->neg_categoria }}</p>
             </div>
         </div>
@@ -33,8 +74,8 @@
 
             {{-- Info y Servicios --}}
             <div class="space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-purple-700">
-                    <h3 class="text-xl font-semibold text-purple-700 mb-4">📄 Información del negocio</h3>
+                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4" style="border-color: #7E79C9;">
+                    <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">📄 Información del negocio</h3>
                     <ul class="text-base text-gray-700 space-y-2">
                         <li><strong>Email:</strong> {{ $negocio->neg_email }}</li>
                         <li><strong>Teléfono:</strong> {{ $negocio->neg_telefono }}</li>
@@ -42,8 +83,8 @@
                     </ul>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-purple-700">
-                    <h3 class="text-xl font-semibold text-purple-700 mb-4">💼 Servicios</h3>
+                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4" style="border-color: #7E79C9;">
+                    <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">💼 Servicios</h3>
                     @if($negocio->servicios->count())
                         <ul class="list-disc pl-5 text-base text-gray-700 space-y-2">
                             @foreach($negocio->servicios as $servicio)
@@ -58,8 +99,8 @@
 
             {{-- Horarios y Calendario --}}
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-purple-700">
-                    <h3 class="text-xl font-semibold text-purple-700 mb-4">⏰ Horarios de Atención</h3>
+                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4" style="border-color: #7E79C9;">
+                    <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">⏰ Horarios de Atención</h3>
                     <table class="w-full text-base">
                         <thead>
                             <tr class="text-gray-600 border-b">
@@ -85,8 +126,8 @@
                 </div>
 
                 @if($negocio->bloqueos->count())
-                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-purple-700">
-                        <h3 class="text-xl font-semibold text-purple-700 mb-4">📅 Días Bloqueados</h3>
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4" style="border-color: #7E79C9;">
+                        <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">📅 Días Bloqueados</h3>
                         <div id="calendarioBloqueos" class="rounded overflow-hidden"></div>
                     </div>
                 @endif
