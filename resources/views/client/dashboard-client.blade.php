@@ -1,4 +1,3 @@
-
 {{-- CSS específico del dashboard cliente --}}
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -21,8 +20,12 @@
     <!-- Sidebar -->
     <aside class="clx-sidebar">
         <div class="clx-logo">
-            <h1><i class="fas fa-calendar-alt"></i> Calendarix</h1>
+            <h1>
+                <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix Logo" style="height: 64px; vertical-align: middle; margin-right: 8px;">
+                Calendarix
+            </h1>
         </div>
+
 
         <div class="clx-user-info">
             <div class="clx-user-avatar">
@@ -78,13 +81,13 @@
 
                     <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
                         @forelse ($misEmpresas as $empresa)
-                            <li>
-                                <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
-                                    {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
-                                </a>
-                            </li>
+                        <li>
+                            <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
+                                {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
+                            </a>
+                        </li>
                         @empty
-                            <li><span class="text-sm text-gray-400">Sin empresas aún</span></li>
+                        <li><span class="text-sm text-gray-400">Sin empresas aún</span></li>
                         @endforelse
                     </ul>
                 </li>
@@ -118,9 +121,9 @@
                     </button>
                 </div>
                 <div class="text-center mt-6">
-                <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-md transition">
-                    Registra tu negocio
-                </a>
+                    <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-md transition">
+                        Registra tu negocio
+                    </a>
                 </div>
             </div>
         </header>
@@ -184,12 +187,12 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const toggleLink = document.querySelector('[data-clx-toggle="empresa-submenu"]');
         const submenu = document.getElementById('empresa-submenu');
 
         if (toggleLink && submenu) {
-            toggleLink.addEventListener('click', function (e) {
+            toggleLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
             });
