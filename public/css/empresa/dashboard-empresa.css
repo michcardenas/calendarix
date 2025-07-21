@@ -3,43 +3,43 @@
 /* ===== VARIABLES CSS ===== */
 :root {
     /* Colores */
-    --primary: #8B5FBF;
-    --primary-light: #A67FCF;
-    --primary-dark: #6B3F9F;
-    --secondary: #E8D5F2;
-    --background: #F5F1FA;
-    --white: #FFFFFF;
-    --text-primary: #2D1B3D;
-    --text-secondary: #6B5B7B;
-    --text-muted: #9B8BAB;
-    --border: #D1C4E9;
-    
+    --primary: #7e79c9;
+    --primary-light: #8f8ae0;
+    --primary-dark: #5e5ca5;
+    --secondary: #f6f5f7;
+    --background: #f6f5f7;
+    --white: #ffffff;
+    --text-primary: #f6f5f7;
+    --text-secondary: #e0def2;
+    --text-muted: #c0bfd9;
+    --border: #d4d2e9;
+
     /* Sidebar */
-    --sidebar-bg: #2D1B3D;
-    --sidebar-bg-light: #3D2B4D;
-    --sidebar-text: #E8D5F2;
-    --sidebar-text-muted: #B8A5C2;
-    --sidebar-hover: rgba(139, 95, 191, 0.2);
+    --sidebar-bg: #455392;
+    --sidebar-bg-light: #4f5aa3;
+    --sidebar-text: #f6f5f7;
+    --sidebar-text-muted: #d6d3f0;
+    --sidebar-hover: rgba(255, 255, 255, 0.1);
     --sidebar-active: var(--primary);
-    
+
     /* Cards */
-    --card-bg: #FFFFFF;
-    --card-border: rgba(139, 95, 191, 0.1);
-    --card-hover: #FDFCFF;
-    
+    --card-bg: #444478;
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-hover: #54548a;
+
     /* Sombras */
-    --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.08);
-    --shadow-md: 0 4px 20px rgba(139, 95, 191, 0.12);
-    --shadow-lg: 0 8px 30px rgba(139, 95, 191, 0.15);
-    --shadow-xl: 0 15px 40px rgba(139, 95, 191, 0.2);
-    --shadow-sidebar: 4px 0 20px rgba(45, 27, 61, 0.3);
-    
+    --shadow-sm: 0 2px 10px rgba(69, 83, 146, 0.08);
+    --shadow-md: 0 4px 20px rgba(69, 83, 146, 0.12);
+    --shadow-lg: 0 8px 30px rgba(69, 83, 146, 0.15);
+    --shadow-xl: 0 15px 40px rgba(69, 83, 146, 0.2);
+    --shadow-sidebar: 4px 0 20px rgba(0, 0, 0, 0.2);
+
     /* Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 20%, #F5F1FA 100%);
-    --gradient-card: linear-gradient(135deg, var(--white) 0%, #FDFCFF 100%);
+    --gradient-bg: linear-gradient(135deg, #f6f5f7 0%, #fdfdfd 20%, #f6f5f7 100%);
+    --gradient-card: linear-gradient(135deg, var(--card-bg) 0%, #54548a 100%);
     --gradient-sidebar: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-light) 100%);
-    
+
     /* Espaciado */
     --space-xs: 4px;
     --space-sm: 8px;
@@ -47,7 +47,7 @@
     --space-lg: 24px;
     --space-xl: 32px;
     --space-2xl: 48px;
-    
+
     /* Bordes y transiciones */
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -57,6 +57,7 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
 }
+
 
 /* ===== RESET Y BASE ===== */
 * {

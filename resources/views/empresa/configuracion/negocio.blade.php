@@ -3,7 +3,7 @@
 @section('title', 'Configuración del Negocio')
 
 @section('content')
-<div class="px-8 py-10 min-h-screen">
+<div class="px-8 py-10 min-h-screen" style="background-color: #f6f5f7">
     {{-- Mensajes --}}
     @if(session('success'))
     <div class="bg-green-100 border border-green-300 text-green-800 rounded px-4 py-3 mb-4">
@@ -23,8 +23,8 @@
 
     {{-- Encabezado --}}
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-indigo-700">⚙️ Datos del negocio</h2>
-        <p class="text-sm text-gray-600">Configura el nombre de tu negocio, país, idioma y enlaces externos.</p>
+        <h2 class="text-2xl font-bold" style="color: #455392;">⚙️ Datos del negocio</h2>
+        <p class="text-sm" style="color: #444478;">Configura el nombre de tu negocio, país, idioma y enlaces externos.</p>
     </div>
 
     <div class="flex flex-wrap gap-6">
@@ -32,8 +32,8 @@
         <div class="w-full md:w-[48%]">
             <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Información del negocio</h3>
-                    <button class="text-sm text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded" id="btn-edit-neg-info">
+                    <h3 class="text-lg font-semibold" style="color: #444478;">Información del negocio</h3>
+                    <button class="text-sm text-white px-3 py-1 rounded" style="background-color: #7e79c9;" id="btn-edit-neg-info">
                         Editar
                     </button>
                 </div>
@@ -49,7 +49,6 @@
                     @csrf
                     <input type="hidden" name="empresa_id" value="{{ $empresa->id }}">
 
-                    {{-- Imagen actual --}}
                     @if($empresa->neg_imagen)
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Logo actual</label>
@@ -60,10 +59,9 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nueva imagen del negocio (opcional)</label>
                         <input type="file" name="confneg_imagen" accept="image/*"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    {{-- Portada actual --}}
                     @if($empresa->neg_portada)
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Portada actual</label>
@@ -74,25 +72,23 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nueva portada del negocio (opcional)</label>
                         <input type="file" name="confneg_portada" accept="image/*"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    {{-- Datos básicos --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nombre del negocio</label>
                         <input type="text" name="confneg_nombre" value="{{ $empresa->neg_nombre_comercial }}"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">País</label>
                         <select name="confneg_pais"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                             <option selected>{{ $empresa->neg_pais ?? 'Colombia' }}</option>
                         </select>
                     </div>
 
-                    {{-- Datos personales --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nombre del propietario</label>
                         <input type="text" name="confneg_nombre_real" value="{{ $empresa->neg_nombre }}"
@@ -117,7 +113,6 @@
                             class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    {{-- Operación --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Equipo de trabajo</label>
                         <input type="text" name="confneg_equipo" value="{{ $empresa->neg_equipo }}"
@@ -148,14 +143,15 @@
                         </label>
                     </div>
 
-                    {{-- Acciones --}}
                     <div class="flex gap-2">
                         <button type="submit"
-                            class="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-md">
+                            class="text-white text-sm px-4 py-2 rounded-md"
+                            style="background-color: #7e79c9;">
                             Guardar
                         </button>
                         <button type="button"
-                            class="bg-gray-400 hover:bg-gray-500 text-white text-sm px-4 py-2 rounded-md"
+                            class="text-white text-sm px-4 py-2 rounded-md"
+                            style="background-color: #b0abe1;"
                             id="btn-cancel-neg-info">
                             Cancelar
                         </button>
@@ -167,7 +163,7 @@
         {{-- Enlaces externos --}}
         <div class="w-full md:w-[48%]">
             <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">🔗 Enlaces externos</h3>
+                <h3 class="text-lg font-semibold mb-4" style="color: #444478;">🔗 Enlaces externos</h3>
                 <form action="{{ route('negocio.guardar') }}" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="empresa_id" value="{{ $empresa->id }}">
@@ -176,25 +172,26 @@
                         <label class="block text-sm font-medium text-gray-700">Facebook</label>
                         <input type="url" name="confneg_facebook" placeholder="https://facebook.com/tuempresa"
                             value="{{ $empresa->neg_facebook }}"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Instagram</label>
                         <input type="url" name="confneg_instagram" placeholder="https://instagram.com/tuempresa"
                             value="{{ $empresa->neg_instagram }}"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Sitio Web</label>
                         <input type="url" name="confneg_web" placeholder="https://tuempresa.com"
                             value="{{ $empresa->neg_sitio_web }}"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <button type="submit"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm">
+                        class="text-white px-4 py-2 rounded-md text-sm"
+                        style="background-color: #455392;">
                         Guardar Enlaces
                     </button>
                 </form>

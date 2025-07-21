@@ -1,47 +1,51 @@
 /* public/css/negocio-form.css */
 
-/* ===== VARIABLES CSS ===== */
 :root {
-    /* Colores principales */
-    --primary: #8B5FBF;
-    --primary-light: #A67FCF;
-    --primary-dark: #6B3F9F;
-    --secondary: #E8D5F2;
-    --background: #F5F1FA;
+    /* 🎨 Colores principales */
+    --primary: #7E79C9;               /* Lavanda principal */
+    --primary-light: #A49EF0;         /* Versión más clara */
+    --primary-dark: #5F5AAE;          /* Tono intermedio oscuro */
+    --secondary: #f6f5f7;             /* Fondo crema claro */
+    --background: #FDFBFF;            /* Fondo general más claro */
     --white: #FFFFFF;
-    --text-primary: #2D1B3D;
-    --text-secondary: #6B5B7B;
-    --border: #D1C4E9;
-    --error: #e74c3c;
+
+    /* 🖋 Texto */
+    --text-primary: #444478;          /* Texto oscuro lavanda */
+    --text-secondary: #6B5B7B;        /* Gris lavanda */
     
-    /* Sombras */
-    --shadow-sm: 0 4px 20px rgba(139, 95, 191, 0.1);
-    --shadow-md: 0 8px 30px rgba(139, 95, 191, 0.15);
-    --shadow-lg: 0 15px 40px rgba(139, 95, 191, 0.2);
-    
-    /* Gradientes */
+    /* 📏 Bordes y alertas */
+    --border: #CFCDE5;
+    --error: #E74C3C;
+
+    /* 🌫 Sombras */
+    --shadow-sm: 0 4px 20px rgba(126, 121, 201, 0.08);
+    --shadow-md: 0 8px 30px rgba(126, 121, 201, 0.12);
+    --shadow-lg: 0 15px 40px rgba(126, 121, 201, 0.15);
+
+    /* 🌈 Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 50%, #F5F1FA 100%);
-    
-    /* Espaciado */
+    --gradient-bg: linear-gradient(135deg, #FDFBFF 0%, #f6f5f7 50%, #FDFBFF 100%);
+
+    /* 📐 Espaciado */
     --space-xs: 8px;
     --space-sm: 12px;
     --space-md: 16px;
     --space-lg: 24px;
     --space-xl: 32px;
     --space-2xl: 40px;
-    
-    /* Bordes */
+
+    /* 🧱 Bordes */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
     --radius-xl: 24px;
     --radius-full: 50px;
-    
-    /* Transiciones */
+
+    /* ⏱️ Transiciones */
     --transition: all 0.3s ease;
     --transition-fast: all 0.2s ease;
 }
+
 
 /* ===== RESET ===== */
 * {

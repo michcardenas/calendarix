@@ -14,11 +14,11 @@ $diasSemana = [
 @endphp
 
 @section('content')
-<div class="min-h-screen px-6 py-10 text-gray-800">
+<div class="min-h-screen px-6 py-10" style="background-color: #f6f5f7; color: #444478;">
     <div class="max-w-7xl mx-auto space-y-10">
 
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold">⚙️ Configuración de Agenda</h1>
+            <h1 class="text-3xl font-bold" style="color: #455392;">⚙️ Configuración de Agenda</h1>
         </div>
 
         <form action="{{ route('agenda.guardar_bloqueados', $empresa->id) }}" method="POST" class="space-y-10">
@@ -28,16 +28,16 @@ $diasSemana = [
 
             {{-- Calendario --}}
             <section>
-                <h2 class="text-lg font-semibold mb-3">📅 Fechas bloqueadas</h2>
+                <h2 class="text-lg font-semibold mb-3" style="color: #455392;">📅 Fechas bloqueadas</h2>
                 <div id="calendar" class="bg-white rounded-xl shadow-sm p-4"></div>
             </section>
 
             {{-- Horarios Laborales --}}
             <section>
-                <h2 class="text-lg font-semibold mb-3">🕓 Horario laboral por día</h2>
+                <h2 class="text-lg font-semibold mb-3" style="color: #455392;">🕓 Horario laboral por día</h2>
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                     <table class="w-full text-sm text-gray-700">
-                        <thead class="bg-gray-50 text-left text-xs uppercase text-gray-500">
+                        <thead style="background-color: #f6f5f7;" class="text-left text-xs uppercase text-[#7e79c9]">
                             <tr>
                                 <th class="px-4 py-3">Día</th>
                                 <th class="px-4 py-3">Activo</th>
@@ -55,7 +55,7 @@ $diasSemana = [
                                 <td class="px-4 py-2">{{ $nombre }}</td>
                                 <td class="px-4 py-2">
                                     <input type="checkbox" name="dias_laborales[{{ $numero }}][activo]" value="1"
-                                        class="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                                        class="h-4 w-4 text-[#7e79c9] border-gray-300 rounded"
                                         {{ $horario && $horario->activo ? 'checked' : '' }}>
                                 </td>
                                 <td class="px-4 py-2">
@@ -76,7 +76,7 @@ $diasSemana = [
             {{-- Botones --}}
             <div class="flex flex-wrap gap-4">
                 <button type="submit"
-                    class="inline-flex items-center px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm font-medium">
+                    class="inline-flex items-center px-5 py-2 bg-[#7e79c9] text-white rounded-md hover:bg-[#6c66b8] transition text-sm font-medium">
                     Guardar configuración
                 </button>
 
@@ -95,18 +95,18 @@ $diasSemana = [
 <style>
     .fc {
         --fc-border-color: transparent;
-        --fc-today-bg-color: #fefce8;
+        --fc-today-bg-color: #f6f5f7;
         font-family: 'Segoe UI', sans-serif;
     }
 
     .fc .fc-toolbar-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #374151;
+        color: #455392;
     }
 
     .fc .fc-button {
-        background: #4f46e5;
+        background: #7e79c9;
         border: none;
         padding: 0.4rem 0.8rem;
         border-radius: 6px;
@@ -116,7 +116,7 @@ $diasSemana = [
     }
 
     .fc .fc-button:hover {
-        background: #4338ca;
+        background: #6c66b8;
     }
 
     .fc a {
@@ -125,7 +125,7 @@ $diasSemana = [
 
     .fc .fc-col-header-cell-cushion,
     .fc .fc-daygrid-day-number {
-        color: #6b7280;
+        color: #444478;
         font-weight: 500;
     }
 
@@ -164,7 +164,7 @@ $diasSemana = [
                 backgroundColor: '#fee2e2'
             })),
             eventDisplay: 'background',
-            height: 650, // 👈 más alto, sin scroll
+            height: 650,
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',

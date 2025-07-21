@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>calendarix</title>
+    <title>Calendarix</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,26 +15,26 @@
 
         :root {
             /* 🎨 Paleta clara y legible */
-            --welcome-bg-base: #fafbff;
-            --welcome-bg-gradient: linear-gradient(135deg, #fafbff 0%, #f8faff 25%, #f5f8ff 50%, #f2f6ff 75%, #eff4ff 100%);
-            
+            --welcome-bg-base: #f6f5f7;
+            --welcome-bg-gradient: linear-gradient(135deg, #f6f5f7 0%, #f6f5f7 25%, #f6f5f7 50%, #f6f5f7 75%, #f6f5f7 100%);
+
             /* 🖤 Textos oscuros para legibilidad */
             --welcome-text-primary: #1a202c;
-            --welcome-text-secondary: #4a5568;
-            --welcome-text-muted: #718096;
-            
+            --welcome-text-secondary: #374151;
+            --welcome-text-muted: #6b7280;
+
             /* 🌈 Acentos de color */
-            --welcome-accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            --welcome-secondary-gradient: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #6366f1 100%);
-            
+            --welcome-accent-gradient: linear-gradient(135deg, #455392 0%, #7E79C9 50%, #a3a0db 100%);
+            --welcome-secondary-gradient: linear-gradient(135deg, #7E79C9 0%, #9f94e0 50%, #e0e7ff 100%);
+
             /* ✨ Fondos y elementos */
             --welcome-white: #ffffff;
-            --welcome-gray-light: #f7fafc;
-            --welcome-gray-medium: #e2e8f0;
-            
+            --welcome-gray-light: #f6f5f7;
+            --welcome-gray-medium: #e5e7eb;
+
             /* 🫧 Glass effects más sutiles */
-            --welcome-glass-overlay: rgba(255, 255, 255, 0.7);
-            --welcome-glass-border: rgba(99, 102, 241, 0.1);
+            --welcome-glass-overlay: rgba(255, 255, 255, 0.65);
+            --welcome-glass-border: rgba(69, 83, 146, 0.1);
             --welcome-backdrop-blur: 20px;
 
             /* 📏 Espaciado */
@@ -67,13 +67,13 @@
             --welcome-radius-2xl: 1.5rem;
 
             /* 🎭 Sombras suaves */
-            --welcome-shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --welcome-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --welcome-shadow-strong: 0 10px 25px rgba(0, 0, 0, 0.15);
-            
+            --welcome-shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --welcome-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --welcome-shadow-strong: 0 10px 25px rgba(0, 0, 0, 0.1);
+
             /* ⚡ Transiciones */
-            --welcome-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --welcome-transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            --welcome-transition: 0.3s ease-in-out;
+            --welcome-transition-slow: 0.6s ease-in-out;
         }
 
         * {
@@ -96,8 +96,15 @@
 
         /* 🌊 Animación sutil del fondo */
         @keyframes welcomeGradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         /* 🫧 BOLITAS MÁS SUTILES - FONDO CLARO */
@@ -108,7 +115,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle 120px at 10% 20%, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0.02) 40%, transparent 70%),
                 radial-gradient(circle 100px at 90% 15%, rgba(236, 72, 153, 0.06) 0%, rgba(236, 72, 153, 0.01) 35%, transparent 65%),
                 radial-gradient(circle 140px at 15% 85%, rgba(168, 85, 247, 0.07) 0%, rgba(168, 85, 247, 0.02) 40%, transparent 70%),
@@ -128,7 +135,7 @@
             left: 15%;
             border-radius: 50%;
             background: rgba(99, 102, 241, 0.15);
-            box-shadow: 
+            box-shadow:
                 200px 100px 0 -2px rgba(236, 72, 153, 0.12),
                 -150px 300px 0 0px rgba(168, 85, 247, 0.1),
                 400px 50px 0 3px rgba(139, 92, 246, 0.14),
@@ -144,18 +151,23 @@
 
         /* 🫧 Animación de las bolitas flotantes */
         @keyframes welcomeFloatingBubbles {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translate(0px, 0px) scale(1);
                 opacity: 1;
             }
+
             25% {
                 transform: translate(-15px, -25px) scale(1.1);
                 opacity: 0.8;
             }
+
             50% {
                 transform: translate(20px, -15px) scale(0.9);
                 opacity: 0.6;
             }
+
             75% {
                 transform: translate(-10px, -30px) scale(1.05);
                 opacity: 0.9;
@@ -618,7 +630,7 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
-            
+
             #welcome-body::before,
             #welcome-body::after {
                 animation: none;
@@ -631,21 +643,27 @@
         }
 
         @keyframes welcomeFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
     </style>
 </head>
+
 <body id="welcome-body">
     <!-- 🎯 HEADER -->
     <header id="welcome-header">
         <a href="#" id="welcome-logo">
-            <div id="welcome-logo-icon">
-                <i class="fas fa-calendar-check"></i>
-            </div>
-            <span>calendarix</span>
+                <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix Logo" style="height: 64px;">
+            <span>Calendarix</span>
         </a>
-        
+
         <nav id="welcome-nav">
             <a href="#welcome-features" class="welcome-nav-link">Características</a>
             <a href="#welcome-pricing" class="welcome-nav-link">Precios</a>
@@ -658,6 +676,7 @@
         </nav>
     </header>
 
+
     <!-- 🎯 HERO SECTION -->
     <section id="welcome-hero">
         <div id="welcome-hero-badge" class="welcome-floating">
@@ -666,12 +685,12 @@
         </div>
 
         <h1 id="welcome-hero-title">
-            Reserva servicios de belleza 
-            <span style="background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">y bienestar en tu zona</span>
+            Reserva servicios de belleza
+            <span style="background: linear-gradient(135deg, #455392, #7e79c9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">y bienestar en tu zona</span>
         </h1>
 
         <p id="welcome-hero-subtitle">
-            Descubre y agenda citas con los mejores profesionales de belleza, spa, 
+            Descubre y agenda citas con los mejores profesionales de belleza, spa,
             masajes y bienestar cerca de ti. Fácil, rápido y confiable.
         </p>
 
@@ -740,7 +759,7 @@
                 </div>
                 <h3 class="welcome-feature-title">Reserva 24/7</h3>
                 <p class="welcome-feature-description">
-                    Agenda tus citas en cualquier momento del día. 
+                    Agenda tus citas en cualquier momento del día.
                     Los profesionales actualizan su disponibilidad en tiempo real.
                 </p>
             </div>
@@ -751,7 +770,7 @@
                 </div>
                 <h3 class="welcome-feature-title">Pago Seguro</h3>
                 <p class="welcome-feature-description">
-                    Pagos protegidos y garantizados. Si algo sale mal, 
+                    Pagos protegidos y garantizados. Si algo sale mal,
                     te devolvemos tu dinero sin complicaciones.
                 </p>
             </div>
@@ -762,7 +781,7 @@
                 </div>
                 <h3 class="welcome-feature-title">Profesionales Verificados</h3>
                 <p class="welcome-feature-description">
-                    Todos nuestros profesionales están verificados y tienen 
+                    Todos nuestros profesionales están verificados y tienen
                     reseñas reales de clientes como tú.
                 </p>
             </div>
@@ -773,7 +792,7 @@
                 </div>
                 <h3 class="welcome-feature-title">Recordatorios</h3>
                 <p class="welcome-feature-description">
-                    Recibe notificaciones automáticas por email y SMS 
+                    Recibe notificaciones automáticas por email y SMS
                     para no olvidar nunca tu cita.
                 </p>
             </div>
@@ -784,7 +803,7 @@
                 </div>
                 <h3 class="welcome-feature-title">App Móvil</h3>
                 <p class="welcome-feature-description">
-                    Gestiona tus citas desde tu móvil. Cancela, reprograma 
+                    Gestiona tus citas desde tu móvil. Cancela, reprograma
                     o encuentra nuevos servicios en un solo toque.
                 </p>
             </div>
@@ -795,7 +814,7 @@
                 </div>
                 <h3 class="welcome-feature-title">Ofertas Exclusivas</h3>
                 <p class="welcome-feature-description">
-                    Accede a descuentos especiales y promociones que solo 
+                    Accede a descuentos especiales y promociones que solo
                     encontrarás en nuestra plataforma.
                 </p>
             </div>
@@ -807,7 +826,7 @@
         <div id="welcome-cta-container">
             <h2 id="welcome-cta-title">¿Listo para tu próxima cita?</h2>
             <p id="welcome-cta-subtitle">
-                Únete a miles de personas que ya disfrutan de la mejor experiencia 
+                Únete a miles de personas que ya disfrutan de la mejor experiencia
                 en servicios de belleza y bienestar.
             </p>
             <div id="welcome-hero-actions">
@@ -828,7 +847,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Smooth scroll para enlaces internos
             document.querySelectorAll('a[href^="#welcome-"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
+                anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
@@ -878,7 +897,7 @@
                 welcomeSearchInput.addEventListener('focus', function() {
                     this.parentNode.style.background = 'rgba(99, 102, 241, 0.02)';
                 });
-                
+
                 welcomeSearchInput.addEventListener('blur', function() {
                     this.parentNode.style.background = '';
                 });
@@ -886,4 +905,5 @@
         });
     </script>
 </body>
+
 </html>

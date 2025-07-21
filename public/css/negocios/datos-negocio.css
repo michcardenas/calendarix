@@ -2,35 +2,35 @@
 
 /* ===== VARIABLES CSS ===== */
 :root {
-    /* Colores */
-    --primary: #8B5FBF;
-    --primary-light: #A67FCF;
-    --primary-dark: #6B3F9F;
-    --secondary: #E8D5F2;
-    --background: #F5F1FA;
+    /* 🎨 Colores */
+    --primary: #7E79C9;
+    --primary-light: #A49EF0;
+    --primary-dark: #5F5AAE;
+    --secondary: #f6f5f7;
+    --background: #FDFBFF;
     --white: #FFFFFF;
-    --text-primary: #2D1B3D;
+    --text-primary: #455392;
     --text-secondary: #6B5B7B;
-    --border: #D1C4E9;
-    --error: #e74c3c;
-    
-    /* Sombras */
-    --shadow-sm: 0 4px 20px rgba(139, 95, 191, 0.1);
-    --shadow-md: 0 8px 30px rgba(139, 95, 191, 0.15);
-    --shadow-lg: 0 15px 40px rgba(139, 95, 191, 0.2);
-    
-    /* Gradientes */
+    --border: #DAD6F0;
+    --error: #E74C3C;
+
+    /* 🌫 Sombras */
+    --shadow-sm: 0 4px 20px rgba(126, 121, 201, 0.1);
+    --shadow-md: 0 8px 30px rgba(126, 121, 201, 0.15);
+    --shadow-lg: 0 15px 40px rgba(126, 121, 201, 0.2);
+
+    /* 🌈 Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 30%, #F5F1FA 100%);
-    
-    /* Espaciado */
+    --gradient-bg: linear-gradient(135deg, #FDFBFF 0%, #f6f5f7 30%, #FDFBFF 100%);
+
+    /* 📐 Espaciado */
     --space-sm: 8px;
     --space-md: 16px;
     --space-lg: 24px;
     --space-xl: 32px;
     --space-2xl: 48px;
-    
-    /* Bordes y transiciones */
+
+    /* 🧱 Bordes y transiciones */
     --radius: 12px;
     --radius-lg: 20px;
     --transition: all 0.3s ease;

@@ -2,53 +2,53 @@
 
 /* ===== VARIABLES CSS ===== */
 :root {
-    /* Colores */
-    --primary: #8B5FBF;
-    --primary-light: #A67FCF;
-    --primary-dark: #6B3F9F;
-    --secondary: #E8D5F2;
-    --background: #F5F1FA;
+    /* 🎨 Colores */
+    --primary: #7E79C9;
+    --primary-light: #A49EF0;
+    --primary-dark: #5F5AAE;
+    --secondary: #f6f5f7;
+    --background: #FDFBFF;
     --white: #FFFFFF;
-    --text-primary: #2D1B3D;
+    --text-primary: #455392;
     --text-secondary: #6B5B7B;
     --text-muted: #9B8BAB;
-    --border: #D1C4E9;
-    --error: #e74c3c;
-    --success: #27ae60;
-    --warning: #f39c12;
-    --danger: #e74c3c;
-    
-    /* Estados de input */
-    --input-bg: #FDFCFF;
-    --input-border: #D1C4E9;
+    --border: #DAD6F0;
+    --error: #E74C3C;
+    --success: #27AE60;
+    --warning: #F39C12;
+    --danger: #E74C3C;
+
+    /* 🖋 Estados de input */
+    --input-bg: #FFFFFF;
+    --input-border: #DAD6F0;
     --input-focus: var(--primary);
     --input-hover: var(--primary-light);
-    
-    /* Cards */
+
+    /* 🧾 Cards */
     --card-bg: #FFFFFF;
-    --card-border: rgba(139, 95, 191, 0.1);
-    --card-header-bg: #F8F6FC;
-    
-    /* Sombras */
-    --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.08);
-    --shadow-md: 0 4px 20px rgba(139, 95, 191, 0.12);
-    --shadow-lg: 0 8px 30px rgba(139, 95, 191, 0.15);
-    --shadow-xl: 0 15px 40px rgba(139, 95, 191, 0.2);
-    
-    /* Gradientes */
+    --card-border: rgba(126, 121, 201, 0.1);
+    --card-header-bg: #F4F2FD;
+
+    /* 🌫 Sombras */
+    --shadow-sm: 0 2px 10px rgba(126, 121, 201, 0.08);
+    --shadow-md: 0 4px 20px rgba(126, 121, 201, 0.12);
+    --shadow-lg: 0 8px 30px rgba(126, 121, 201, 0.15);
+    --shadow-xl: 0 15px 40px rgba(126, 121, 201, 0.2);
+
+    /* 🌈 Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 25%, #F5F1FA 100%);
+    --gradient-bg: linear-gradient(135deg, #FDFBFF 0%, #f6f5f7 25%, #FDFBFF 100%);
     --gradient-card: linear-gradient(135deg, var(--white) 0%, #FDFCFF 100%);
-    
-    /* Espaciado */
+
+    /* 📐 Espaciado */
     --space-xs: 4px;
     --space-sm: 8px;
     --space-md: 16px;
     --space-lg: 24px;
     --space-xl: 32px;
     --space-2xl: 48px;
-    
-    /* Bordes y transiciones */
+
+    /* 🧱 Bordes y transiciones */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;

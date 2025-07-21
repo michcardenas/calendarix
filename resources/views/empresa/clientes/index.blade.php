@@ -7,19 +7,19 @@
         {{-- Encabezado --}}
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-2xl font-bold text-purple-700">👥 Clientes</h2>
-                <p class="text-sm text-gray-500">Gestión de tus clientes registrados.</p>
+                <h2 class="text-2xl font-bold text-[#455392]">👥 Clientes</h2>
+                <p class="text-sm text-[#444478b3]">Gestión de tus clientes registrados.</p>
             </div>
             <button onclick="document.getElementById('modalCrearCliente').classList.remove('hidden')"
-                class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 text-sm">
+                class="bg-[#455392] hover:bg-[#7e79c9] text-white px-4 py-2 rounded text-sm transition-all">
                 <i class="fas fa-user-plus mr-2"></i> Nuevo Cliente
             </button>
         </div>
 
         {{-- Tabla de clientes --}}
-        <div class="bg-white rounded-lg shadow overflow-x-auto">
+        <div class="bg-white rounded-lg shadow overflow-x-auto border border-[#4553921a]">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-100 text-gray-600 text-left">
+                <thead class="bg-[#f6f5f7] text-[#444478] font-semibold">
                     <tr>
                         <th class="px-4 py-2">Nombre</th>
                         <th class="px-4 py-2">Correo</th>
@@ -29,13 +29,13 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse ($clientes as $cliente)
-                        <tr>
+                        <tr class="hover:bg-[#f6f5f7] transition">
                             <td class="px-4 py-2">{{ $cliente->nombre }}</td>
                             <td class="px-4 py-2">{{ $cliente->email ?? '—' }}</td>
                             <td class="px-4 py-2">{{ $cliente->telefono ?? '—' }}</td>
                             <td class="px-4 py-2 text-center space-x-2">
                                 <button onclick="document.getElementById('modalEditarCliente{{ $cliente->id }}').classList.remove('hidden')"
-                                    class="text-blue-600 hover:underline">Editar</button>
+                                    class="text-[#455392] hover:underline font-medium">Editar</button>
 
                                 <form action="{{ route('empresa.clientes.destroy', ['empresa' => $empresa->id, 'cliente' => $cliente->id]) }}"
                                     method="POST" class="inline">

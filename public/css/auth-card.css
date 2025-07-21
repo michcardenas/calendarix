@@ -3,19 +3,19 @@
    ============================================ */
 
 :root {
-  /* 🎨 Paleta suave y elegante */
-  --bg-base: #f5f7ff;
-  --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 25%, #e8f0ff 50%, #e0ebff 75%, #d8e6ff 100%);
-  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  --secondary-gradient: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #6366f1 100%);
-  
+  /* 🎨 Paleta suave y elegante actualizada */
+  --bg-base: #f6f5f7;
+  --bg-gradient: linear-gradient(135deg, #f6f5f7 0%, #f0f0f5 25%, #e8e8f0 50%, #e2e1eb 75%, #dddceb 100%);
+  --accent-gradient: linear-gradient(135deg, #7e79c9 0%, #6b65bb 50%, #444478 100%);
+  --secondary-gradient: linear-gradient(135deg, #f59db5 0%, #7e79c9 50%, #444478 100%);
+
   /* 🌈 Colores base */
   --neutral-white: #ffffff;
-  --neutral-gray: #64748b;
-  --neutral-dark: #1e293b;
-  
+  --neutral-gray: #7e7e9a;
+  --neutral-dark: #2d2a3e;
+
   /* ✨ Efectos glass y overlays */
-  --glass-overlay: rgba(30, 41, 59, 0.15);
+  --glass-overlay: rgba(68, 68, 120, 0.08);
   --glass-border: rgba(255, 255, 255, 0.25);
   --backdrop-blur: 24px;
 
@@ -40,10 +40,10 @@
   --radius-xl: 1rem;
 
   /* 🎭 Sombras suaves */
-  --shadow-soft: 0 2px 8px rgba(99, 102, 241, 0.06);
-  --shadow-medium: 0 8px 25px rgba(99, 102, 241, 0.08);
-  --shadow-strong: 0 20px 40px rgba(99, 102, 241, 0.12);
-  
+  --shadow-soft: 0 2px 8px rgba(126, 121, 201, 0.06);
+  --shadow-medium: 0 8px 25px rgba(126, 121, 201, 0.08);
+  --shadow-strong: 0 20px 40px rgba(68, 68, 120, 0.12);
+
   /* ⚡ Transiciones */
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -120,7 +120,7 @@ body::after {
   }
 }
 
-/* 🫧 BOLITAS SÚPER VISIBLES - NUEVAS */
+/* 🫧 BOLITAS SUTILMENTE ELEGANTES - ACTUALIZADAS */
 body::before {
   content: '';
   position: fixed;
@@ -129,16 +129,16 @@ body::before {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle 150px at 10% 20%, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0.1) 30%, transparent 60%),
-    radial-gradient(circle 120px at 90% 15%, rgba(236, 72, 153, 0.35) 0%, rgba(236, 72, 153, 0.08) 35%, transparent 65%),
-    radial-gradient(circle 180px at 15% 85%, rgba(255, 140, 0, 0.38) 0%, rgba(255, 140, 0, 0.06) 40%, transparent 70%),
-    radial-gradient(circle 140px at 85% 80%, rgba(168, 85, 247, 0.42) 0%, rgba(168, 85, 247, 0.09) 35%, transparent 65%);
+    radial-gradient(circle 150px at 10% 20%, rgba(168, 85, 247, 0.25) 0%, rgba(168, 85, 247, 0.08) 30%, transparent 60%),
+    radial-gradient(circle 120px at 90% 15%, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0.05) 35%, transparent 65%),
+    radial-gradient(circle 180px at 15% 85%, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.04) 40%, transparent 70%),
+    radial-gradient(circle 140px at 85% 80%, rgba(134, 239, 172, 0.25) 0%, rgba(134, 239, 172, 0.05) 35%, transparent 65%);
   animation: floatingBubbles 15s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
-/* 🌈 MÁS BOLITAS SÚPER VISIBLES */
+/* 🌈 MÁS BOLITAS CON ESTILO CALENDARIX */
 body::after {
   content: '';
   position: fixed;
@@ -147,14 +147,15 @@ body::after {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle 110px at 70% 25%, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.08) 40%, transparent 70%),
-    radial-gradient(circle 160px at 25% 50%, rgba(34, 197, 94, 0.25) 0%, rgba(34, 197, 94, 0.05) 45%, transparent 75%),
-    radial-gradient(circle 100px at 80% 60%, rgba(248, 113, 113, 0.32) 0%, rgba(248, 113, 113, 0.07) 40%, transparent 70%),
-    radial-gradient(circle 130px at 30% 15%, rgba(139, 92, 246, 0.28) 0%, rgba(139, 92, 246, 0.06) 45%, transparent 75%);
+    radial-gradient(circle 110px at 70% 25%, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.05) 40%, transparent 70%),
+    radial-gradient(circle 160px at 25% 50%, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.04) 45%, transparent 75%),
+    radial-gradient(circle 100px at 80% 60%, rgba(236, 72, 153, 0.18) 0%, rgba(236, 72, 153, 0.04) 40%, transparent 70%),
+    radial-gradient(circle 130px at 30% 15%, rgba(168, 85, 247, 0.18) 0%, rgba(168, 85, 247, 0.03) 45%, transparent 75%);
   animation: floatingBubbles 20s ease-in-out infinite reverse;
   pointer-events: none;
   z-index: 0;
 }
+
 
 @keyframes floatingBubbles {
   0%, 100% {
@@ -581,7 +582,7 @@ body::after {
 }
 
 .auth-bottom-link a {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #7e79c9 0%, #a084dc 100%);
     color: white;
     padding: 0.5rem 1.25rem;
     border-radius: 9999px;
@@ -593,8 +594,9 @@ body::after {
 }
 
 .auth-bottom-link a:hover {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #6b65bb 0%, #8b5cf6 100%);
 }
+
 
 /* 📱 Responsive */
 @media (max-width: 480px) {

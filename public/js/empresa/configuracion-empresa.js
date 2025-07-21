@@ -278,13 +278,14 @@ function getNotificationIcon(type) {
 
 function getNotificationColor(type) {
     const colors = {
-        'info': 'linear-gradient(135deg, #667eea, #764ba2)',
-        'success': 'linear-gradient(135deg, #48bb78, #38a169)',
-        'warning': 'linear-gradient(135deg, #ed8936, #dd6b20)',
-        'error': 'linear-gradient(135deg, #e53e3e, #c53030)'
+        'info': 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+        'success': 'linear-gradient(135deg, var(--success), #1e874b)',
+        'warning': 'linear-gradient(135deg, var(--warning), #d35400)',
+        'error': 'linear-gradient(135deg, var(--danger), #b52a23)'
     };
     return colors[type] || colors['info'];
 }
+
 
 // Inicializar animaciones de entrada
 function initAnimations() {

@@ -1,47 +1,54 @@
 /* public/css/negocio-categorias.css */
 
-/* ===== VARIABLES CSS ===== */
+/* ===== VARIABLES CSS - CALENDARIX ===== */
 :root {
-    /* Colores */
-    --primary: #8B5FBF;
-    --primary-light: #A67FCF;
-    --primary-dark: #6B3F9F;
-    --secondary: #E8D5F2;
-    --background: #F5F1FA;
+    /* 🎨 Colores principales */
+    --primary: #8B5FBF;               /* Púrpura base */
+    --primary-light: #B79DF0;         /* Lavanda clara */
+    --primary-dark: #6A41A2;          /* Púrpura oscuro */
+    --secondary: #E8D5F2;             /* Fondo lavanda */
+    --background: #FAF8FE;            /* Fondo general más claro */
     --white: #FFFFFF;
-    --text-primary: #2D1B3D;
-    --text-secondary: #6B5B7B;
-    --border: #D1C4E9;
+
+    /* 🎯 Texto */
+    --text-primary: #2D1B3D;          /* Título */
+    --text-secondary: #6B5B7B;        /* Subtítulo / texto gris lavanda */
+    
+    /* 🧱 Bordes */
+    --border: #DDD1EA;
     --border-hover: #A67FCF;
     --checked-bg: #F3F0FF;
     --checked-border: var(--primary);
+    
+    /* 🚨 Estados */
     --error: #e74c3c;
-    
-    /* Sombras */
-    --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.08);
-    --shadow-md: 0 4px 20px rgba(139, 95, 191, 0.12);
-    --shadow-lg: 0 8px 30px rgba(139, 95, 191, 0.15);
-    --shadow-xl: 0 15px 40px rgba(139, 95, 191, 0.2);
-    
-    /* Gradientes */
+
+    /* 🌫 Sombras suaves y cálidas */
+    --shadow-sm: 0 2px 10px rgba(139, 95, 191, 0.06);
+    --shadow-md: 0 4px 20px rgba(139, 95, 191, 0.10);
+    --shadow-lg: 0 8px 30px rgba(139, 95, 191, 0.13);
+    --shadow-xl: 0 15px 40px rgba(139, 95, 191, 0.18);
+
+    /* 🌈 Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     --gradient-bg: linear-gradient(135deg, #F5F1FA 0%, #E8D5F2 30%, #F5F1FA 100%);
-    --gradient-card: linear-gradient(135deg, var(--white) 0%, #FDFCFF 100%);
-    
-    /* Espaciado */
+    --gradient-card: linear-gradient(135deg, #FFFFFF 0%, #FDFCFF 100%);
+
+    /* 📐 Espaciado */
     --space-xs: 4px;
     --space-sm: 8px;
     --space-md: 16px;
     --space-lg: 24px;
     --space-xl: 32px;
     --space-2xl: 48px;
-    
-    /* Bordes y transiciones */
+
+    /* 📏 Bordes y transiciones */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 50px;
+
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);

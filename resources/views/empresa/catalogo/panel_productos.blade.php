@@ -6,24 +6,24 @@
     {{-- Encabezado --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-indigo-600 mb-1">📦 Productos</h2>
-            <p class="text-gray-500 text-sm">Consulta y administra los productos registrados en tu catálogo.</p>
+            <h2 class="text-2xl font-bold text-[#444478] mb-1">📦 Productos</h2>
+            <p class="text-[#7e79c9] text-sm">Consulta y administra los productos registrados en tu catálogo.</p>
         </div>
         <a href="{{ route('producto.crear') }}"
-            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded shadow hover:bg-indigo-700 transition">
+            class="inline-flex items-center px-4 py-2 bg-[#455392] text-white text-sm font-medium rounded shadow hover:opacity-90 transition">
             <i class="bi bi-plus-circle mr-2"></i> Nuevo producto
         </a>
     </div>
 
     {{-- Contenido --}}
     @if($productos->isEmpty())
-    <div class="bg-indigo-50 text-indigo-700 px-4 py-3 rounded shadow text-center text-sm flex items-center justify-center gap-2">
+    <div class="bg-[#f6f5f7] text-[#455392] px-4 py-3 rounded shadow text-center text-sm flex items-center justify-center gap-2">
         <i class="bi bi-box-seam-fill"></i> No hay productos registrados.
     </div>
     @else
     <div class="overflow-x-auto bg-white rounded-lg shadow ring-1 ring-gray-200">
         <table class="min-w-full text-sm text-left text-gray-700">
-            <thead class="bg-gray-50 text-indigo-700 uppercase text-xs font-semibold border-b">
+            <thead class="bg-[#f6f5f7] text-[#455392] uppercase text-xs font-semibold border-b">
                 <tr>
                     <th class="px-4 py-3 w-[100px]">Imagen</th>
                     <th class="px-4 py-3">Nombre</th>
@@ -49,13 +49,13 @@
                     <td class="px-4 py-3 font-medium text-gray-800">{{ $producto->nombre }}</td>
                     <td class="px-4 py-3 text-gray-500">{{ $producto->codigo_barras ?? '—' }}</td>
                     <td class="px-4 py-3 text-gray-500">{{ $producto->marca ?? '—' }}</td>
-                    <td class="px-4 py-3 font-semibold text-indigo-600">
+                    <td class="px-4 py-3 font-semibold text-[#444478]">
                         ${{ number_format($producto->precio_venta, 0, ',', '.') }}
                     </td>
                     <td class="px-4 py-3">{{ $producto->stock ?? 0 }}</td>
                     <td class="px-4 py-3 text-right space-x-2">
                         <a href="{{ route('producto.editar', $producto->id) }}"
-                            class="inline-flex items-center justify-center px-2 py-1 text-indigo-600 border border-indigo-300 rounded hover:bg-indigo-50 transition text-xs shadow-sm">
+                            class="inline-flex items-center justify-center px-2 py-1 text-[#444478] border border-[#7e79c9] rounded hover:bg-[#f6f5f7] transition text-xs shadow-sm">
                             <i class="bi bi-pencil-square"></i>
                         </a>
                         <form action="{{ route('producto.eliminar', $producto->id) }}" method="POST" class="inline"

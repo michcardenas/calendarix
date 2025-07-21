@@ -6,7 +6,6 @@
 <script src="//unpkg.com/alpinejs" defer></script>
 
 @php
-    // Categorías base del sistema con íconos
     $categoriasSistema = [
         ['icon' => 'fa-scissors', 'nombre' => 'Peluquería'],
         ['icon' => 'fa-hand-sparkles', 'nombre' => 'Salón de uñas'],
@@ -21,7 +20,6 @@
         ['icon' => 'fa-ellipsis-h', 'nombre' => 'Otros'],
     ];
 
-    // Categorías personalizadas del usuario
     $negocio = \App\Models\Negocio::where('user_id', auth()->id())->first();
     $categoriasUsuario = [];
 
@@ -35,8 +33,8 @@
 
         {{-- Encabezado --}}
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold text-indigo-600">🛠️ Menú de servicios</h1>
-            <button class="px-4 py-2 text-sm font-medium border border-indigo-600 text-indigo-600 rounded-md bg-white hover:bg-indigo-700 hover:text-white transition"
+            <h1 class="text-3xl font-bold text-[#7E79C9]">🛠️ Menú de servicios</h1>
+            <button class="px-4 py-2 text-sm font-medium border border-[#7E79C9] text-[#7E79C9] rounded-md bg-white hover:bg-[#455392] hover:transition"
                     data-bs-toggle="modal" data-bs-target="#modalNuevoServicio">
                 <i class="fas fa-plus mr-2"></i> Añadir servicio
             </button>
@@ -48,12 +46,11 @@
             <div class="md:col-span-3">
                 <h5 class="text-lg font-semibold mb-3 text-gray-700">Categorías</h5>
                 <ul class="space-y-2">
-                    <li class="flex justify-between items-center bg-indigo-600 text-white px-4 py-2 rounded-md shadow">
+                    <li class="flex justify-between items-center bg-[#7E79C9] text-white px-4 py-2 rounded-md shadow">
                         <span>Todas las categorías</span>
-                        <span class="text-sm bg-white text-indigo-600 px-2 rounded-full">{{ $servicios->count() }}</span>
+                        <span class="text-sm bg-white text-[#7E79C9] px-2 rounded-full">{{ $servicios->count() }}</span>
                     </li>
 
-                    {{-- Categorías con servicios --}}
                     @foreach($serviciosPorCategoria as $cat => $items)
                         <li class="flex justify-between items-center bg-white px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50">
                             <span>{{ $cat }}</span>
@@ -61,7 +58,6 @@
                         </li>
                     @endforeach
 
-                    {{-- Categorías nuevas del usuario sin servicios aún --}}
                     @foreach($categoriasUsuario as $cat)
                         @if(!isset($serviciosPorCategoria[$cat]))
                             <li class="flex justify-between items-center bg-white px-4 py-2 rounded-md border border-dashed border-gray-300 hover:bg-gray-50">
@@ -72,7 +68,7 @@
                     @endforeach
 
                     <li>
-                        <button class="text-indigo-600 text-sm underline hover:font-semibold mt-2"
+                        <button class="text-[#7E79C9] text-sm underline hover:font-semibold mt-2"
                                 data-bs-toggle="modal" data-bs-target="#modalCategoria">
                             + Añadir categoría
                         </button>
@@ -90,12 +86,11 @@
 
                 @forelse($serviciosPorCategoria as $categoria => $servicios)
                     <div class="mb-10">
-                        <h3 class="text-xl font-bold text-indigo-600 mb-4">{{ $categoria }}</h3>
+                        <h3 class="text-xl font-bold text-[#7E79C9] mb-4">{{ $categoria }}</h3>
 
                         <div class="space-y-3">
                             @foreach($servicios as $servicio)
-                                {{-- Card Servicio --}}
-                                <div class="flex justify-between items-center bg-white p-4 rounded-lg border-l-4 border-indigo-600 shadow-sm hover:shadow-md transition">
+                                <div class="flex justify-between items-center bg-white p-4 rounded-lg border-l-4 border-[#7E79C9] shadow-sm hover:shadow-md transition">
                                     <div>
                                         <h4 class="font-semibold text-gray-800">{{ $servicio->nombre }}</h4>
                                         <p class="text-sm text-gray-500">{{ $servicio->duracion ?? '15 min' }}</p>
@@ -105,7 +100,7 @@
 
                                         {{-- Dropdown de acciones --}}
                                         <div class="relative inline-block text-left" x-data="{ open: false }">
-                                            <button @click="open = !open" type="button" class="text-gray-600 hover:text-indigo-600">
+                                            <button @click="open = !open" type="button" class="text-gray-600 hover:text-[#7E79C9]">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
 

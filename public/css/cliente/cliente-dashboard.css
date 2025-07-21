@@ -4,11 +4,11 @@
 
 /* Variables CSS para Calendarix */
 :root {
-    --clx-primary: #8B5CF6;
-    --clx-primary-dark: #7C3AED;
-    --clx-primary-light: #A78BFA;
-    --clx-secondary: #F8FAFC;
-    --clx-accent: #10B981;
+    --clx-primary: #455392;         /* Azul principal sidebar */
+    --clx-primary-dark: #3A477C;    /* Variante más oscura */
+    --clx-primary-light: #7E79C9;   /* Morado claro de acento */
+    --clx-secondary: #f6f5f7;       /* Fondo claro */
+    --clx-accent: #e0e7ff;          /* Azul claro de eventos */
     --clx-danger: #EF4444;
     --clx-warning: #F59E0B;
     --clx-dark: #1F2937;
@@ -16,8 +16,8 @@
     --clx-text: #374151;
     --clx-text-light: #6B7280;
     --clx-border: #E5E7EB;
-    --clx-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --clx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --clx-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --clx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     --clx-radius: 12px;
     --clx-radius-sm: 8px;
     --clx-transition: all 0.3s ease;
