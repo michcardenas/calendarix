@@ -3,7 +3,7 @@
         <form method="POST" action="{{ route('servicios.actualizar', $servicio->id) }}" class="modal-content" style="background-color: #f6f5f7;">
             @csrf @method('PUT')
 
-            <div class="modal-header" style="background-color: #455392;">
+            <div class="modal-header" style="background-color: #4a5eaa;">
                 <h5 class="modal-title text-white font-bold">Editar servicio</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -31,7 +31,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="px-4 py-2 rounded text-white" style="background-color: #7e79c9;">Actualizar</button>
+                <button type="submit" class="px-4 py-2 rounded text-white" style="background-color: #4a5eaa;" onmouseover="this.style.backgroundColor='#3a457a'" onmouseout="this.style.backgroundColor='#4a5eaa'">Actualizar</button>
             </div>
         </form>
     </div>

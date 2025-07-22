@@ -3,23 +3,23 @@
 @section('title', 'Centros')
 
 @section('content')
-<div class="px-8 py-10  min-h-screen ">
+<div class="px-8 py-10 min-h-screen">
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-indigo-600">🏢 Centros</h2>
-        <p class="text-sm text-gray-600">Gestiona la información y las ubicaciones de los centros de tu negocio.</p>
+        <h2 class="text-2xl font-bold text-[#4a5eaa]">🏢 Centros</h2>
+        <p class="text-sm text-[#3B4269B3]">Gestiona la información y las ubicaciones de los centros de tu negocio.</p>
     </div>
 
     <div class="bg-white shadow-md rounded-lg p-6">
         @if($centros->isEmpty())
             <p class="text-center text-gray-400">No hay centros registrados aún.</p>
         @else
-            <ul class="divide-y divide-gray-200 mb-6">
+            <ul class="divide-y divide-[#D1D5DB] mb-6">
                 @foreach($centros as $centro)
                     <li class="py-4" id="centro-principal">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
-                                <p class="font-semibold text-gray-800">{{ $centro['nombre'] }}</p>
-                                <p class="text-sm text-gray-600" id="direccion-text-principal">
+                                <p class="font-semibold text-[#3B4269]">{{ $centro['nombre'] }}</p>
+                                <p class="text-sm text-[#3B4269B3]" id="direccion-text-principal">
                                     Dirección: {{ $centro['direccion'] }}
                                 </p>
 
@@ -33,7 +33,7 @@
                                     <div class="flex flex-col sm:flex-row gap-2">
                                         <input type="text" name="direccion"
                                                value="{{ $centro['direccion'] }}"
-                                               class="form-input px-4 py-2 rounded-md border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full sm:w-auto"
+                                               class="form-input px-4 py-2 rounded-md border border-[#D1D5DB] focus:ring-[#4a5eaa] focus:border-[#4a5eaa] text-sm w-full sm:w-auto"
                                                required>
 
                                         <button type="submit"
@@ -51,7 +51,7 @@
                                 <span class="text-xs text-gray-500 mt-1 block">Centro principal</span>
                             </div>
 
-                            <button class="text-indigo-600 hover:underline text-sm font-medium"
+                            <button class="text-[#4a5eaa] hover:underline text-sm font-medium"
                                     onclick="editarDireccion('principal')">
                                 ✏️ Editar
                             </button>
@@ -62,7 +62,7 @@
         @endif
 
         <div class="text-right mt-4">
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            <button class="bg-[#4a5eaa] hover:bg-[#6C88C4] text-white px-4 py-2 rounded-lg text-sm font-medium">
                 <i class="fas fa-plus mr-1"></i> Añadir Centro
             </button>
         </div>

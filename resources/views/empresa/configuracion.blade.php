@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="config-card" data-section="citas">
+                <!-- <div class="config-card" data-section="citas">
                     <div class="card-icon">
                         <i class="fas fa-calendar-check"></i>
                     </div>
@@ -224,7 +224,7 @@
                     <div class="card-arrow">
                         <i class="fas fa-chevron-right"></i>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </main>

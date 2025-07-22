@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-6 py-10" style="background-color: #f6f5f7; border-radius: 1rem;">
 
-    <h2 class="text-2xl font-bold text-[#7E79C9] mb-1">🆕 Añadir nuevo producto</h2>
+    <h2 class="text-2xl font-bold text-[#6274c9] mb-1">🆕 Añadir nuevo producto</h2>
     <p class="text-[#6B7280] mb-6 text-sm">Completa la información del producto para registrarlo en tu catálogo.</p>
 
     <form action="{{ route('producto.store') }}" method="POST" enctype="multipart/form-data" id="form_producto_crear">
@@ -18,7 +18,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="col-span-2">
                             <label class="text-sm font-medium text-[#6B7280]">Nombre del producto</label>
-                            <input type="text" name="nombre" class="w-full mt-1 rounded border-gray-300 focus:ring-[#7E79C9]" required>
+                            <input type="text" name="nombre" class="w-full mt-1 rounded border-gray-300 focus:ring-[#6274c9]" required>
                         </div>
                         <div>
                             <label class="text-sm font-medium text-[#6B7280]">Código de barras</label>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="mt-2">
                         <label class="inline-flex items-center gap-2">
-                            <input type="checkbox" name="activar_oferta" class="rounded border-gray-300 text-[#7E79C9]">
+                            <input type="checkbox" name="activar_oferta" class="rounded border-gray-300 text-[#6274c9]">
                             <span class="text-sm text-[#4B5563]">Activar oferta</span>
                         </label>
                     </div>
@@ -97,7 +97,7 @@
                     </div>
                     <div class="mt-2">
                         <label class="inline-flex items-center gap-2">
-                            <input type="checkbox" name="controla_inventario" class="rounded border-gray-300 text-[#7E79C9]">
+                            <input type="checkbox" name="controla_inventario" class="rounded border-gray-300 text-[#6274c9]">
                             <span class="text-sm text-[#4B5563]">Controla inventario</span>
                         </label>
                     </div>
@@ -107,11 +107,11 @@
                 <div class="bg-white rounded-xl shadow p-6 space-y-3">
                     <h3 class="text-lg font-semibold text-[#4B5563]">👁️ Visibilidad</h3>
                     <label class="inline-flex items-center gap-2">
-                        <input type="checkbox" name="estado_publicado" class="rounded border-gray-300 text-[#7E79C9]" checked>
+                        <input type="checkbox" name="estado_publicado" class="rounded border-gray-300 text-[#6274c9]" checked>
                         <span class="text-sm text-[#4B5563]">Publicado</span>
                     </label>
                     <label class="inline-flex items-center gap-2">
-                        <input type="checkbox" name="mostrar_en_catalogo" class="rounded border-gray-300 text-[#7E79C9]" checked>
+                        <input type="checkbox" name="mostrar_en_catalogo" class="rounded border-gray-300 text-[#6274c9]" checked>
                         <span class="text-sm text-[#4B5563]">Mostrar en catálogo</span>
                     </label>
                 </div>
@@ -119,7 +119,7 @@
                 {{-- Botón --}}
                 <div class="text-right">
                     <button type="submit"
-                            class="bg-[#7E79C9] hover:bg-[#5A4EBB] text-white font-medium text-sm px-6 py-2 rounded shadow transition">
+                            class="bg-[#6274c9] hover:bg-[#4e5bb0] text-white font-medium text-sm px-6 py-2 rounded shadow transition">
                         💾 Guardar producto
                     </button>
                 </div>
@@ -134,7 +134,7 @@
                         <input type="file" name="imagenes[]" multiple accept="image/*"
                                class="block w-full text-sm text-[#4B5563] border border-gray-300 rounded cursor-pointer
                                file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm
-                               file:bg-[#EFEDFB] file:text-[#5A4EBB] hover:file:bg-[#DDD9F3]"
+                               file:bg-[#e9ecfb] file:text-[#4e5bb0] hover:file:bg-[#d4d9f4]"
                                onchange="previewMultipleImages(event)">
                     </div>
                     <div id="preview-container" class="mt-4 grid grid-cols-2 gap-4"></div>

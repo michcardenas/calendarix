@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Empresa;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Negocio;
+use App\Models\Trabajador;
 use App\Models\Cliente;
 use App\Models\Empresa\Empresa;
 
@@ -102,6 +103,76 @@ class EmpresaController extends Controller
         $cliente->delete();
 
         return back()->with('success', 'Cliente eliminado correctamente.');
+    }
+
+    /**
+     * Mostrar la lista de trabajadores
+     */
+    public function trabajadores($empresaId)
+    {
+        $empresa = Empresa::with('trabajadores')->findOrFail($empresaId);
+        $trabajadores = $empresa->trabajadores ?? [];
+
+        return view('empresa.trabajadores.index', [
+            'empresa' => $empresa,
+            'trabajadores' => $trabajadores,
+            'currentPage' => 'trabajadores',
+            'currentSubPage' => null,
+        ]);
+    }
+
+    /**
+     * Crear un nuevo trabajador
+     */
+    public function storeTrabajador(Request $request)
+    {
+        $request->validate([
+            'negocio_id' => 'required|exists:negocios,id',
+            'nombre'     => 'required|string|max:255',
+            'email'      => 'nullable|email|max:255',
+            'telefono'   => 'nullable|string|max:20',
+        ]);
+
+        Trabajador::create([
+            'negocio_id' => $request->negocio_id,
+            'nombre'     => $request->nombre,
+            'email'      => $request->email,
+            'telefono'   => $request->telefono,
+        ]);
+
+        return redirect()->back()->with('success', 'Trabajador creado correctamente.');
+    }
+
+    /**
+     * Actualizar trabajador
+     */
+    public function updateTrabajador(Request $request, $empresaId, $trabajadorId)
+    {
+        $request->validate([
+            'nombre'   => 'required|string|max:255',
+            'email'    => 'nullable|email|max:255',
+            'telefono' => 'nullable|string|max:20',
+        ]);
+
+        $trabajador = Trabajador::where('negocio_id', $empresaId)->findOrFail($trabajadorId);
+        $trabajador->update([
+            'nombre'   => $request->nombre,
+            'email'    => $request->email,
+            'telefono' => $request->telefono,
+        ]);
+
+        return redirect()->back()->with('success', 'Trabajador actualizado correctamente.');
+    }
+
+    /**
+     * Eliminar trabajador
+     */
+    public function destroyTrabajador($empresaId, $trabajadorId)
+    {
+        $trabajador = Trabajador::where('negocio_id', $empresaId)->where('id', $trabajadorId)->firstOrFail();
+        $trabajador->delete();
+
+        return redirect()->back()->with('success', 'Trabajador eliminado correctamente.');
     }
 
 

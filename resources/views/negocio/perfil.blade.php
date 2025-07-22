@@ -3,26 +3,8 @@
 @section('title', $negocio->neg_nombre_comercial ?? 'Perfil del Negocio')
 
 @section('content')
-{{-- Fondo animado con bolitas --}}
 <style>
-/* 🫧 BOLITAS DE FONDO */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(circle 150px at 10% 20%, rgba(246, 245, 247, 0.4) 0%, rgba(246, 245, 247, 0.1) 30%, transparent 60%),
-    radial-gradient(circle 120px at 90% 15%, rgba(246, 245, 247, 0.35) 0%, rgba(246, 245, 247, 0.08) 35%, transparent 65%),
-    radial-gradient(circle 180px at 15% 85%, rgba(246, 245, 247, 0.38) 0%, rgba(246, 245, 247, 0.06) 40%, transparent 70%),
-    radial-gradient(circle 140px at 85% 80%, rgba(246, 245, 247, 0.42) 0%, rgba(246, 245, 247, 0.09) 35%, transparent 65%);
-  animation: floatingBubbles 15s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
+body::before,
 body::after {
   content: '';
   position: fixed;
@@ -30,27 +12,55 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    radial-gradient(circle 110px at 70% 25%, rgba(246, 245, 247, 0.3) 0%, rgba(246, 245, 247, 0.08) 40%, transparent 70%),
-    radial-gradient(circle 160px at 25% 50%, rgba(246, 245, 247, 0.25) 0%, rgba(246, 245, 247, 0.05) 45%, transparent 75%),
-    radial-gradient(circle 100px at 80% 60%, rgba(246, 245, 247, 0.32) 0%, rgba(246, 245, 247, 0.07) 40%, transparent 70%),
-    radial-gradient(circle 130px at 30% 15%, rgba(246, 245, 247, 0.28) 0%, rgba(246, 245, 247, 0.06) 45%, transparent 75%);
-  animation: floatingBubbles 20s ease-in-out infinite reverse;
-  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: cover;
   z-index: 0;
+  pointer-events: none;
 }
 
-@keyframes floatingBubbles {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+body::before {
+  background:
+    radial-gradient(circle 160px at 10% 20%, rgba(126, 121, 201, 0.28) 0%, transparent 60%),
+    radial-gradient(circle 120px at 30% 40%, rgba(90, 78, 187, 0.25) 0%, transparent 60%),
+    radial-gradient(circle 150px at 50% 20%, rgba(126, 121, 201, 0.3) 0%, transparent 60%),
+    radial-gradient(circle 130px at 70% 35%, rgba(90, 78, 187, 0.3) 0%, transparent 60%),
+    radial-gradient(circle 180px at 85% 10%, rgba(126, 121, 201, 0.25) 0%, transparent 60%),
+    radial-gradient(circle 100px at 20% 75%, rgba(90, 78, 187, 0.22) 0%, transparent 60%),
+    radial-gradient(circle 120px at 45% 90%, rgba(126, 121, 201, 0.26) 0%, transparent 60%),
+    radial-gradient(circle 140px at 80% 80%, rgba(90, 78, 187, 0.3) 0%, transparent 60%);
+  animation: bubblesBefore 18s ease-in-out infinite;
 }
+
+body::after {
+  background:
+    radial-gradient(circle 130px at 15% 50%, rgba(126, 121, 201, 0.2) 0%, transparent 60%),
+    radial-gradient(circle 160px at 35% 60%, rgba(90, 78, 187, 0.28) 0%, transparent 60%),
+    radial-gradient(circle 120px at 55% 45%, rgba(126, 121, 201, 0.24) 0%, transparent 60%),
+    radial-gradient(circle 140px at 75% 55%, rgba(90, 78, 187, 0.22) 0%, transparent 60%),
+    radial-gradient(circle 160px at 90% 35%, rgba(126, 121, 201, 0.23) 0%, transparent 60%),
+    radial-gradient(circle 100px at 10% 85%, rgba(90, 78, 187, 0.2) 0%, transparent 60%),
+    radial-gradient(circle 150px at 40% 10%, rgba(126, 121, 201, 0.28) 0%, transparent 60%),
+    radial-gradient(circle 130px at 60% 85%, rgba(90, 78, 187, 0.25) 0%, transparent 60%);
+  animation: bubblesAfter 22s ease-in-out infinite reverse;
+}
+
+@keyframes bubblesBefore {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+
+@keyframes bubblesAfter {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(30px); }
+}
+
 </style>
+
 
 <div class="py-10 relative z-10">
     <div class="max-w-6xl mx-auto">
-
         {{-- Portada --}}
-        <div class="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl mb-14" style="background-color: #7E79C9;">
+        <div class="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl mb-14 bg-[#4a5eaa]">
             @if($negocio->neg_portada)
                 <img src="{{ $negocio->neg_portada }}" class="absolute inset-0 w-full h-full object-cover" alt="Portada">
             @endif
@@ -64,8 +74,8 @@ body::after {
                      alt="Avatar">
             </div>
             <div>
-                <h1 class="text-4xl font-extrabold" style="color: #5A4EBB;">{{ $negocio->neg_nombre_comercial }}</h1>
-                <p class="text-lg text-gray-600">{{ $negocio->neg_categoria }}</p>
+                <h1 class="text-4xl font-extrabold text-[#4a5eaa]">{{ $negocio->neg_nombre_comercial }}</h1>
+                <p class="text-lg text-[#3B4269B3]">{{ $negocio->neg_categoria }}</p>
             </div>
         </div>
 
@@ -74,8 +84,8 @@ body::after {
 
             {{-- Info y Servicios --}}
             <div class="space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4" style="border-color: #7E79C9;">
-                    <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">📄 Información del negocio</h3>
+                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-[#4a5eaa]">
+                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">📄 Información del negocio</h3>
                     <ul class="text-base text-gray-700 space-y-2">
                         <li><strong>Email:</strong> {{ $negocio->neg_email }}</li>
                         <li><strong>Teléfono:</strong> {{ $negocio->neg_telefono }}</li>
@@ -83,8 +93,8 @@ body::after {
                     </ul>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4" style="border-color: #7E79C9;">
-                    <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">💼 Servicios</h3>
+                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-[#4a5eaa]">
+                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">💼 Servicios</h3>
                     @if($negocio->servicios->count())
                         <ul class="list-disc pl-5 text-base text-gray-700 space-y-2">
                             @foreach($negocio->servicios as $servicio)
@@ -99,8 +109,8 @@ body::after {
 
             {{-- Horarios y Calendario --}}
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4" style="border-color: #7E79C9;">
-                    <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">⏰ Horarios de Atención</h3>
+                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
+                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">⏰ Horarios de Atención</h3>
                     <table class="w-full text-base">
                         <thead>
                             <tr class="text-gray-600 border-b">
@@ -126,8 +136,8 @@ body::after {
                 </div>
 
                 @if($negocio->bloqueos->count())
-                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4" style="border-color: #7E79C9;">
-                        <h3 class="text-xl font-semibold mb-4" style="color: #5A4EBB;">📅 Días Bloqueados</h3>
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
+                        <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">📅 Días Bloqueados</h3>
                         <div id="calendarioBloqueos" class="rounded overflow-hidden"></div>
                     </div>
                 @endif

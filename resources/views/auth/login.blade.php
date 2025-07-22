@@ -23,7 +23,8 @@
                 <span id="statusMessage"></span>
             </div>
 
-            <form class="auth-form" onsubmit="handleSubmit(event)">
+            <form method="POST" action="{{ route('login') }}" class="auth-form">
+                @csrf
                 <!-- Email -->
                 <div class="auth-input-group">
                     <label for="auth-login-email" class="auth-label">Correo electrónico</label>

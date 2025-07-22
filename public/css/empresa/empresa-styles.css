@@ -4,22 +4,32 @@
    VARIABLES CSS
    ================================= */
 :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --success-color: #28a745;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #17a2b8;
+    /* Gradiente principal de Calendarix */
+    --primary-gradient: linear-gradient(135deg, #7e79c9 0%, #a49ee8 100%);
+
+    /* Estados */
+    --success-color: #2ecc71; /* Verde suave y visible */
+    --danger-color: #e74c3c;  /* Rojo fuerte pero elegante */
+    --warning-color: #f1c40f; /* Amarillo vibrante */
+    --info-color: #17a2b8;    /* Azul informativo moderno */
+
+    /* Blancos y negros con transparencia */
     --white-alpha-1: rgba(255, 255, 255, 0.1);
     --white-alpha-2: rgba(255, 255, 255, 0.2);
     --white-alpha-6: rgba(255, 255, 255, 0.6);
     --black-alpha-3: rgba(0, 0, 0, 0.3);
+
+    /* Bordes y transiciones */
     --border-radius: 8px;
     --border-radius-lg: 12px;
     --border-radius-xl: 15px;
     --transition: all 0.3s ease;
-    --shadow-hover: 0 5px 15px rgba(0,0,0,0.3);
-    --shadow-card: 0 10px 30px rgba(0,0,0,0.3);
+
+    /* Sombras ajustadas al estilo violeta */
+    --shadow-hover: 0 5px 15px rgba(126, 121, 201, 0.3);
+    --shadow-card: 0 10px 30px rgba(126, 121, 201, 0.3);
 }
+
 
 /* =================================
    BOTONES

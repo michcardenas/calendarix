@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use App\Services\RoleRedirectService;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Mostrar la vista de login.
+     * Display the login view.
      */
     public function create(): View
     {
@@ -19,51 +21,29 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Procesar la autenticación.
+     * Handle an incoming authentication request.
      */
-    public function store(Request $request)
-
+    public function store(LoginRequest $request, RoleRedirectService $redirector): RedirectResponse
     {
-         \Log::info('== INTENTANDO LOGIN ==', $request->only('email'));
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-        \Log::info('== CREDENCIALES VALIDAS ==', $credentials);
+        $request->authenticate();
+        $request->session()->regenerate();
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $user = Auth::user();
 
-            $user = Auth::user();
-
-            if ($user->hasRole('Administrador')) {
-                return redirect()->route('dashboard');
-            }
-
-            if ($user->hasRole('Cliente')) {
-                return redirect()->route('dashboard');
-            }
-
-            Auth::logout();
-            return abort(403, 'No tienes permisos asignados.');
-        }
-        \Log::warning('== CREDENCIALES INVALIDAS ==', $credentials);
-
-        throw ValidationException::withMessages([
-            'email' => __('Estas credenciales no coinciden con nuestros registros.'),
-        ]);
-        
+        return redirect()->to($redirector->getRedirectRoute($user));
     }
 
-
     /**
-     * Cerrar sesión.
+     * Destroy an authenticated session.
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
+
         return redirect('/');
     }
 }

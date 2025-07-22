@@ -6,24 +6,24 @@
     {{-- Encabezado --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-[#444478] mb-1">📦 Productos</h2>
-            <p class="text-[#7e79c9] text-sm">Consulta y administra los productos registrados en tu catálogo.</p>
+            <h2 class="text-2xl font-bold text-[#4a5eaa] mb-1">📦 Productos</h2>
+            <p class="text-[#6C88C4] text-sm">Consulta y administra los productos registrados en tu catálogo.</p>
         </div>
         <a href="{{ route('producto.crear') }}"
-            class="inline-flex items-center px-4 py-2 bg-[#455392] text-white text-sm font-medium rounded shadow hover:opacity-90 transition">
+            class="inline-flex items-center px-4 py-2 bg-[#4a5eaa] text-white text-sm font-medium rounded shadow hover:opacity-90 transition">
             <i class="bi bi-plus-circle mr-2"></i> Nuevo producto
         </a>
     </div>
 
     {{-- Contenido --}}
     @if($productos->isEmpty())
-    <div class="bg-[#f6f5f7] text-[#455392] px-4 py-3 rounded shadow text-center text-sm flex items-center justify-center gap-2">
+    <div class="bg-[#f6f5f7] text-[#4a5eaa] px-4 py-3 rounded shadow text-center text-sm flex items-center justify-center gap-2">
         <i class="bi bi-box-seam-fill"></i> No hay productos registrados.
     </div>
     @else
     <div class="overflow-x-auto bg-white rounded-lg shadow ring-1 ring-gray-200">
         <table class="min-w-full text-sm text-left text-gray-700">
-            <thead class="bg-[#f6f5f7] text-[#455392] uppercase text-xs font-semibold border-b">
+            <thead class="bg-[#f6f5f7] text-[#4a5eaa] uppercase text-xs font-semibold border-b">
                 <tr>
                     <th class="px-4 py-3 w-[100px]">Imagen</th>
                     <th class="px-4 py-3">Nombre</th>
@@ -49,13 +49,13 @@
                     <td class="px-4 py-3 font-medium text-gray-800">{{ $producto->nombre }}</td>
                     <td class="px-4 py-3 text-gray-500">{{ $producto->codigo_barras ?? '—' }}</td>
                     <td class="px-4 py-3 text-gray-500">{{ $producto->marca ?? '—' }}</td>
-                    <td class="px-4 py-3 font-semibold text-[#444478]">
+                    <td class="px-4 py-3 font-semibold text-[#4a5eaa]">
                         ${{ number_format($producto->precio_venta, 0, ',', '.') }}
                     </td>
                     <td class="px-4 py-3">{{ $producto->stock ?? 0 }}</td>
                     <td class="px-4 py-3 text-right space-x-2">
                         <a href="{{ route('producto.editar', $producto->id) }}"
-                            class="inline-flex items-center justify-center px-2 py-1 text-[#444478] border border-[#7e79c9] rounded hover:bg-[#f6f5f7] transition text-xs shadow-sm">
+                            class="inline-flex items-center justify-center px-2 py-1 text-[#4a5eaa] border border-[#4a5eaa] rounded hover:bg-[#f6f5f7] transition text-xs shadow-sm">
                             <i class="bi bi-pencil-square"></i>
                         </a>
                         <form action="{{ route('producto.eliminar', $producto->id) }}" method="POST" class="inline"
@@ -63,7 +63,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit"
-                                class="inline-flex items-center justify-center px-2 py-1 text-red-600 border border-red-300 rounded hover:bg-red-50 transition text-xs shadow-sm">
+                                class="inline-flex items-center justify-center px-2 py-1 text-[#E3342F] border border-red-300 rounded hover:bg-red-50 transition text-xs shadow-sm">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>

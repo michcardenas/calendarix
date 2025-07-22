@@ -24,7 +24,7 @@
             --welcome-text-muted: #6b7280;
 
             /* 🌈 Acentos de color */
-            --welcome-accent-gradient: linear-gradient(135deg, #455392 0%, #7E79C9 50%, #a3a0db 100%);
+            --welcome-accent-gradient: linear-gradient(135deg, #4a5eaa 0%, #7E79C9 50%, #a3a0db 100%);
             --welcome-secondary-gradient: linear-gradient(135deg, #7E79C9 0%, #9f94e0 50%, #e0e7ff 100%);
 
             /* ✨ Fondos y elementos */
@@ -686,7 +686,7 @@
 
         <h1 id="welcome-hero-title">
             Reserva servicios de belleza
-            <span style="background: linear-gradient(135deg, #455392, #7e79c9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">y bienestar en tu zona</span>
+            <span style="background: linear-gradient(135deg, #4a5eaa, #7e79c9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">y bienestar en tu zona</span>
         </h1>
 
         <p id="welcome-hero-subtitle">

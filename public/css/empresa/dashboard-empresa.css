@@ -3,9 +3,9 @@
 /* ===== VARIABLES CSS ===== */
 :root {
     /* Colores */
-    --primary: #7e79c9;
-    --primary-light: #8f8ae0;
-    --primary-dark: #5e5ca5;
+    --primary: #4a5eaa;
+    --primary-light: #5e63b2;
+    --primary-dark: #2c376c;
     --secondary: #f6f5f7;
     --background: #f6f5f7;
     --white: #ffffff;
@@ -15,17 +15,17 @@
     --border: #d4d2e9;
 
     /* Sidebar */
-    --sidebar-bg: #455392;
-    --sidebar-bg-light: #4f5aa3;
+    --sidebar-bg: #4a5eaa;
+    --sidebar-bg-light: #5a67a8;
     --sidebar-text: #f6f5f7;
     --sidebar-text-muted: #d6d3f0;
-    --sidebar-hover: rgba(255, 255, 255, 0.1);
+    --sidebar-hover: rgba(255, 255, 255, 0.08);
     --sidebar-active: var(--primary);
 
     /* Cards */
     --card-bg: #444478;
     --card-border: rgba(255, 255, 255, 0.1);
-    --card-hover: #54548a;
+    --card-hover: #565689;
 
     /* Sombras */
     --shadow-sm: 0 2px 10px rgba(69, 83, 146, 0.08);
@@ -37,7 +37,7 @@
     /* Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     --gradient-bg: linear-gradient(135deg, #f6f5f7 0%, #fdfdfd 20%, #f6f5f7 100%);
-    --gradient-card: linear-gradient(135deg, var(--card-bg) 0%, #54548a 100%);
+    --gradient-card: linear-gradient(135deg, var(--card-bg) 0%, #565689 100%);
     --gradient-sidebar: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-light) 100%);
 
     /* Espaciado */
@@ -57,6 +57,7 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
 }
+
 
 
 /* ===== RESET Y BASE ===== */
@@ -377,7 +378,7 @@ body {
 .stats .card p {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--text-primary);
     margin: 0;
     animation: numberCount 1s ease-out 1s both;
 }

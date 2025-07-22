@@ -4,24 +4,42 @@
 
 /* Variables CSS para Calendarix */
 :root {
-    --clx-primary: #455392;         /* Azul principal sidebar */
-    --clx-primary-dark: #3A477C;    /* Variante más oscura */
-    --clx-primary-light: #7E79C9;   /* Morado claro de acento */
-    --clx-secondary: #f6f5f7;       /* Fondo claro */
-    --clx-accent: #e0e7ff;          /* Azul claro de eventos */
-    --clx-danger: #EF4444;
-    --clx-warning: #F59E0B;
-    --clx-dark: #1F2937;
-    --clx-light: #FFFFFF;
+    /* Colores principales */
+    --clx-primary: #455392;
+    /* Azul profundo (sidebar) */
+    --clx-primary-dark: #3a3e6b;
+    /* Variante más oscura y definida */
+    --clx-primary-light: #7e79c9;
+    /* Violeta pastel elegante */
+
+    /* Fondo y acento */
+    --clx-secondary: #f6f5f7;
+    /* Fondo claro general */
+    --clx-accent: #a49ee8;
+    /* Acento suave (eventos, botones hover) */
+
+    /* Estados */
+    --clx-danger: #e74c3c;
+    --clx-warning: #f1c40f;
+    --clx-dark: #2d2d46;
+    /* Texto fuerte y profundo */
+    --clx-light: #ffffff;
+
+    /* Textos */
     --clx-text: #374151;
-    --clx-text-light: #6B7280;
-    --clx-border: #E5E7EB;
-    --clx-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    --clx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    --clx-text-light: #9c9cb9;
+
+    /* Bordes y sombras */
+    --clx-border: #dad8ee;
+    --clx-shadow: 0 4px 6px -1px rgba(126, 121, 201, 0.1);
+    --clx-shadow-lg: 0 10px 15px -3px rgba(126, 121, 201, 0.15);
+
+    /* Estética */
     --clx-radius: 12px;
     --clx-radius-sm: 8px;
     --clx-transition: all 0.3s ease;
 }
+
 
 /* Reset y configuración base */
 * {
@@ -100,10 +118,23 @@ body {
 }
 
 @keyframes clx-float {
-    0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg) scale(1); }
-    25% { transform: translateY(-15px) translateX(10px) rotate(90deg) scale(1.05); }
-    50% { transform: translateY(-25px) translateX(-5px) rotate(180deg) scale(0.95); }
-    75% { transform: translateY(-10px) translateX(15px) rotate(270deg) scale(1.02); }
+
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: translateY(-15px) translateX(10px) rotate(90deg) scale(1.05);
+    }
+
+    50% {
+        transform: translateY(-25px) translateX(-5px) rotate(180deg) scale(0.95);
+    }
+
+    75% {
+        transform: translateY(-10px) translateX(15px) rotate(270deg) scale(1.02);
+    }
 }
 
 /* ===============================================
@@ -534,25 +565,27 @@ body {
 }
 
 .clx-submenu {
+    padding-left: 1rem;
+    margin-top: 0.5rem;
     list-style: none;
-    margin: 0;
-    padding: 0;
 }
 
 .clx-submenu li {
-    margin: 5px 0;
+    margin-bottom: 0.3rem;
 }
 
+
 .clx-submenu-link {
-    color: #575353;
+    color: var(--text-primary);       /* Azul lavanda suave */
     font-size: 16px;
     display: block;
     padding-left: 61px;
+    text-decoration: none;
     transition: color 0.3s;
 }
 
 .clx-submenu-link:hover {
-    color: #bfa074;
+    color: var(--clx-primary);            /* Lavanda principal al pasar */
 }
 
 
@@ -612,6 +645,7 @@ body {
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -623,6 +657,7 @@ body {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(100%);
         opacity: 0;

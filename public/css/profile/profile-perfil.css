@@ -2,15 +2,15 @@
 
 /* ===== VARIABLES CSS ===== */
 :root {
-    /* 🎨 Colores */
-    --primary: #7E79C9;
-    --primary-light: #A49EF0;
-    --primary-dark: #5F5AAE;
-    --secondary: #f6f5f7;
+    /* 🎨 Colores actualizados */
+    --primary: #455392;              /* Azul profundo elegante */
+    --primary-light: #7E79C9;        /* Lila suave como acento */
+    --primary-dark: #3A477C;         /* Azul oscuro para énfasis */
+    --secondary: #f6f5f7;            /* Fondo claro neutro */
     --background: #FDFBFF;
     --white: #FFFFFF;
-    --text-primary: #455392;
-    --text-secondary: #6B5B7B;
+    --text-primary: #2c376d;         /* Contraste para títulos y headers */
+    --text-secondary: #5c5f87;       /* Texto complementario */
     --text-muted: #9B8BAB;
     --border: #DAD6F0;
     --error: #E74C3C;
@@ -26,14 +26,14 @@
 
     /* 🧾 Cards */
     --card-bg: #FFFFFF;
-    --card-border: rgba(126, 121, 201, 0.1);
-    --card-header-bg: #F4F2FD;
+    --card-border: rgba(69, 83, 146, 0.08); /* primary más suave */
+    --card-header-bg: #EEF0FC;
 
     /* 🌫 Sombras */
-    --shadow-sm: 0 2px 10px rgba(126, 121, 201, 0.08);
-    --shadow-md: 0 4px 20px rgba(126, 121, 201, 0.12);
-    --shadow-lg: 0 8px 30px rgba(126, 121, 201, 0.15);
-    --shadow-xl: 0 15px 40px rgba(126, 121, 201, 0.2);
+    --shadow-sm: 0 2px 10px rgba(69, 83, 146, 0.06);
+    --shadow-md: 0 4px 20px rgba(69, 83, 146, 0.10);
+    --shadow-lg: 0 8px 30px rgba(69, 83, 146, 0.15);
+    --shadow-xl: 0 15px 40px rgba(69, 83, 146, 0.2);
 
     /* 🌈 Gradientes */
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
@@ -57,6 +57,7 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
 }
+
 
 /* ===== RESET Y BASE ===== */
 * {

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <form method="POST" action="{{ route('servicios.guardar') }}" class="modal-content" style="background-color: #f6f5f7;">
             @csrf
-            <div class="modal-header" style="background-color: #455392;">
+            <div class="modal-header" style="background-color: #4a5eaa;">
                 <h5 class="modal-title text-white font-bold">Añadir nuevo servicio</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -45,7 +45,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="px-4 py-2 rounded text-white" style="background-color: #7e79c9;">Guardar servicio</button>
+                <button type="submit" class="px-4 py-2 rounded text-white" style="background-color: #4a5eaa;" onmouseover="this.style.backgroundColor='#3a457a'" onmouseout="this.style.backgroundColor='#4a5eaa'">Guardar servicio</button>
             </div>
         </form>
     </div>

@@ -230,6 +230,17 @@ Route::get('/empresa/{empresa}/clientes', [EmpresaController::class, 'clientes']
     Route::put('/{cliente}/editar', [EmpresaController::class, 'updateCliente'])->name('empresa.clientes.update');
     Route::delete('/{cliente}/eliminar', [EmpresaController::class, 'destroyCliente'])->name('empresa.clientes.destroy');
 });
+// Mostrar todos los trabajadores
+Route::get('/empresa/{empresa}/trabajadores', [EmpresaController::class, 'trabajadores'])
+    ->name('empresa.trabajadores.index');
+
+// CRUD de trabajadores con prefijos claros
+Route::prefix('empresa/{empresa}/trabajadores')->group(function () {
+    Route::post('/crear', [EmpresaController::class, 'storeTrabajador'])->name('empresa.trabajadores.store');
+    Route::put('/{trabajador}/editar', [EmpresaController::class, 'updateTrabajador'])->name('empresa.trabajadores.update');
+    Route::delete('/{trabajador}/eliminar', [EmpresaController::class, 'destroyTrabajador'])->name('empresa.trabajadores.destroy');
+});
+
 //agenda
 Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('empresa.agenda');
 // routes/web.php

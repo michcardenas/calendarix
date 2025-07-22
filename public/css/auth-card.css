@@ -11,11 +11,11 @@
 
   /* 🌈 Colores base */
   --neutral-white: #ffffff;
-  --neutral-gray: #7e7e9a;
-  --neutral-dark: #2d2a3e;
+  --neutral-gray: #9c9cb9;
+  --neutral-dark: #2d2d46;
 
   /* ✨ Efectos glass y overlays */
-  --glass-overlay: rgba(68, 68, 120, 0.08);
+  --glass-overlay: rgba(126, 121, 201, 0.08);
   --glass-border: rgba(255, 255, 255, 0.25);
   --backdrop-blur: 24px;
 
@@ -41,13 +41,14 @@
 
   /* 🎭 Sombras suaves */
   --shadow-soft: 0 2px 8px rgba(126, 121, 201, 0.06);
-  --shadow-medium: 0 8px 25px rgba(126, 121, 201, 0.08);
-  --shadow-strong: 0 20px 40px rgba(68, 68, 120, 0.12);
+  --shadow-medium: 0 8px 25px rgba(126, 121, 201, 0.1);
+  --shadow-strong: 0 20px 40px rgba(68, 68, 120, 0.15);
 
   /* ⚡ Transiciones */
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 * {
   box-sizing: border-box;
@@ -79,16 +80,16 @@ body::after {
   top: 20%;
   left: 15%;
   border-radius: 50%;
-  background: rgba(255, 215, 0, 0.6);
+  background: rgba(126, 121, 201, 0.2); /* base morado principal */
   box-shadow: 
-    200px 100px 0 -5px rgba(236, 72, 153, 0.5),
-    -150px 300px 0 0px rgba(255, 140, 0, 0.4),
-    400px 50px 0 10px rgba(168, 85, 247, 0.6),
-    600px 250px 0 -8px rgba(99, 102, 241, 0.5),
-    -100px 500px 0 5px rgba(34, 197, 94, 0.4),
-    800px 400px 0 -3px rgba(248, 113, 113, 0.5),
-    100px 600px 0 8px rgba(139, 92, 246, 0.6),
-    500px 150px 0 -10px rgba(255, 215, 0, 0.4);
+    200px 100px 0 -5px rgba(168, 144, 255, 0.35),
+    -150px 300px 0 0px rgba(255, 236, 179, 0.3),
+    400px 50px 0 10px rgba(126, 121, 201, 0.4),
+    600px 250px 0 -8px rgba(96, 96, 164, 0.4),
+    -100px 500px 0 5px rgba(244, 204, 255, 0.3),
+    800px 400px 0 -3px rgba(160, 145, 230, 0.5),
+    100px 600px 0 8px rgba(139, 130, 234, 0.4),
+    500px 150px 0 -10px rgba(255, 225, 230, 0.3);
   animation: floatingBubbles 25s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
@@ -129,14 +130,15 @@ body::before {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle 150px at 10% 20%, rgba(168, 85, 247, 0.25) 0%, rgba(168, 85, 247, 0.08) 30%, transparent 60%),
-    radial-gradient(circle 120px at 90% 15%, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0.05) 35%, transparent 65%),
-    radial-gradient(circle 180px at 15% 85%, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.04) 40%, transparent 70%),
-    radial-gradient(circle 140px at 85% 80%, rgba(134, 239, 172, 0.25) 0%, rgba(134, 239, 172, 0.05) 35%, transparent 65%);
+    radial-gradient(circle 150px at 10% 20%, rgba(126, 121, 201, 0.25) 0%, rgba(126, 121, 201, 0.08) 30%, transparent 60%),
+    radial-gradient(circle 120px at 90% 15%, rgba(139, 130, 234, 0.22) 0%, rgba(139, 130, 234, 0.05) 35%, transparent 65%),
+    radial-gradient(circle 180px at 15% 85%, rgba(112, 108, 172, 0.2) 0%, rgba(112, 108, 172, 0.04) 40%, transparent 70%),
+    radial-gradient(circle 140px at 85% 80%, rgba(230, 228, 255, 0.22) 0%, rgba(230, 228, 255, 0.05) 35%, transparent 65%);
   animation: floatingBubbles 15s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
+
 
 /* 🌈 MÁS BOLITAS CON ESTILO CALENDARIX */
 body::after {
@@ -147,14 +149,15 @@ body::after {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle 110px at 70% 25%, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.05) 40%, transparent 70%),
-    radial-gradient(circle 160px at 25% 50%, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.04) 45%, transparent 75%),
-    radial-gradient(circle 100px at 80% 60%, rgba(236, 72, 153, 0.18) 0%, rgba(236, 72, 153, 0.04) 40%, transparent 70%),
-    radial-gradient(circle 130px at 30% 15%, rgba(168, 85, 247, 0.18) 0%, rgba(168, 85, 247, 0.03) 45%, transparent 75%);
+    radial-gradient(circle 110px at 70% 25%, rgba(105, 100, 200, 0.2) 0%, rgba(105, 100, 200, 0.05) 40%, transparent 70%),
+    radial-gradient(circle 160px at 25% 50%, rgba(202, 176, 255, 0.15) 0%, rgba(202, 176, 255, 0.04) 45%, transparent 75%),
+    radial-gradient(circle 100px at 80% 60%, rgba(168, 144, 255, 0.18) 0%, rgba(168, 144, 255, 0.04) 40%, transparent 70%),
+    radial-gradient(circle 130px at 30% 15%, rgba(114, 110, 198, 0.18) 0%, rgba(114, 110, 198, 0.03) 45%, transparent 75%);
   animation: floatingBubbles 20s ease-in-out infinite reverse;
   pointer-events: none;
   z-index: 0;
 }
+
 
 
 @keyframes floatingBubbles {
@@ -582,8 +585,8 @@ body::after {
 }
 
 .auth-bottom-link a {
-    background: linear-gradient(135deg, #7e79c9 0%, #a084dc 100%);
-    color: white;
+    background: linear-gradient(135deg, #7e79c9 0%, #5e5ca5 100%);
+    color: var(--neutral-white);
     padding: 0.5rem 1.25rem;
     border-radius: 9999px;
     font-weight: 600;
@@ -591,10 +594,11 @@ body::after {
     text-decoration: none;
     display: inline-block;
     transition: background 0.3s ease;
+    box-shadow: 0 4px 8px rgba(94, 92, 165, 0.2);
 }
 
 .auth-bottom-link a:hover {
-    background: linear-gradient(135deg, #6b65bb 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #5e5ca5 0%, #444478 100%);
 }
 
 

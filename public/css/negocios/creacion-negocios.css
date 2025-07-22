@@ -1,50 +1,52 @@
 /* public/css/negocio-form.css */
 
 :root {
-    /* 🎨 Colores principales */
-    --primary: #7E79C9;               /* Lavanda principal */
-    --primary-light: #A49EF0;         /* Versión más clara */
-    --primary-dark: #5F5AAE;          /* Tono intermedio oscuro */
-    --secondary: #f6f5f7;             /* Fondo crema claro */
-    --background: #FDFBFF;            /* Fondo general más claro */
-    --white: #FFFFFF;
+  /* 🎨 Colores principales */
+  --primary: #4A5EAA;               /* Azul lavanda profundo */
+  --primary-light: #7E79C9;         /* Lavanda clásica */
+  --primary-dark: #373F85;          /* Indigo intenso */
+  --secondary: #F6F5FA;             /* Fondo neutro claro */
+  --background: #FAFAFF;            /* Fondo general aún más claro */
+  --white: #FFFFFF;
 
-    /* 🖋 Texto */
-    --text-primary: #444478;          /* Texto oscuro lavanda */
-    --text-secondary: #6B5B7B;        /* Gris lavanda */
-    
-    /* 📏 Bordes y alertas */
-    --border: #CFCDE5;
-    --error: #E74C3C;
+  /* 🖋 Texto */
+  --text-primary: #4A5EAA;          /* Indigo visible y armónico */
+  --text-secondary: #6B5B7B;        /* Gris lavanda */
+  --text-muted: #9B8BAB;
 
-    /* 🌫 Sombras */
-    --shadow-sm: 0 4px 20px rgba(126, 121, 201, 0.08);
-    --shadow-md: 0 8px 30px rgba(126, 121, 201, 0.12);
-    --shadow-lg: 0 15px 40px rgba(126, 121, 201, 0.15);
+  /* 📏 Bordes y alertas */
+  --border: #D1CDEA;
+  --error: #E74C3C;
 
-    /* 🌈 Gradientes */
-    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-bg: linear-gradient(135deg, #FDFBFF 0%, #f6f5f7 50%, #FDFBFF 100%);
+  /* 🌫 Sombras */
+  --shadow-sm: 0 4px 20px rgba(74, 94, 170, 0.08);
+  --shadow-md: 0 8px 30px rgba(74, 94, 170, 0.12);
+  --shadow-lg: 0 15px 40px rgba(74, 94, 170, 0.15);
 
-    /* 📐 Espaciado */
-    --space-xs: 8px;
-    --space-sm: 12px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 32px;
-    --space-2xl: 40px;
+  /* 🌈 Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  --gradient-bg: linear-gradient(135deg, #FAFAFF 0%, #F6F5FA 50%, #FAFAFF 100%);
 
-    /* 🧱 Bordes */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
-    --radius-xl: 24px;
-    --radius-full: 50px;
+  /* 📐 Espaciado */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
 
-    /* ⏱️ Transiciones */
-    --transition: all 0.3s ease;
-    --transition-fast: all 0.2s ease;
+  /* 🧱 Bordes */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-full: 50px;
+
+  /* ⏱️ Transiciones */
+  --transition: all 0.3s ease;
+  --transition-fast: all 0.2s ease;
 }
+
 
 
 /* ===== RESET ===== */

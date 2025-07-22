@@ -12,4 +12,9 @@ class Empresa extends Model
     {
         return $this->hasMany(\App\Models\Cliente::class, 'negocio_id');
     }
+
+    public function trabajadores()
+    {
+        return $this->hasMany(\App\Models\Trabajador::class, 'negocio_id');
+    }
 }

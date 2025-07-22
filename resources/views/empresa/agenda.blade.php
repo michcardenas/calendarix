@@ -4,35 +4,36 @@
 $currentPage = 'agenda';
 $currentSubPage = null;
 $diasSemana = [
-1 => 'Lunes',
-2 => 'Martes',
-3 => 'Miércoles',
-4 => 'Jueves',
-5 => 'Viernes',
-6 => 'Sábado',
-7 => 'Domingo',
+    1 => 'Lunes',
+    2 => 'Martes',
+    3 => 'Miércoles',
+    4 => 'Jueves',
+    5 => 'Viernes',
+    6 => 'Sábado',
+    7 => 'Domingo',
 ];
 @endphp
 
 @section('content')
-<div class="min-h-screen px-6 py-10" style="background-color: #f6f5f7; color: #444478;">
+<div class="min-h-screen px-6 py-10" style="background-color: #f6f5f7; color: #3B4269;">
     <div class="max-w-7xl mx-auto space-y-10">
+
         {{-- Encabezado --}}
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold" style="color: #455392;">📆 Agenda</h1>
+            <h1 class="text-3xl font-bold" style="color: #4a5eaa;">📆 Agenda</h1>
             <a href="{{ route('empresa.agenda.configurar', $empresa->id) }}"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-md"
-                style="background-color: #7e79c9;">
+                style="background-color: #4a5eaa;">
                 Configurar horarios
             </a>
         </div>
 
         {{-- Horarios Laborales --}}
         <section>
-            <h2 class="text-lg font-semibold mb-3" style="color: #455392;">🕓 Horario Laboral</h2>
+            <h2 class="text-lg font-semibold mb-3" style="color: #4a5eaa;">🕓 Horario Laboral</h2>
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                 <table class="w-full text-sm text-gray-700">
-                    <thead style="background-color: #f6f5f7;" class="text-left text-xs uppercase" >
+                    <thead style="background-color: #f6f5f7;" class="text-left text-xs uppercase">
                         <tr>
                             <th class="px-4 py-3">Día</th>
                             <th class="px-4 py-3">Inicio</th>
@@ -62,9 +63,10 @@ $diasSemana = [
 
         {{-- Calendario --}}
         <section>
-            <h2 class="text-lg font-semibold mb-3" style="color: #455392;">📅 Calendario</h2>
+            <h2 class="text-lg font-semibold mb-3" style="color: #4a5eaa;">📅 Calendario</h2>
             <div id="calendar" class="bg-white rounded-xl shadow-sm p-4"></div>
         </section>
+
     </div>
 </div>
 @endsection
@@ -86,11 +88,11 @@ $diasSemana = [
     .fc .fc-toolbar-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #455392;
+        color: #4a5eaa;
     }
 
     .fc .fc-button {
-        background: #7e79c9;
+        background: #4a5eaa;
         border: none;
         padding: 0.4rem 0.8rem;
         border-radius: 6px;
@@ -101,7 +103,7 @@ $diasSemana = [
     }
 
     .fc .fc-button:hover {
-        background: #6c66b8;
+        background: #6C88C4;
     }
 
     .fc .fc-daygrid-event {
@@ -117,7 +119,7 @@ $diasSemana = [
 
     .fc .fc-col-header-cell-cushion,
     .fc .fc-daygrid-day-number {
-        color: #444478;
+        color: #3B4269;
         font-weight: 500;
     }
 
