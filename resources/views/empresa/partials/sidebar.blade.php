@@ -52,13 +52,21 @@
                     class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition {{ $currentSubPage === 'servicios' ? 'bg-[#6C88C4]/30 font-semibold' : '' }}">
                     <i class="fas fa-cut w-4 text-sm"></i> Servicios
                 </a>
-                <a href="{{ route('producto.crear') }}"
+                <a href="{{ route('producto.crear', ['id' => $empresa->id]) }}"
                     class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition {{ $currentSubPage === 'productos_crear' ? 'bg-[#6C88C4]/30 font-semibold' : '' }}">
                     <i class="fas fa-plus w-4 text-sm"></i> Crear producto
                 </a>
-                <a href="{{ route('producto.panel') }}"
+                <a href="{{ route('producto.panel', ['id' => $empresa->id]) }}"
                     class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition {{ $currentSubPage === 'productos_ver' ? 'bg-[#6C88C4]/30 font-semibold' : '' }}">
                     <i class="fas fa-eye w-4 text-sm"></i> Ver productos
+                </a>
+                <a href="{{ route('checkout.index', ['id' => $empresa->id]) }}"
+                    class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition {{ $currentSubPage === 'checkout' ? 'bg-[#6C88C4]/30 font-semibold' : '' }}">
+                    <i class="fas fa-shopping-cart w-4 text-sm"></i> Checkout
+                </a>
+                <a href="{{ route('checkout.pedidos', ['id' => $empresa->id]) }}"
+                    class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition {{ $currentSubPage === 'pedidos' ? 'bg-[#6C88C4]/30 font-semibold' : '' }}">
+                    <i class="fas fa-clipboard-list w-4 text-sm"></i> Pedidos
                 </a>
             </div>
 

@@ -152,7 +152,7 @@
         </div>
 
         <div class="text-right pt-6">
-            <a href="{{ route('producto.panel') }}"
+            <a href="{{ route('producto.panel', ['id' => $empresa->id]) }}"
                 class="inline-block px-5 py-2 text-sm text-[#3B4D9A] border border-gray-300 rounded hover:bg-gray-50 transition">Cancelar</a>
             <button type="submit"
                 class="inline-block px-5 py-2 ml-3 text-sm font-semibold bg-[#3B4D9A] text-white rounded hover:bg-[#2e3f84] transition">

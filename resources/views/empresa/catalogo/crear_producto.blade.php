@@ -1,6 +1,7 @@
 @extends('layouts.empresa')
 
 @section('content')
+
 <div class="max-w-7xl mx-auto px-6 py-10" style="background-color: #f6f5f7; border-radius: 1rem;">
 
     <h2 class="text-2xl font-bold text-[#6274c9] mb-1">🆕 Añadir nuevo producto</h2>
@@ -8,7 +9,7 @@
 
     <form action="{{ route('producto.store') }}" method="POST" enctype="multipart/form-data" id="form_producto_crear">
         @csrf
-
+        <input type="hidden" name="negocio_id" value="{{ $empresa->id }}">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {{-- Panel izquierdo --}}
             <div class="lg:col-span-2 space-y-6">
@@ -119,7 +120,7 @@
                 {{-- Botón --}}
                 <div class="text-right">
                     <button type="submit"
-                            class="bg-[#6274c9] hover:bg-[#4e5bb0] text-white font-medium text-sm px-6 py-2 rounded shadow transition">
+                        class="bg-[#6274c9] hover:bg-[#4e5bb0] text-white font-medium text-sm px-6 py-2 rounded shadow transition">
                         💾 Guardar producto
                     </button>
                 </div>
@@ -132,10 +133,10 @@
                     <div>
                         <label class="text-sm font-medium text-[#6B7280] block mb-2">Subir imágenes</label>
                         <input type="file" name="imagenes[]" multiple accept="image/*"
-                               class="block w-full text-sm text-[#4B5563] border border-gray-300 rounded cursor-pointer
+                            class="block w-full text-sm text-[#4B5563] border border-gray-300 rounded cursor-pointer
                                file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm
                                file:bg-[#e9ecfb] file:text-[#4e5bb0] hover:file:bg-[#d4d9f4]"
-                               onchange="previewMultipleImages(event)">
+                            onchange="previewMultipleImages(event)">
                     </div>
                     <div id="preview-container" class="mt-4 grid grid-cols-2 gap-4"></div>
                 </div>
@@ -147,21 +148,21 @@
 
 @push('scripts')
 <script>
-function previewMultipleImages(event) {
-    const container = document.getElementById('preview-container');
-    container.innerHTML = '';
-    Array.from(event.target.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'rounded shadow border border-gray-300';
-            img.style.height = '120px';
-            img.style.objectFit = 'cover';
-            container.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-}
+    function previewMultipleImages(event) {
+        const container = document.getElementById('preview-container');
+        container.innerHTML = '';
+        Array.from(event.target.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'rounded shadow border border-gray-300';
+                img.style.height = '120px';
+                img.style.objectFit = 'cover';
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 </script>
 @endpush

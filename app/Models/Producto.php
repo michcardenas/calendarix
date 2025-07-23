@@ -8,6 +8,7 @@ class Producto extends Model
 {
     protected $fillable = [
         'user_id',
+        'negocio_id', // ✅ agregado aquí
         'nombre',
         'codigo_barras',
         'marca',
@@ -33,4 +34,8 @@ class Producto extends Model
         return $this->hasMany(ImagenProducto::class);
     }
 
+    public function negocio()
+    {
+        return $this->belongsTo(\App\Models\Empresa\Empresa::class, 'negocio_id');
+    }
 }

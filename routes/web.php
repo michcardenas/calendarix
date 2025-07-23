@@ -22,6 +22,7 @@ use App\Http\Controllers\Empresa\NegocioConfiguracionController;
 use App\Http\Controllers\Empresa\CatalogoController;
 use App\Http\Controllers\Empresa\ProductoController;
 use App\Http\Controllers\Empresa\AgendaController;
+use App\Http\Controllers\CheckoutController;
 
 
 /*
@@ -80,7 +81,6 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/mis-empresas', [NegocioController::class, 'index'])->name('negocio.index');
     Route::get('/empresa/{id}', [NegocioController::class, 'show'])->name('negocio.show');
-
 });
 
 
@@ -124,7 +124,6 @@ Route::prefix('negocio')->group(function () {
 
     Route::get('/empresa/editor/{id}', [App\Http\Controllers\Empresa\EditorEmpresaController::class, 'index'])->name('empresa.editor');
     Route::post('/empresa/{id}/servicios/guardar', [ServicioEmpresaController::class, 'guardar'])->name('empresa.servicios.guardar');
-
 });
 
 
@@ -166,7 +165,7 @@ Route::prefix('empresa')->name('empresa.')->group(function () {
     Route::get('/{id}/configuracion', [EmpresaController::class, 'configuracion'])->name('configuracion');
     Route::get('/{id}/agenda', [EmpresaController::class, 'agenda'])->name('agenda');
     Route::get('/{id}/clientes', [EmpresaController::class, 'clientes'])->name('clientes');
-    
+
     // Rutas para las subsecciones de configuración (para el futuro)
     Route::prefix('{id}/configuracion')->name('configuracion.')->group(function () {
         Route::get('/negocio', [EmpresaController::class, 'configNegocio'])->name('negocio');
@@ -210,10 +209,11 @@ Route::post('/empresa/catalogo/categorias/guardar', [CatalogoController::class, 
 Route::post('/empresa/servicio/guardar', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
 
 //productos
-Route::get('/empresa/catalogo/producto/crear', [ProductoController::class, 'create'])->name('producto.crear');
+Route::get('/empresa/{id}/catalogo/producto/crear', [ProductoController::class, 'create'])
+    ->name('producto.crear');
 Route::post('/empresa/catalogo/producto', [ProductoController::class, 'store'])->name('producto.store');
 Route::post('/empresa/catalogo/producto/guardar', [ProductoController::class, 'guardar'])->name('producto.guardar');
-Route::get('/empresa/catalogo/productos', [ProductoController::class, 'panel'])->name('producto.panel');
+Route::get('/empresa/{id}/catalogo/productos', [ProductoController::class, 'panel'])->name('producto.panel');
 // Mostrar el formulario de edición
 Route::get('/empresa/catalogo/producto/{producto}/editar', [ProductoController::class, 'edit'])->name('producto.editar');
 // Guardar cambios del producto
@@ -225,7 +225,7 @@ Route::put('/empresa/catalogo/producto/{producto}/actualizar', [ProductoControll
 Route::get('/empresa/{empresa}/clientes', [EmpresaController::class, 'clientes'])
     ->name('empresa.clientes.index');
 
-    Route::prefix('empresa/{empresa}/clientes')->group(function () {
+Route::prefix('empresa/{empresa}/clientes')->group(function () {
     Route::post('/crear', [EmpresaController::class, 'storeCliente'])->name('empresa.clientes.store');
     Route::put('/{cliente}/editar', [EmpresaController::class, 'updateCliente'])->name('empresa.clientes.update');
     Route::delete('/{cliente}/eliminar', [EmpresaController::class, 'destroyCliente'])->name('empresa.clientes.destroy');
@@ -251,5 +251,11 @@ Route::post('/empresa/{id}/agenda/bloqueados', [AgendaController::class, 'guarda
 Route::get('/negocios/{id}-{slug}', [\App\Http\Controllers\NegocioController::class, 'show'])
     ->name('negocios.show');
 
+Route::get('/empresa/{id}/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/empresa/{id}/checkout/add', [CheckoutController::class, 'add'])->name('checkout.add');
+Route::post('/empresa/{id}/checkout/finalizar', [CheckoutController::class, 'finalizar'])->name('checkout.finalizar');
 
-require __DIR__.'/auth.php';
+Route::get('/empresa/{id}/catalogo/pedidos', [CheckoutController::class, 'pedidos'])->name('checkout.pedidos');
+Route::put('/checkout/{checkout}/estado', [CheckoutController::class, 'cambiarEstado'])->name('checkout.estado');
+
+require __DIR__ . '/auth.php';

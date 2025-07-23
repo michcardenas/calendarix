@@ -9,7 +9,7 @@
             <h2 class="text-2xl font-bold text-[#4a5eaa] mb-1">📦 Productos</h2>
             <p class="text-[#6C88C4] text-sm">Consulta y administra los productos registrados en tu catálogo.</p>
         </div>
-        <a href="{{ route('producto.crear') }}"
+        <a href="{{ route('producto.crear', ['id' => $empresa->id]) }}"
             class="inline-flex items-center px-4 py-2 bg-[#4a5eaa] text-white text-sm font-medium rounded shadow hover:opacity-90 transition">
             <i class="bi bi-plus-circle mr-2"></i> Nuevo producto
         </a>
