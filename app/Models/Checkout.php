@@ -10,7 +10,7 @@ use App\Models\Empresa\ServicioEmpresa;
 class Checkout extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'nombre',
         'email',
@@ -20,7 +20,6 @@ class Checkout extends Model
         'metodo_pago',
         'user_id',
         'negocio_id',
-        'total',
     ];
 
     // Relaciones
