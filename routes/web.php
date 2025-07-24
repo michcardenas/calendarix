@@ -23,7 +23,7 @@ use App\Http\Controllers\Empresa\CatalogoController;
 use App\Http\Controllers\Empresa\ProductoController;
 use App\Http\Controllers\Empresa\AgendaController;
 use App\Http\Controllers\CheckoutController;
-
+use App\Http\Controllers\CarritoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -257,5 +257,12 @@ Route::post('/empresa/{id}/checkout/finalizar', [CheckoutController::class, 'fin
 
 Route::get('/empresa/{id}/catalogo/pedidos', [CheckoutController::class, 'pedidos'])->name('checkout.pedidos');
 Route::put('/checkout/{checkout}/estado', [CheckoutController::class, 'cambiarEstado'])->name('checkout.estado');
+Route::post('/checkout/{id}/remove', [CheckoutController::class, 'remove'])->name('checkout.remove');
+Route::post('/carrito/agregar', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+Route::post('/checkout/{negocio}/redirigir', [CheckoutController::class, 'redirigir'])->name('checkout.redirigir');
+Route::get('/checkout/confirmar/{id}', [CheckoutController::class, 'confirmar'])->name('checkout.confirmar');
+Route::post('/checkout/confirmar/{id}', [CheckoutController::class, 'guardarDatos'])->name('checkout.guardar');
+Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
 
 require __DIR__ . '/auth.php';

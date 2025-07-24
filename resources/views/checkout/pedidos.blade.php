@@ -57,12 +57,12 @@ body::after {
             </div>
         @endif
 
-        @if(count($checkouts))
+        @if($checkouts->count())
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-[#6274c9] text-white">
                         <tr>
-                            <th class="px-4 py-2 text-left">Producto</th>
+                            <th class="px-4 py-2 text-left">Producto / Servicio</th>
                             <th class="px-4 py-2 text-center">Cantidad</th>
                             <th class="px-4 py-2 text-center">Precio Unitario</th>
                             <th class="px-4 py-2 text-center">Total</th>
@@ -74,33 +74,48 @@ body::after {
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
                         @foreach($checkouts as $checkout)
-                            <tr>
-                                <td class="px-4 py-2">{{ $checkout->producto->nombre ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center">{{ $checkout->cantidad }}</td>
-                                <td class="px-4 py-2 text-center">${{ number_format($checkout->precio_unitario, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2 text-center font-semibold">${{ number_format($checkout->precio_total, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2 text-center">{{ $checkout->metodo_pago }}</td>
-                                <td class="px-4 py-2 text-center">
-                                    <span class="px-2 py-1 rounded text-xs {{ $checkout->estado_pago === 'pagado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                                        {{ ucfirst($checkout->estado_pago) }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-2 text-center">{{ $checkout->created_at->format('d/m/Y') }}</td>
-                                <td class="px-4 py-2 text-center">
-                                    @if($checkout->estado_pago === 'pendiente')
-                                        <form action="{{ route('checkout.estado', $checkout->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit"
-                                                    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs">
-                                                Marcar como pagado
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="text-green-700 text-xs">✓ Pagado</span>
+                            @foreach($checkout->detalles as $detalle)
+                                <tr>
+                                    <td class="px-4 py-2">
+                                        {{ $detalle->producto->nombre ?? $detalle->servicio->nombre ?? '-' }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center">{{ $detalle->cantidad }}</td>
+                                    <td class="px-4 py-2 text-center">
+                                        ${{ number_format($detalle->precio_unitario, 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center font-semibold">
+                                        ${{ number_format($detalle->precio_total, 0, ',', '.') }}
+                                    </td>
+
+                                    @if ($loop->first)
+                                        <td class="px-4 py-2 text-center" rowspan="{{ $checkout->detalles->count() }}">
+                                            {{ $checkout->metodo_pago }}
+                                        </td>
+                                        <td class="px-4 py-2 text-center" rowspan="{{ $checkout->detalles->count() }}">
+                                            <span class="px-2 py-1 rounded text-xs {{ $checkout->estado_pago === 'pagado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                                {{ ucfirst($checkout->estado_pago) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-2 text-center" rowspan="{{ $checkout->detalles->count() }}">
+                                            {{ $checkout->created_at->format('d/m/Y') }}
+                                        </td>
+                                        <td class="px-4 py-2 text-center" rowspan="{{ $checkout->detalles->count() }}">
+                                            @if($checkout->estado_pago === 'pendiente')
+                                                <form action="{{ route('checkout.estado', $checkout->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs">
+                                                        Marcar como pagado
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="text-green-700 text-xs">✓ Pagado</span>
+                                            @endif
+                                        </td>
                                     @endif
-                                </td>
-                            </tr>
+                                </tr>
+                            @endforeach
                         @endforeach
                     </tbody>
                 </table>

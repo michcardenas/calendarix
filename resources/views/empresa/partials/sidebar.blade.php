@@ -44,6 +44,12 @@
                 <i class="fas fa-cog w-4 text-sm"></i> Configuración
             </a>
 
+            <a href="{{ route('negocios.show', ['id' => $empresa->id, 'slug' => Str::slug($empresa->neg_nombre)]) }}"
+                target="_blank"
+                class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition">
+                <i class="fas fa-globe w-4 text-sm"></i> Ver perfil público
+            </a>
+
             {{-- Subgrupo catálogo --}}
             <div class="mt-3 text-xs text-[#3B4269] uppercase tracking-wider px-3">Catálogo</div>
 
@@ -88,11 +94,7 @@
                     class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition {{ $currentSubPage === 'procedencia' ? 'bg-[#6C88C4]/30 font-semibold' : '' }}">
                     <i class="fas fa-map-marked-alt w-4 text-sm"></i> Procedencia
                 </a>
-                <a href="{{ route('negocios.show', ['id' => $empresa->id, 'slug' => Str::slug($empresa->neg_nombre)]) }}"
-                    target="_blank"
-                    class="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#6C88C4]/20 transition">
-                    <i class="fas fa-globe w-4 text-sm"></i> Ver perfil público
-                </a>
+
             </div>
 
             <div class="mt-3 text-xs text-[#3B4269] uppercase tracking-wider px-3">Opciones</div>
