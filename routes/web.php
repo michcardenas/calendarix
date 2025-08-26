@@ -123,7 +123,6 @@ Route::prefix('negocio')->group(function () {
     Route::delete('/negocios/{negocio}', [NegocioController::class, 'destroy'])->name('negocio.destroy');
 
     Route::get('/empresa/editor/{id}', [App\Http\Controllers\Empresa\EditorEmpresaController::class, 'index'])->name('empresa.editor');
-    Route::post('/empresa/{id}/servicios/guardar', [ServicioEmpresaController::class, 'guardar'])->name('empresa.servicios.guardar');
 });
 
 
@@ -150,8 +149,6 @@ Route::get('/bloques/{tipo}', [App\Http\Controllers\Empresa\BloquesController::c
 Route::get('/empresa/{id}/servicios', [App\Http\Controllers\Empresa\ServicioEmpresaController::class, 'mostrar'])
     ->name('empresa.servicios.mostrar');
 
-Route::post('/empresa/{id}/servicios', [App\Http\Controllers\Empresa\ServicioEmpresaController::class, 'guardar'])
-    ->name('empresa.servicios.guardar');
 /*
 |--------------------------------------------------------------------------
 | INCLUYE RUTAS DE AUTENTICACIÓN DE LARAVEL BREEZE
@@ -166,7 +163,7 @@ Route::prefix('empresa')->name('empresa.')->group(function () {
     Route::get('/{id}/agenda', [EmpresaController::class, 'agenda'])->name('agenda');
     Route::get('/{id}/clientes', [EmpresaController::class, 'clientes'])->name('clientes');
 
-    // Rutas para las subsecciones de configuración (para el futuro)
+    // Rutas para las subsecciones de configuración
     Route::prefix('{id}/configuracion')->name('configuracion.')->group(function () {
         Route::get('/negocio', [EmpresaController::class, 'configNegocio'])->name('negocio');
         Route::get('/citas', [EmpresaController::class, 'configCitas'])->name('citas');
@@ -176,7 +173,25 @@ Route::prefix('empresa')->name('empresa.')->group(function () {
         Route::get('/formularios', [EmpresaController::class, 'configFormularios'])->name('formularios');
         Route::get('/pagos', [EmpresaController::class, 'configPagos'])->name('pagos');
     });
+
+    // 📦 Rutas para Catálogo de Servicios
+    Route::prefix('{id}/catalogo')->name('catalogo.')->group(function () {
+        // Servicios
+        Route::get('/servicios', [CatalogoController::class, 'menuServicios'])->name('servicios');
+        Route::get('/servicios/crear', [CatalogoController::class, 'formCrearServicio'])->name('servicios.crear');
+        Route::post('/servicios', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
+        
+
+        Route::get('/servicios/{servicio}/editar', [CatalogoController::class, 'editarServicio'])->name('servicios.editar');
+        Route::put('/servicios/{servicio}', [CatalogoController::class, 'actualizarServicio'])->name('servicios.actualizar');
+        Route::post('/servicios/{servicio}/duplicar', [CatalogoController::class, 'duplicarServicio'])->name('servicios.duplicar');
+        Route::delete('/servicios/{servicio}', [CatalogoController::class, 'eliminarServicio'])->name('servicios.eliminar');
+
+        // Categorías
+        Route::post('/categorias', [CatalogoController::class, 'guardarCategoria'])->name('categorias.guardar');
+    });
 });
+
 
 // Rutas para la configuración de empresa
 Route::get('/empresa/{id}/configuracion/negocio', [EmpresaController::class, 'negocio'])
@@ -195,18 +210,6 @@ Route::get('/empresa/configuracion/procedencia', [NegocioConfiguracionController
 Route::put('/empresa/configuracion/procedencia/{id}', [NegocioConfiguracionController::class, 'actualizarProcedencia'])->name('empresa.configuracion.procedencia.update');
 Route::post('/empresa/configuracion/procedencia', [NegocioConfiguracionController::class, 'actualizarProcedencia'])
     ->name('empresa.configuracion.procedencia.update');
-Route::get('/empresa/negocio/catalogo/servicios', [CatalogoController::class, 'menuServicios'])->name('catalogo.servicios');
-Route::post('/empresa/servicio/guardar', [CatalogoController::class, 'guardarServicio'])->name('catalogo.servicio.guardar');
-Route::post('/empresa/negocio/catalogo/servicios', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
-Route::post('/catalogo/servicios/guardar', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
-Route::get('/catalogo/servicios/{id}/editar', [CatalogoController::class, 'editarServicio'])->name('servicios.editar');
-Route::put('/catalogo/servicios/{id}', [CatalogoController::class, 'actualizarServicio'])->name('servicios.actualizar');
-Route::post('/catalogo/servicios/{id}/duplicar', [CatalogoController::class, 'duplicarServicio'])->name('servicios.duplicar');
-Route::delete('/catalogo/servicios/{id}', [CatalogoController::class, 'eliminarServicio'])->name('servicios.eliminar');
-Route::get('/empresa/servicio/crear', [CatalogoController::class, 'formCrearServicio'])->name('servicios.crear');
-Route::post('/empresa/catalogo/categorias/guardar', [CatalogoController::class, 'guardarCategoria'])
-    ->name('catalogo.categorias.guardar');
-Route::post('/empresa/servicio/guardar', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
 
 //productos
 Route::get('/empresa/{id}/catalogo/producto/crear', [ProductoController::class, 'create'])
@@ -259,10 +262,22 @@ Route::get('/empresa/{id}/catalogo/pedidos', [CheckoutController::class, 'pedido
 Route::put('/checkout/{checkout}/estado', [CheckoutController::class, 'cambiarEstado'])->name('checkout.estado');
 Route::post('/checkout/{id}/remove', [CheckoutController::class, 'remove'])->name('checkout.remove');
 Route::post('/carrito/agregar', [CarritoController::class, 'agregar'])->name('carrito.agregar');
-Route::post('/checkout/{negocio}/redirigir', [CheckoutController::class, 'redirigir'])->name('checkout.redirigir');
 Route::get('/checkout/confirmar/{id}', [CheckoutController::class, 'confirmar'])->name('checkout.confirmar');
 Route::post('/checkout/confirmar/{id}', [CheckoutController::class, 'guardarDatos'])->name('checkout.guardar');
+Route::post('/checkout/{empresa}/finalizar', [CheckoutController::class, 'finalizar'])
+    ->name('checkout.finalizar');  // abre modal (sin BD)
+
+Route::post('/checkout/{empresa}/confirmar', [CheckoutController::class, 'confirmar'])
+    ->name('checkout.confirmar');  // crea en BD
+
+Route::get('/checkout/{pedido}/success', fn($id) => view('checkout.success', compact('id')))
+    ->name('checkout.success');
 Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::get('/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
+Route::post('/negocios/{negocio}/agenda', [AgendaController::class, 'store'])
+     ->name('agenda.store');
 
+Route::get('/negocios/{negocio}/agenda/citas-dia', [AgendaController::class, 'citasDia'])
+    ->name('agenda.citas-dia');
+     
 require __DIR__ . '/auth.php';

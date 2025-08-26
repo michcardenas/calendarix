@@ -7,169 +7,201 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Negocio;
 use App\Models\Empresa\ServicioEmpresa;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class CatalogoController extends Controller
 {
-    public function menuServicios()
+    /**
+     * Carga el negocio por id y valida que pertenezca al usuario autenticado.
+     */
+    private function negocioOrAbort(int $id): Negocio
     {
-        $negocio = \App\Models\Negocio::where('user_id', Auth::id())->first();
-
-        if (!$negocio) {
-            // Redirecciona al usuario a una vista de configuración o muestra un mensaje
-            return redirect()->route('dashboard')->with('error', 'Primero debes registrar tu negocio.');
+        $negocio = Negocio::findOrFail($id);
+        if ((int)$negocio->user_id !== (int)Auth::id()) {
+            abort(403, 'No tienes permisos sobre este negocio.');
         }
+        return $negocio;
+    }
 
-        $categorias = is_string($negocio->neg_categorias)
-            ? json_decode($negocio->neg_categorias, true)
-            : ($negocio->neg_categorias ?? []);
+    /**
+     * Retorna las categorías como array desde el campo JSON del negocio.
+     */
+    private function categorias(Negocio $negocio): array
+    {
+        if (is_string($negocio->neg_categorias) && $negocio->neg_categorias !== '') {
+            return json_decode($negocio->neg_categorias, true) ?: [];
+        }
+        return is_array($negocio->neg_categorias) ? $negocio->neg_categorias : [];
+    }
 
-        $servicios = ServicioEmpresa::where('negocio_id', $negocio->id)->get();
+    /**
+     * GET: Listado de servicios y agrupación por categoría.
+     * Ruta: GET /empresa/{id}/catalogo/servicios (nombre: empresa.catalogo.servicios)
+     */
+    public function menuServicios(int $id)
+    {
+        $empresa  = $this->negocioOrAbort($id);
+        $categorias = $this->categorias($empresa);
+
+        $servicios = ServicioEmpresa::where('negocio_id', $empresa->id)->get();
         $serviciosPorCategoria = $servicios->groupBy('categoria');
 
         return view('empresa.catalogo.menu-servicios', [
-            'categorias' => $categorias,
-            'empresa' => $negocio,
-            'currentPage' => 'catalogo',
-            'currentSubPage' => 'servicios',
-            'servicios' => $servicios,
+            'empresa'               => $empresa,
+            'categorias'            => $categorias,
+            'servicios'             => $servicios,
             'serviciosPorCategoria' => $serviciosPorCategoria,
+            'currentPage'           => 'catalogo',
+            'currentSubPage'        => 'servicios',
         ]);
     }
 
-    public function guardarCategoria(Request $request)
+    /**
+     * GET: Formulario para crear servicio.
+     * Ruta: GET /empresa/{id}/catalogo/servicios/crear (nombre: empresa.catalogo.servicios.crear)
+     */
+    public function formCrearServicio(int $id)
     {
-        Log::debug('📝 Ingresando a guardarCategoria');
+        $empresa    = $this->negocioOrAbort($id);
+        $categorias = $this->categorias($empresa);
 
-        $request->validate([
-            'nueva_categoria' => 'required|string|max:255',
+        return view('empresa.catalogo.crear-servicio', [
+            'empresa'        => $empresa,
+            'categorias'     => $categorias,
+            'currentPage'    => 'catalogo',
+            'currentSubPage' => 'servicios',
         ]);
-        Log::debug('✅ Validación pasada', ['nueva_categoria' => $request->nueva_categoria]);
-
-        $negocio = \App\Models\Negocio::where('user_id', auth()->id())->first();
-        if (!$negocio) {
-            Log::error('❌ No se encontró el negocio del usuario', ['user_id' => auth()->id()]);
-            return redirect()->back()->with('error', 'No se encontró el negocio del usuario.');
-        }
-
-        Log::debug('🔍 Negocio encontrado', ['negocio_id' => $negocio->id]);
-
-        $categorias = is_string($negocio->neg_categorias)
-            ? json_decode($negocio->neg_categorias, true)
-            : [];
-
-        Log::debug('📂 Categorías actuales', ['categorias' => $categorias]);
-
-        $categorias[] = $request->nueva_categoria;
-
-        $negocio->neg_categorias = json_encode($categorias);
-        $negocio->save();
-
-        Log::info('✅ Categoría añadida correctamente', [
-            'categorias_actualizadas' => $negocio->neg_categorias,
-        ]);
-
-        return redirect()->back()->with('success', 'Categoría añadida correctamente.');
     }
 
-    public function guardarServicio(Request $request)
+    /**
+     * POST: Guardar servicio.
+     * Ruta: POST /empresa/{id}/catalogo/servicios (nombre: empresa.catalogo.servicios.guardar)
+     */
+    public function guardarServicio(Request $request, int $id)
     {
+        $empresa = $this->negocioOrAbort($id);
+
         $request->validate([
-            'nombre' => 'required',
-            'descripcion' => 'nullable',
-            'precio' => 'required|numeric',
-            'categoria_existente' => 'nullable|string',
-            'categoria_nueva' => 'nullable|string|max:255',
+            'nombre'              => 'required|string|max:255',
+            'descripcion'         => 'nullable|string',
+            'precio'              => 'required|numeric',
+            'categoria_existente' => 'nullable|string|max:255',
+            'categoria_nueva'     => 'nullable|string|max:255',
         ]);
-
-        $negocio = \App\Models\Negocio::where('user_id', auth()->id())->first();
-
-        if (!$negocio) {
-            return redirect()->route('dashboard')->with('error', 'Debes configurar primero tu negocio.');
-        }
 
         $categoria = $request->categoria_nueva ?: $request->categoria_existente;
 
         ServicioEmpresa::create([
-            'negocio_id' => $negocio->id,
-            'nombre' => $request->nombre,
+            'negocio_id'  => $empresa->id,
+            'nombre'      => $request->nombre,
             'descripcion' => $request->descripcion,
-            'precio' => $request->precio,
-            'categoria' => $categoria,
+            'precio'      => $request->precio,
+            'categoria'   => $categoria,
         ]);
 
-        // Guardar nueva categoría en el JSON del negocio si aplica
+        // Persistir nueva categoría si aplica
         if ($request->filled('categoria_nueva')) {
-            $categorias = is_string($negocio->neg_categorias)
-                ? json_decode($negocio->neg_categorias, true)
-                : [];
-
-            if (!in_array($categoria, $categorias)) {
-                $categorias[] = $categoria;
-                $negocio->neg_categorias = json_encode($categorias);
-                $negocio->save();
+            $cats = $this->categorias($empresa);
+            if (!in_array($categoria, $cats, true)) {
+                $cats[] = $categoria;
+                $empresa->neg_categorias = json_encode(array_values(array_unique($cats)));
+                $empresa->save();
             }
         }
 
-        return redirect()->route('catalogo.servicios')->with('success', 'Servicio creado correctamente.');
+        return redirect()
+            ->route('empresa.catalogo.servicios', $empresa->id)
+            ->with('success', 'Servicio creado correctamente.');
     }
 
-    public function editarServicio($id)
-    {
-        $servicio = ServicioEmpresa::findOrFail($id);
-        return view('empresa.catalogo.editar-servicio', compact('servicio'));
-    }
-
-    public function actualizarServicio(Request $request, $id)
+    /**
+     * POST: Guardar categoría.
+     * Ruta: POST /empresa/{id}/catalogo/categorias (nombre: empresa.catalogo.categorias.guardar)
+     */
+    public function guardarCategoria(Request $request, int $id)
     {
         $request->validate([
-            'nombre' => 'required',
-            'precio' => 'required|numeric',
-            'categoria' => 'required',
+            'nueva_categoria' => 'required|string|max:255',
         ]);
 
-        $servicio = ServicioEmpresa::findOrFail($id);
-        $servicio->update($request->only('nombre', 'descripcion', 'precio', 'categoria'));
+        $empresa = $this->negocioOrAbort($id);
+        $cats    = $this->categorias($empresa);
+        $cats[]  = $request->nueva_categoria;
 
-        return redirect()->route('catalogo.servicios')->with('success', 'Servicio actualizado.');
+        $empresa->neg_categorias = json_encode(array_values(array_unique($cats)));
+        $empresa->save();
+
+        return back()->with('success', 'Categoría añadida correctamente.');
     }
 
-    public function duplicarServicio($id)
+    /**
+     * GET: Editar servicio (scoped al negocio).
+     * Ruta: GET /empresa/{id}/catalogo/servicios/{servicio}/editar (nombre: empresa.catalogo.servicios.editar)
+     */
+    public function editarServicio(int $id, int $servicio)
     {
-        $original = ServicioEmpresa::findOrFail($id);
+        $empresa   = $this->negocioOrAbort($id);
+        $servicioM = ServicioEmpresa::where('negocio_id', $empresa->id)->findOrFail($servicio);
+        $categorias = $this->categorias($empresa);
+
+        return view('empresa.catalogo.editar-servicio', [
+            'empresa'        => $empresa,
+            'servicio'       => $servicioM,
+            'categorias'     => $categorias,
+            'currentPage'    => 'catalogo',
+            'currentSubPage' => 'servicios',
+        ]);
+    }
+
+    /**
+     * PUT: Actualizar servicio (scoped al negocio).
+     * Ruta: PUT /empresa/{id}/catalogo/servicios/{servicio} (nombre: empresa.catalogo.servicios.actualizar)
+     */
+    public function actualizarServicio(Request $request, int $id, int $servicio)
+    {
+        $empresa = $this->negocioOrAbort($id);
+
+        $request->validate([
+            'nombre'      => 'required|string|max:255',
+            'precio'      => 'required|numeric',
+            'categoria'   => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+        ]);
+
+        $servicioM = ServicioEmpresa::where('negocio_id', $empresa->id)->findOrFail($servicio);
+        $servicioM->update($request->only('nombre', 'descripcion', 'precio', 'categoria'));
+
+        return redirect()
+            ->route('empresa.catalogo.servicios', $empresa->id)
+            ->with('success', 'Servicio actualizado.');
+    }
+
+    /**
+     * POST: Duplicar servicio (scoped al negocio).
+     * Ruta: POST /empresa/{id}/catalogo/servicios/{servicio}/duplicar (nombre: empresa.catalogo.servicios.duplicar)
+     */
+    public function duplicarServicio(int $id, int $servicio)
+    {
+        $empresa  = $this->negocioOrAbort($id);
+        $original = ServicioEmpresa::where('negocio_id', $empresa->id)->findOrFail($servicio);
+
         $duplicado = $original->replicate();
         $duplicado->nombre = $duplicado->nombre . ' (copia)';
+        $duplicado->negocio_id = $empresa->id;
         $duplicado->save();
 
         return back()->with('success', 'Servicio duplicado.');
     }
 
-    public function eliminarServicio($id)
+    /**
+     * DELETE: Eliminar servicio (scoped al negocio).
+     * Ruta: DELETE /empresa/{id}/catalogo/servicios/{servicio} (nombre: empresa.catalogo.servicios.eliminar)
+     */
+    public function eliminarServicio(int $id, int $servicio)
     {
-        $servicio = ServicioEmpresa::findOrFail($id);
-        $servicio->delete();
+        $empresa   = $this->negocioOrAbort($id);
+        $servicioM = ServicioEmpresa::where('negocio_id', $empresa->id)->findOrFail($servicio);
+        $servicioM->delete();
 
         return back()->with('success', 'Servicio eliminado.');
-    }
-
-    public function formCrearServicio()
-    {
-        $negocio = \App\Models\Negocio::where('user_id', Auth::id())->first();
-
-        if (!$negocio) {
-            return redirect()->route('dashboard')->with('error', 'Debes configurar primero tu negocio.');
-        }
-
-        $categorias = is_string($negocio->neg_categorias)
-            ? json_decode($negocio->neg_categorias, true)
-            : [];
-
-        return view('empresa.catalogo.crear-servicio', [
-            'categorias' => $categorias,
-            'empresa' => $negocio,
-            'currentPage' => 'catalogo',
-            'currentSubPage' => 'servicios',
-        ]);
     }
 }

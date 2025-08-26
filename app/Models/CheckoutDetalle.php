@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Empresa\ServicioEmpresa;
+use App\Models\Producto; // ✅ importa el modelo si lo usas aquí
 
 class CheckoutDetalle extends Model
 {
@@ -19,6 +20,12 @@ class CheckoutDetalle extends Model
         'cantidad',
         'precio_unitario',
         'precio_total',
+    ];
+
+    protected $casts = [
+        'cantidad'        => 'int',
+        'precio_unitario' => 'decimal:2',
+        'precio_total'    => 'decimal:2',
     ];
 
     // Relaciones

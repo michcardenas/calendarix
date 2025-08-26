@@ -1,6 +1,6 @@
 <div class="modal fade" id="modalNuevoServicio" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="{{ route('servicios.guardar') }}" class="modal-content" style="background-color: #f6f5f7;">
+        <form method="POST" action="{{ route('empresa.catalogo.servicios.guardar', $negocio->id) }}" class="modal-content" style="background-color: #f6f5f7;">
             @csrf
             <div class="modal-header" style="background-color: #4a5eaa;">
                 <h5 class="modal-title text-white font-bold">Añadir nuevo servicio</h5>

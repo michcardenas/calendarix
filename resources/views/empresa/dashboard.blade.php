@@ -30,21 +30,41 @@
         <div class="stats">
             <div class="card">
                 <h4>Total de Citas</h4>
-                <p>12</p>
+                <p>{{ number_format($totalCitas ?? 0) }}</p>
             </div>
             <div class="card">
                 <h4>Servicios Activos</h4>
-                <p>5</p>
+                <p>{{ number_format($serviciosActivos ?? 0) }}</p>
             </div>
             <div class="card">
                 <h4>Miembros del equipo</h4>
-                <p>3</p>
+                <p>{{ number_format($miembrosEquipo ?? 0) }}</p>
             </div>
         </div>
 
         <div class="card">
             <h4>Próximas citas</h4>
-            <p>Aquí podrías mostrar la lista de próximas reservas o acciones importantes.</p>
+
+            @if(($proximasCitas ?? collect())->isEmpty())
+                <p>No hay citas próximas.</p>
+            @else
+                <ul style="margin:0; padding-left:1rem; list-style:disc;">
+                    @foreach($proximasCitas as $cita)
+                        <li style="margin: .35rem 0;">
+                            <strong>{{ $cita->nombre_cliente ?? '—' }}</strong>
+                            — {{ \Illuminate\Support\Carbon::parse($cita->fecha)->format('d/m/Y') }}
+                            • {{ \Illuminate\Support\Str::of($cita->hora_inicio)->limit(5,'') }}
+                            @if(!empty($cita->hora_fin))
+                                – {{ \Illuminate\Support\Str::of($cita->hora_fin)->limit(5,'') }}
+                            @endif
+                            • <em>{{ ucfirst($cita->estado ?? 'pendiente') }}</em>
+                            @if(!empty($cita->notas))
+                                — {{ \Illuminate\Support\Str::limit($cita->notas, 80) }}
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
 </div>
 

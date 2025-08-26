@@ -1,66 +1,3 @@
-/**
- * ===============================================
- * CALENDARIX CLIENT DASHBOARD JAVASCRIPT
- * ===============================================
- */
-
-// Datos de ejemplo para el dashboard (en producción vendría del backend)
-const clxData = {
-    user: {
-        name: document.querySelector('.clx-user-name')?.textContent || 'Usuario',
-        email: document.querySelector('.clx-user-email')?.textContent || 'email@ejemplo.com',
-        avatar: document.querySelector('.clx-user-avatar')?.textContent || 'U'
-    },
-    appointments: [
-        {
-            id: 1,
-            time: '10:00',
-            service: 'Corte y peinado',
-            business: 'Salón Bella Vista',
-            status: 'confirmed',
-            date: '2025-06-20'
-        },
-        {
-            id: 2,
-            time: '15:30',
-            service: 'Manicure y pedicure',
-            business: 'Nails & Beauty',
-            status: 'pending',
-            date: '2025-06-21'
-        },
-        {
-            id: 3,
-            time: '11:00',
-            service: 'Masaje relajante',
-            business: 'Spa Zen',
-            status: 'confirmed',
-            date: '2025-06-22'
-        }
-    ],
-    recommendations: [
-        {
-            id: 1,
-            name: 'Estética Luna',
-            service: 'Tratamientos faciales',
-            rating: 4.8,
-            distance: '0.8 km'
-        },
-        {
-            id: 2,
-            name: 'Barbería Clásica',
-            service: 'Cortes masculinos',
-            rating: 4.9,
-            distance: '1.2 km'
-        },
-        {
-            id: 3,
-            name: 'Yoga Studio',
-            service: 'Clases de yoga',
-            rating: 4.7,
-            distance: '2.1 km'
-        }
-    ]
-};
 
 /**
  * ===============================================
@@ -312,27 +249,6 @@ function clxAddInteractiveEffects() {
  * ===============================================
  */
 
-function clxNavigateTo(page) {
-    // Rutas de Laravel - ajustar según tu configuración
-    const routes = {
-        'dashboard': '/dashboard',
-        'appointments': '/appointments',
-        'businesses': '/businesses',
-        'favorites': '/favorites',
-        'history': '/history',
-        'profile': '/profile',
-        'notifications': '/notifications'
-    };
-
-    if (routes[page]) {
-        // Navegación real con Laravel
-        window.location.href = routes[page];
-    } else {
-        // Simulación para desarrollo
-        console.log(`🔄 Navegación simulada a: ${page}`);
-        clxShowToast(`Navegando a ${page}...`, 'info');
-    }
-}
 
 function clxShowBookingModal() {
     // En producción, aquí abririás un modal real

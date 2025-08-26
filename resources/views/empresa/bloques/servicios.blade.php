@@ -18,7 +18,7 @@
             </div>
             
             <div class="modal-body">
-                <form action="{{ route('empresa.servicios.guardar', $negocio->id) }}" method="POST" id="form-servicios">
+                <form action="{{ route('empresa.catalogo.servicios.guardar', $negocio->id) }}" method="POST" id="form-servicios">
                     @csrf
                     
                     <div id="contenedor-servicios">

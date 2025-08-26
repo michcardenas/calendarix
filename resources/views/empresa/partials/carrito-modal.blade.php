@@ -9,12 +9,12 @@
             <button id="cerrarModalCarrito" class="bg-gray-300 hover:bg-gray-400 text-sm px-4 py-2 rounded">Cerrar</button>
         </div>
 
-        <form id="formCheckout" method="POST" action="{{ route('checkout.redirigir', $empresa->id) }}">
+        <form id="formCheckout" method="POST" action="{{ route('checkout.finalizar', $empresa->id) }}">
             @csrf
             <input type="hidden" name="carrito" id="carritoJsonInput">
             <button type="submit"
                 class="w-full bg-[#6274c9] hover:bg-[#4e5bb0] text-white text-sm py-2 rounded shadow font-medium">
-                🧾 Ir al Checkout
+                🧾 Realizar Pedido
             </button>
         </form>
     </div>

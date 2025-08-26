@@ -111,13 +111,14 @@
                                                         data-bs-target="#modalEditarServicio{{ $servicio->id }}">
                                                     Editar
                                                 </button>
-                                                <form method="POST" action="{{ route('servicios.duplicar', $servicio->id) }}">
-                                                    @csrf
+<form method="POST" action="{{ route('empresa.catalogo.servicios.duplicar', ['id' => $empresa->id, 'servicio' => $servicio->id]) }}">
+    @csrf
+
                                                     <button type="submit" class="block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left">Duplicar</button>
                                                 </form>
                                                 <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Reserva rápida</a>
                                                 <hr class="my-1">
-                                                <form method="POST" action="{{ route('servicios.eliminar', $servicio->id) }}">
+                                                <form method="POST" action="{{ route('empresa.catalogo.servicios.eliminar', ['id' => $empresa->id, 'servicio' => $servicio->id]) }}">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left">
                                                         Eliminar

@@ -1,6 +1,6 @@
 <div class="modal fade" id="modalEditarServicio{{ $servicio->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="{{ route('servicios.actualizar', $servicio->id) }}" class="modal-content" style="background-color: #f6f5f7;">
+        <form method="POST" action="{{ route('empresa.catalogo.servicios.actualizar', ['id' => $empresa->id, 'servicio' => $servicio->id]) }}" class="modal-content" style="background-color: #f6f5f7;">
             @csrf @method('PUT')
 
             <div class="modal-header" style="background-color: #4a5eaa;">

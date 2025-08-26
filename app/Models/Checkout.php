@@ -28,6 +28,15 @@ class Checkout extends Model
         return $this->belongsTo(Empresa::class, 'negocio_id');
     }
 
+    // en App\Models\Checkout
+    public function getTotalAttribute()
+    {
+        return $this->relationLoaded('detalles')
+            ? $this->detalles->sum('precio_total')
+            : $this->detalles()->sum('precio_total');
+    }
+
+
     public function producto()
     {
         return $this->belongsTo(Producto::class, 'producto_id');

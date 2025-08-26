@@ -91,77 +91,57 @@ class CheckoutController extends Controller
         return back()->with('success', 'Agregado al carrito.');
     }
 
-    public function finalizar(Request $request, $id)
+// 1) Mostrar modal (sin guardar en BD)
+    public function finalizar(Request $request, $negocioId)
     {
-        $carrito = Session::get('carrito', []);
-        Log::debug('Contenido del carrito:', $carrito);
-
-        if (empty($carrito)) {
-            Log::warning('Carrito vacío al intentar finalizar.');
-            return back()->with('error', 'El carrito está vacío.');
-        }
-
-        $total = 0;
-
-        foreach ($carrito as $index => $item) {
-            // Soportar 'precio' o 'precio_unitario'
-            $precioUnitario = $item['precio_unitario'] ?? $item['precio'] ?? null;
-
-            if (!isset($item['cantidad']) || $precioUnitario === null) {
-                Log::error("Artículo inválido en índice $index: " . json_encode($item));
-                return back()->with('error', 'Hay un artículo inválido en el carrito.');
+        // Carrito desde JSON o sesión
+        $items = [];
+        if ($request->filled('carrito')) {
+            try {
+                $items = json_decode($request->input('carrito'), true, 512, JSON_THROW_ON_ERROR);
+            } catch (\Throwable $e) {
+                Log::error('Error JSON carrito: '.$e->getMessage());
             }
-
-            $subtotal = $precioUnitario * $item['cantidad'];
-            Log::debug("Artículo $index subtotal: $subtotal", $item);
-            $total += $subtotal;
+        }
+        if (empty($items)) {
+            $items = Session::get('carrito', []); // por si ya lo tenías en sesión
+        }
+        if (empty($items)) {
+            return response()->json(['ok'=>false,'errors'=>['general'=>['El carrito está vacío.']]], 422);
         }
 
-        Log::info("Total calculado del carrito: $total");
+        // Calcula total (precio_total = precio_unitario * cantidad)
+        $total = 0;
+        foreach ($items as $i => $it) {
+            $pu   = (float)($it['precio_unitario'] ?? $it['precio'] ?? null);
+            $cant = (int)  ($it['cantidad'] ?? 0);
+            if ($pu <= 0 || $cant <= 0) {
+                return response()->json(['ok'=>false,'errors'=>['general'=>["Ítem #$i inválido."]]], 422);
+            }
+            $total += $pu * $cant;
+        }
 
-        $pedido = Checkout::create([
-            'negocio_id' => $id,
-            'user_id' => auth()->id(),
-            'metodo_pago' => 'pendiente',
-            'estado_pago' => 'pendiente',
-            'total' => $total,
+        // Guarda en sesión para usar en confirmar()
+        Session::put('checkout_preview', [
+            'negocio_id' => $negocioId,
+            'items'      => $items,
+            'total'      => $total, // solo referencia; el total real se recalcula luego
         ]);
 
-        Log::info("Pedido creado con ID: {$pedido->id}");
+        // Renderiza modal con items + total (sin persistir)
+        $html = view('checkout.partials._modal_checkout', [
+            'items' => $items,
+            'total' => $total,
+            'negocioId' => $negocioId,
+        ])->render();
 
-        foreach ($carrito as $index => $item) {
-            $precioUnitario = $item['precio_unitario'] ?? $item['precio'] ?? 0;
-            $cantidad = $item['cantidad'] ?? 1;
-
-            $detalle = [
-                'checkout_id'     => $pedido->id,
-                'producto_id'     => $item['tipo'] === 'producto' ? ($item['id'] ?? null) : null,
-                'servicio_id'     => $item['tipo'] === 'servicio' ? ($item['id'] ?? null) : null,
-                'cantidad'        => $cantidad,
-                'precio_unitario' => $precioUnitario,
-                'precio_total'    => $precioUnitario * $cantidad,
-            ];
-
-            Log::debug("Insertando detalle $index:", $detalle);
-            CheckoutDetalle::create($detalle);
-        }
-
-        Session::forget('carrito');
-        Log::info("Carrito limpiado y redirigiendo a checkout.confirmar con ID {$pedido->id}");
-
-        return redirect()->route('checkout.confirmar', $pedido->id);
+        return response()->json(['ok'=>true,'html'=>$html]);
     }
 
-    public function confirmar($id)
-    {
-        $pedido = Checkout::with('detalles.producto', 'detalles.servicio')->findOrFail($id);
-        return view('checkout.confirmar', compact('pedido'));
-    }
-
-    public function guardarDatos(Request $request, $id)
+    // 2) Finalizar (aquí recién se crea en BD)
+    public function confirmar(Request $request, $negocioId)
     {
         try {
-            // Validar entrada del formulario
             $request->validate([
                 'nombre'    => 'required|string',
                 'email'     => 'required|email',
@@ -169,35 +149,120 @@ class CheckoutController extends Controller
                 'direccion' => 'required|string',
             ]);
 
-            // Buscar el pedido con relaciones
-            $pedido = Checkout::with('detalles.producto', 'detalles.servicio')->findOrFail($id);
+            $preview = Session::get('checkout_preview');
+            if (!$preview || ($preview['negocio_id'] ?? null) != $negocioId) {
+                return response()->json(['ok'=>false,'errors'=>['general'=>['La sesión de checkout expiró.']]], 422);
+            }
 
-            // Guardar los datos del cliente
+            $items = $preview['items'] ?? [];
+            if (empty($items)) {
+                return response()->json(['ok'=>false,'errors'=>['general'=>['El carrito está vacío.']]], 422);
+            }
+
+            // Crea pedido SIN campo total (lo calculamos siempre desde detalles)
+            $pedido = \App\Models\Checkout::create([
+                'negocio_id'  => $negocioId,
+                'user_id'     => auth()->id(),
+                'metodo_pago' => 'pendiente',
+                'estado_pago' => 'pendiente',
+                'nombre'      => $request->nombre,
+                'email'       => $request->email,
+                'telefono'    => $request->telefono,
+                'direccion'   => $request->direccion,
+            ]);
+
+            // Insertar detalles: precio_unitario original y precio_total = unit * cantidad
+            foreach ($items as $it) {
+                $tipo = $it['tipo'] ?? null;
+                $idRef = $it['id'] ?? null;
+                $cant = (int)($it['cantidad'] ?? 0);
+
+                // 🔒 Recomendado: recuperar precio real desde BD
+                if ($tipo === 'producto') {
+                    $p = \App\Models\Producto::findOrFail($idRef);
+                    $pu = (float)$p->precio;
+                    $productoId = $p->id;
+                    $servicioId = null;
+                } elseif ($tipo === 'servicio') {
+                    $s = \App\Models\Empresa\ServicioEmpresa::findOrFail($idRef);
+                    $pu = (float)$s->precio;
+                    $productoId = null;
+                    $servicioId = $s->id;
+                } else {
+                    return response()->json(['ok'=>false,'errors'=>['general'=>['Tipo de ítem inválido.']]], 422);
+                }
+
+                \App\Models\CheckoutDetalle::create([
+                    'checkout_id'     => $pedido->id,
+                    'producto_id'     => $productoId,
+                    'servicio_id'     => $servicioId,
+                    'cantidad'        => $cant,
+                    'precio_unitario' => $pu,
+                    'precio_total'    => $pu * $cant,
+                ]);
+            }
+
+            // Limpia solo el preview (y si usabas carrito en sesión)
+            Session::forget('checkout_preview');
+            Session::forget('carrito');
+
+            // (Opcional) correo de confirmación
+            // Mail::to($pedido->email)->send(new PedidoConfirmado($pedido));
+
+            return response()->json([
+                'ok'       => true,
+                'redirect' => route('checkout.success', $pedido->id),
+                'message'  => '¡Pedido confirmado!'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            return response()->json(['ok'=>false,'errors'=>$ve->errors()], 422);
+        } catch (\Throwable $e) {
+            \Log::error('Error confirmar pedido: '.$e->getMessage());
+            return response()->json(['ok'=>false,'errors'=>['general'=>['Error al finalizar el pedido.']]], 500);
+        }
+    }
+
+
+    public function guardarDatos(Request $request, $pedidoId)
+    {
+        try {
+            $request->validate([
+                'nombre'    => 'required|string',
+                'email'     => 'required|email',
+                'telefono'  => 'required|string',
+                'direccion' => 'required|string',
+            ]);
+
+            $pedido = Checkout::with('detalles.producto', 'detalles.servicio')->findOrFail($pedidoId);
             $pedido->fill($request->only('nombre', 'email', 'telefono', 'direccion'));
             $pedido->estado_pago = 'pendiente';
             $pedido->save();
 
-            // Verificar si el email quedó guardado correctamente
-            if (!filter_var($pedido->email, FILTER_VALIDATE_EMAIL)) {
-                Log::error('❌ Email inválido después de guardar:', ['email' => $pedido->email, 'pedido_id' => $pedido->id]);
-                return back()->with('error', 'Correo inválido. No se pudo enviar confirmación.');
-            }
-
-            // Enviar el correo
+            // Enviar correo (opcionalmente cola)
             Mail::to($pedido->email)->send(new PedidoConfirmado($pedido));
-            Log::info('✅ Pedido confirmado y correo enviado correctamente.', ['pedido_id' => $pedido->id, 'email' => $pedido->email]);
 
-            return redirect()->route('checkout.success', $pedido->id)
-                ->with('success', '¡Pedido confirmado y correo enviado!');
-        } catch (\Exception $e) {
-            Log::error('❌ Error al confirmar pedido: ' . $e->getMessage(), [
-                'pedido_id' => $id,
-                'error' => $e->getMessage(),
+            // Limpia el carrito SOLO tras confirmar datos
+            Session::forget('carrito');
+
+            return response()->json([
+                'ok'       => true,
+                'redirect' => route('checkout.success', $pedido->id),
+                'message'  => '¡Pedido confirmado y correo enviado!'
             ]);
-
-            return back()->with('error', 'Hubo un error al confirmar tu pedido. Intenta de nuevo.');
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            return response()->json([
+                'ok'     => false,
+                'errors' => $ve->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('❌ Error guardarDatos: ' . $e->getMessage(), ['pedido_id' => $pedidoId]);
+            return response()->json([
+                'ok'     => false,
+                'errors' => ['general' => ['Hubo un error al confirmar tu pedido. Intenta de nuevo.']]
+            ], 500);
         }
     }
+
 
 
     public function pedidos($id)

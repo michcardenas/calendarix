@@ -17,7 +17,6 @@
         z-index: 0;
         pointer-events: none;
     }
-
     body::before {
         background:
             radial-gradient(circle 160px at 10% 20%, rgba(126, 121, 201, 0.28), transparent 60%),
@@ -30,7 +29,6 @@
             radial-gradient(circle 140px at 80% 80%, rgba(90, 78, 187, 0.3), transparent 60%);
         animation: bubblesBefore 18s ease-in-out infinite;
     }
-
     body::after {
         background:
             radial-gradient(circle 130px at 15% 50%, rgba(126, 121, 201, 0.2), transparent 60%),
@@ -43,16 +41,8 @@
             radial-gradient(circle 130px at 60% 85%, rgba(90, 78, 187, 0.25), transparent 60%);
         animation: bubblesAfter 22s ease-in-out infinite reverse;
     }
-
-    @keyframes bubblesBefore {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-30px); }
-    }
-
-    @keyframes bubblesAfter {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(30px); }
-    }
+    @keyframes bubblesBefore { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+    @keyframes bubblesAfter  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(30px); } }
 </style>
 
 {{-- Botón carrito flotante --}}
@@ -63,9 +53,9 @@
     </button>
 </div>
 
-{{-- Modal del carrito (puede moverse a partial luego) --}}
+{{-- Modales --}}
 @include('empresa.partials.carrito-modal', ['empresa' => $negocio])
-
+@include('empresa.partials.modal-agendar', ['negocio' => $negocio])
 
 <div class="py-10 relative z-10">
     <div class="max-w-6xl mx-auto">
@@ -170,6 +160,19 @@
 
             {{-- Horarios y Calendario --}}
             <div class="lg:col-span-2 space-y-6">
+                {{-- 📆 Citas del día (NUEVO) --}}
+                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-[#4a5eaa]">📆 Citas del día</h3>
+                        <input type="date" id="fechaCitas" class="border rounded-lg px-3 py-2"
+                               value="{{ now()->toDateString() }}">
+                    </div>
+                    <div id="citasDiaVacio" class="text-gray-500 hidden">No hay citas para esta fecha.</div>
+                    <ul id="listaCitasDia" class="divide-y">
+                        {{-- se llena por JS --}}
+                    </ul>
+                </div>
+
                 {{-- Horarios --}}
                 <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
                     <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">⏰ Horarios de Atención</h3>
@@ -210,146 +213,373 @@
         </div>
     </div>
 </div>
+
+{{-- 📦 Horarios + NegocioID para JS --}}
+@php
+    $horariosMap = $negocio->horarios
+        ->where('activo', 1)
+        ->groupBy('dia_semana')
+        ->map(function ($items) {
+            return $items->map(function ($h) {
+                return [
+                    'inicio' => $h->hora_inicio ? substr($h->hora_inicio, 0, 5) : null,
+                    'fin'    => $h->hora_fin    ? substr($h->hora_fin, 0, 5) : null,
+                ];
+            })->values();
+        })
+        ->toArray();
+@endphp
+
+<div id="horariosData" data-map='@json($horariosMap)'></div>
+<div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
+
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // 🗓️ Calendario
-    const calendarEl = document.getElementById('calendarioBloqueos');
-    if (calendarEl) {
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            height: 500,
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: ''
-            },
-            events: [
-                @foreach($negocio->bloqueos as $bloqueo)
-                {
-                    title: 'Bloqueado',
-                    start: '{{ \Carbon\Carbon::parse($bloqueo->fecha_bloqueada)->format('Y-m-d') }}',
-                    allDay: true,
-                    color: '#dc2626'
-                },
-                @endforeach
-            ]
-        });
-        calendar.render();
-    }
+  // ================== ⏱️ Horarios desde data-atributo ==================
+  // <div id="horariosData" data-map='{"1":[{"inicio":"08:00","fin":"17:00"}], ...}'></div>
+  const horariosEl = document.getElementById('horariosData');
+  const HORARIOS   = horariosEl ? JSON.parse(horariosEl.dataset.map || '{}') : {};
+  window.NEGOCIO_HORARIOS = HORARIOS;
 
-    // 🛒 Carrito
-    let carrito = JSON.parse(localStorage.getItem('carritoNegocio')) || [];
-    const modal = document.getElementById('modalCarrito');
-    const lista = document.getElementById('carritoItems');
-    const total = document.getElementById('carritoTotal');
-    const count = document.getElementById('carritoCount');
-    const inputHidden = document.getElementById('carritoJsonInput');
+  // ================== 🔎 Datos de agenda (negocio) ==================
+  // Asegúrate de tener en la vista: <div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
+  const agendaEl   = document.getElementById('agendaData');
+  const NEGOCIO_ID = agendaEl?.dataset?.negocioId || null;
 
-    function guardarCarrito() {
-        localStorage.setItem('carritoNegocio', JSON.stringify(carrito));
-    }
+  // ================== 📆 Citas del día (panel opcional) ==================
+  const fechaInput = document.getElementById('fechaCitas');
+  const ulCitas    = document.getElementById('listaCitasDia');
+  const vacioLabel = document.getElementById('citasDiaVacio');
 
-    function actualizarCarrito() {
-        lista.innerHTML = '';
-        let suma = 0;
+  // helpers de fecha
+  const pad2  = n => String(n).padStart(2, '0');
+  const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
-        if (carrito.length === 0) {
-            lista.innerHTML = `<li class="text-gray-500 text-sm text-center py-4">Tu carrito está vacío.</li>`;
-        }
+  async function cargarCitasDelDia(fecha) {
+    if (!NEGOCIO_ID) return; // si no hay negocio, no hacemos nada
+    try {
+      const res  = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-dia?fecha=${fecha}`);
+      const json = await res.json();
 
-        carrito.forEach((item, index) => {
-            const subtotal = item.precio * item.cantidad;
-            suma += subtotal;
-
+      // --- Panel: lista de citas ---
+      if (ulCitas && vacioLabel) {
+        ulCitas.innerHTML = '';
+        const items = (json.ok && Array.isArray(json.items)) ? json.items : [];
+        if (!items.length) {
+          vacioLabel.classList.remove('hidden');
+        } else {
+          vacioLabel.classList.add('hidden');
+          for (const c of items) {
             const li = document.createElement('li');
-            li.className = 'py-2 flex justify-between items-center border-b border-gray-100';
+            li.className = 'py-3 flex items-start justify-between';
             li.innerHTML = `
-                <div>
-                    <span class="font-medium">${item.nombre}</span>
-                    <span class="ml-2 text-gray-500 text-sm">($${item.precio.toLocaleString()} x ${item.cantidad})</span><br>
-                    <span class="text-xs text-gray-600">Subtotal: $${subtotal.toLocaleString()}</span>
+              <div>
+                <div class="font-semibold text-gray-800">${c.nombre_cliente ?? 'Cita'}</div>
+                <div class="text-sm text-gray-600">
+                  ${c.hora_inicio} – ${c.hora_fin}${c.estado ? ` · <span class="uppercase">${c.estado}</span>` : ''}
                 </div>
-                <button data-index="${index}" class="eliminar-item text-red-500 hover:text-red-700 text-sm">
-                    Quitar
-                </button>
+                ${c.notas ? `<div class="text-sm text-gray-500 mt-1">${c.notas}</div>` : ''}
+              </div>
             `;
-            lista.appendChild(li);
-        });
-
-        total.textContent = '$' + suma.toLocaleString();
-        count.textContent = carrito.length;
-        if (inputHidden) inputHidden.value = JSON.stringify(carrito);
-        guardarCarrito();
-    }
-
-    // ➕ Agregar al carrito
-    document.querySelectorAll('.agregar-carrito').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const nuevoItem = {
-                id: this.dataset.id,
-                nombre: this.dataset.nombre,
-                precio: parseFloat(this.dataset.precio),
-                tipo: this.dataset.tipo,
-                cantidad: parseInt(this.dataset.cantidad || '1')
-            };
-
-            // Si ya existe, suma la cantidad
-            const existente = carrito.find(item => item.id === nuevoItem.id && item.tipo === nuevoItem.tipo);
-            if (existente) {
-                existente.cantidad += nuevoItem.cantidad;
-            } else {
-                carrito.push(nuevoItem);
-            }
-
-            actualizarCarrito();
-
-            const toast = document.createElement('div');
-            toast.textContent = `${nuevoItem.nombre} agregado al carrito`;
-            toast.className = 'fixed bottom-6 right-6 bg-black/80 text-white text-sm px-4 py-2 rounded shadow-lg z-50 animate-bounce';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        });
-    });
-
-    // 🧹 Eliminar del carrito
-    lista.addEventListener('click', function (e) {
-        if (e.target.classList.contains('eliminar-item')) {
-            const index = parseInt(e.target.dataset.index);
-            carrito.splice(index, 1);
-            actualizarCarrito();
+            ulCitas.appendChild(li);
+          }
         }
+      }
+
+      // --- Calendario: pintar eventos de citas del día ---
+      if (window.calendar && Array.isArray(json.events)) {
+        // Elimina eventos previos de origen 'citas'
+        window.calendar.getEvents()
+          .filter(ev => ev.extendedProps?.source === 'citas')
+          .forEach(ev => ev.remove());
+
+        // Agrega los nuevos
+        for (const ev of json.events) {
+          // asegurar bandera de origen
+          ev.extendedProps = Object.assign({}, ev.extendedProps, { source: 'citas' });
+          window.calendar.addEvent(ev);
+        }
+      }
+    } catch (e) {
+      console.error('Error cargando citas del día:', e);
+    }
+  }
+
+  // ================== 🗓️ Calendario (bloqueos + integración con citas del día) ==================
+  const calendarEl = document.getElementById('calendarioBloqueos');
+  let calendar;
+
+  if (calendarEl) {
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'es',
+      height: 500,
+      headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
+
+      // Eventos iniciales (bloqueos)
+      events: [
+        @foreach($negocio->bloqueos as $bloqueo)
+        {
+          title: 'Bloqueado',
+          start: '{{ \Carbon\Carbon::parse($bloqueo->fecha_bloqueada)->format('Y-m-d') }}',
+          allDay: true,
+          color: '#dc2626',
+          extendedProps: { blocked: true }
+        },
+        @endforeach
+      ],
+
+      // 👉 Click en un día
+      dateClick(info) {
+        const ymd = toYMD(info.date);
+
+        // 1) Actualiza el panel de "Citas del día" (mostrar SIEMPRE aunque sea pasado/bloqueado)
+        if (fechaInput) {
+          fechaInput.value = ymd;
+          cargarCitasDelDia(ymd);
+        }
+
+        // 2) Reglas para agendar (si tienes modal y quieres abrirlo)
+        const today = new Date(); today.setHours(0,0,0,0);
+        const clicked = new Date(info.date); clicked.setHours(0,0,0,0);
+
+        // No permitir pasado
+        if (clicked < today) return;
+
+        // No permitir día bloqueado (comparando en Y-m-d)
+        const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
+        if (blocked) return;
+
+        // Aviso si no hay horarios activos para ese día (1=Lun ... 7=Dom)
+        const jsDay = clicked.getDay() === 0 ? 7 : clicked.getDay();
+        if (!window.NEGOCIO_HORARIOS[jsDay] || window.NEGOCIO_HORARIOS[jsDay].length === 0) {
+          console.warn('No hay horarios activos para el día', jsDay, window.NEGOCIO_HORARIOS);
+        }
+
+        // Abrir modal de agenda con fecha (si existe tu función)
+        if (typeof window.openAgendarModal === 'function') {
+          window.openAgendarModal(ymd);
+        } else {
+          // Fallback mínimo
+          const modal = document.getElementById('modalAgendar');
+          const fechaHidden = document.getElementById('agendarFecha');
+          const fechaLabel  = document.getElementById('agendarFechaLabel');
+          if (fechaHidden) fechaHidden.value = ymd;
+          if (fechaLabel)  fechaLabel.value  = `${ymd.split('-')[1]}/${ymd.split('-')[2]}/${ymd.split('-')[0]}`;
+          modal?.classList.remove('hidden');
+          modal?.classList.add('flex');
+        }
+      },
     });
 
-    // 🪟 Abrir modal
-    document.getElementById('carritoButton')?.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-    });
+    calendar.render();
+    window.calendar = calendar;
 
-    // ❌ Cerrar modal
-    document.getElementById('cerrarModalCarrito')?.addEventListener('click', () => {
-        modal.classList.add('hidden');
-    });
+    // Carga inicial de citas del día (hoy) si existe el input y el negocio
+    if (fechaInput && NEGOCIO_ID) {
+      const hoy = fechaInput.value || toYMD(new Date());
+      cargarCitasDelDia(hoy);
+    }
+  } else {
+    // Si no hay calendario pero sí panel de citas, igual cargamos el listado
+    if (fechaInput && NEGOCIO_ID) {
+      cargarCitasDelDia(fechaInput.value || toYMD(new Date()));
+    }
+  }
 
-    // ✅ Enviar carrito al checkout
-    const formCheckout = document.getElementById('formCheckout');
-    if (formCheckout) {
-        formCheckout.addEventListener('submit', function (e) {
-            if (carrito.length === 0) {
-                e.preventDefault();
-                alert('Tu carrito está vacío.');
-            } else {
-                inputHidden.value = JSON.stringify(carrito);
-                localStorage.removeItem('carritoNegocio');
-            }
-        });
+  // ================== 🛒 Carrito ==================
+  let carrito = JSON.parse(localStorage.getItem('carritoNegocio')) || [];
+  const modalCarrito = document.getElementById('modalCarrito');
+  const lista = document.getElementById('carritoItems');
+  const total = document.getElementById('carritoTotal');
+  const count = document.getElementById('carritoCount');
+  const inputHidden = document.getElementById('carritoJsonInput');
+
+  function guardarCarrito() { localStorage.setItem('carritoNegocio', JSON.stringify(carrito)); }
+
+  function actualizarCarrito() {
+    if (!lista) return;
+    lista.innerHTML = '';
+    let suma = 0;
+
+    if (carrito.length === 0) {
+      lista.innerHTML = `<li class="text-gray-500 text-sm text-center py-4">Tu carrito está vacío.</li>`;
     }
 
-    // 🔄 Cargar carrito al iniciar
-    actualizarCarrito();
+    carrito.forEach((item, index) => {
+      const subtotal = (Number(item.precio) || 0) * (Number(item.cantidad) || 0);
+      suma += subtotal;
+
+      const li = document.createElement('li');
+      li.className = 'py-2 flex justify-between items-center border-b border-gray-100';
+      li.innerHTML = `
+        <div>
+          <span class="font-medium">${item.nombre}</span>
+          <span class="ml-2 text-gray-500 text-sm">($${Number(item.precio).toLocaleString()} x ${item.cantidad})</span><br>
+          <span class="text-xs text-gray-600">Subtotal: $${subtotal.toLocaleString()}</span>
+        </div>
+        <button data-index="${index}" class="eliminar-item text-red-500 hover:text-red-700 text-sm">Quitar</button>
+      `;
+      lista.appendChild(li);
+    });
+
+    if (total) total.textContent = '$' + suma.toLocaleString();
+    if (count) count.textContent = carrito.length;
+    if (inputHidden) inputHidden.value = JSON.stringify(carrito);
+    guardarCarrito();
+  }
+
+  // ➕ Agregar al carrito
+  document.querySelectorAll('.agregar-carrito').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const nuevoItem = {
+        id: this.dataset.id,
+        nombre: this.dataset.nombre,
+        precio: parseFloat(this.dataset.precio),
+        tipo: this.dataset.tipo,
+        cantidad: parseInt(this.dataset.cantidad || '1')
+      };
+
+      const existente = carrito.find(item => item.id === nuevoItem.id && item.tipo === nuevoItem.tipo);
+      if (existente) existente.cantidad += nuevoItem.cantidad;
+      else carrito.push(nuevoItem);
+
+      actualizarCarrito();
+
+      const toast = document.createElement('div');
+      toast.textContent = `${nuevoItem.nombre} agregado al carrito`;
+      toast.className = 'fixed bottom-6 right-6 bg-black/80 text-white text-sm px-4 py-2 rounded shadow-lg z-50 animate-bounce';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    });
+  });
+
+  // 🧹 Eliminar del carrito
+  lista?.addEventListener('click', function (e) {
+    if (e.target.classList.contains('eliminar-item')) {
+      const index = parseInt(e.target.dataset.index);
+      carrito.splice(index, 1);
+      actualizarCarrito();
+    }
+  });
+
+  // 🪟 Abrir/Cerrar modal carrito
+  document.getElementById('carritoButton')?.addEventListener('click', () => {
+    modalCarrito?.classList.remove('hidden');
+  });
+  document.getElementById('cerrarModalCarrito')?.addEventListener('click', () => {
+    modalCarrito?.classList.add('hidden');
+  });
+
+  // =============== MODAL CHECKOUT (AJAX) ===============
+  let checkoutMount = document.getElementById('checkoutModalMount');
+  if (!checkoutMount) {
+    checkoutMount = document.createElement('div');
+    checkoutMount.id = 'checkoutModalMount';
+    document.body.appendChild(checkoutMount);
+  }
+
+  function openCheckoutModal() {
+    const m = document.getElementById('modalCheckout');
+    if (m) { m.classList.remove('hidden'); m.classList.add('flex'); bindCheckoutModalEvents(); }
+  }
+  function closeCheckoutModal() {
+    const m = document.getElementById('modalCheckout');
+    if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+  }
+  function bindCheckoutModalEvents() {
+    const modal = document.getElementById('modalCheckout');
+    if (!modal) return;
+
+    modal.querySelectorAll('[data-close-checkout]').forEach(btn => btn.addEventListener('click', closeCheckoutModal));
+
+    const innerForm = modal.querySelector('#checkoutGuardarForm');
+    if (!innerForm) return;
+
+    innerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = modal.querySelector('#checkoutErrors');
+      if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
+      modal.querySelectorAll('[data-error-for]').forEach(p => { p.classList.add('hidden'); p.textContent = ''; });
+
+      const fd = new FormData(innerForm);
+      try {
+        const res = await fetch(innerForm.action, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': fd.get('_token') },
+          body: fd
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 422 && data.errors) {
+            Object.entries(data.errors).forEach(([name, msgs]) => {
+              const p = modal.querySelector(`[data-error-for="${name}"]`);
+              if (p) { p.textContent = msgs[0]; p.classList.remove('hidden'); }
+            });
+            if (data.errors.general && errBox) {
+              errBox.textContent = data.errors.general[0]; errBox.classList.remove('hidden');
+            }
+          } else if (errBox) {
+            errBox.textContent = 'Error inesperado al finalizar el pedido.'; errBox.classList.remove('hidden');
+          }
+          return;
+        }
+
+        if (data.ok && data.redirect) {
+          localStorage.removeItem('carritoNegocio');
+          window.location.href = data.redirect;
+        }
+      } catch (err) {
+        if (errBox) {
+          errBox.textContent = 'No se pudo enviar el formulario. Verifica tu conexión.';
+          errBox.classList.remove('hidden');
+        }
+      }
+    });
+  }
+
+  // ✅ Enviar carrito al checkout (AJAX) y abrir modal de resumen + formulario
+  const formCheckout = document.getElementById('formCheckout');
+  if (formCheckout) {
+    formCheckout.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      if (carrito.length === 0) {
+        alert('Tu carrito está vacío.');
+        return;
+      }
+
+      if (inputHidden) inputHidden.value = JSON.stringify(carrito);
+
+      const fd = new FormData(formCheckout);
+      try {
+        const res = await fetch(formCheckout.action, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          body: fd
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          alert((data?.errors?.general && data.errors.general[0]) || 'No se pudo preparar el checkout.');
+          return;
+        }
+
+        checkoutMount.innerHTML = data.html;
+        openCheckoutModal();
+        modalCarrito?.classList.add('hidden');
+      } catch (err) {
+        alert('Error de red preparando el checkout.');
+      }
+    });
+  }
+
+  // 🔄 Cargar carrito al iniciar
+  actualizarCarrito();
 });
 </script>
 @endpush
