@@ -1,9 +1,6 @@
 {{-- CSS específico del dashboard cliente --}}
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/cliente/cliente-dashboard.css') }}">
-
-
 
 {{-- Container principal del dashboard --}}
 <div id="clx-dash-container" class="clx-container">
@@ -26,7 +23,6 @@
             </h1>
         </div>
 
-
         <div class="clx-user-info">
             <div class="clx-user-avatar">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
@@ -35,68 +31,70 @@
             <div class="clx-user-email">{{ auth()->user()->email }}</div>
         </div>
 
-       <nav>
-  <ul class="clx-nav">
-    <li class="clx-nav-item">
-      <a href="{{ route('dashboard') }}" class="clx-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home clx-nav-icon"></i> Dashboard
-      </a>
-    </li>
+        <nav>
+            <ul class="clx-nav">
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link active" data-clx-page="dashboard">
+                        <i class="fas fa-home clx-nav-icon"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="appointments">
+                        <i class="fas fa-calendar-check clx-nav-icon"></i>
+                        Mis Citas
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="businesses">
+                        <i class="fas fa-store clx-nav-icon"></i>
+                        Negocios
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="favorites">
+                        <i class="fas fa-heart clx-nav-icon"></i>
+                        Favoritos
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="history">
+                        <i class="fas fa-history clx-nav-icon"></i>
+                        Historial
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="profile">
+                        <i class="fas fa-user-cog clx-nav-icon"></i>
+                        Mi Perfil
+                    </a>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-toggle="empresa-submenu">
+                        <i class="fas fa-briefcase clx-nav-icon"></i>
+                        Mi Empresa <i class="fas fa-chevron-down float-end"></i>
+                    </a>
 
-    <li class="clx-nav-item">
-      <a href="{{ route('negocio.index') }}" class="clx-nav-link">
-        <i class="fas fa-store clx-nav-icon"></i> Negocios
-      </a>
-    </li>
-
-    <li class="clx-nav-item">
-      <a href="{{ route('profile.edit') }}" class="clx-nav-link">
-        <i class="fas fa-user-cog clx-nav-icon"></i> Mi Perfil
-      </a>
-    </li>
-
-    {{-- si no tienes rutas aún, deja # o crea las rutas --}}
-    <li class="clx-nav-item">
-      <a href="#" class="clx-nav-link">
-        <i class="fas fa-calendar-check clx-nav-icon"></i> Mis Citas
-      </a>
-    </li>
-    <li class="clx-nav-item">
-      <a href="#" class="clx-nav-link">
-        <i class="fas fa-heart clx-nav-icon"></i> Favoritos
-      </a>
-    </li>
-    <li class="clx-nav-item">
-      <a href="#" class="clx-nav-link">
-        <i class="fas fa-history clx-nav-icon"></i> Historial
-      </a>
-    </li>
-
-    <li class="clx-nav-item">
-      <a href="#" class="clx-nav-link" data-clx-toggle="empresa-submenu">
-        <i class="fas fa-briefcase clx-nav-icon"></i> Mi Empresa
-        <i class="fas fa-chevron-down float-end"></i>
-      </a>
-      <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
-        @forelse ($misEmpresas as $empresa)
-          <li>
-            <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
-              {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
-            </a>
-          </li>
-        @empty
-          <li><span class="text-sm text-gray-400">Sin empresas aún</span></li>
-        @endforelse
-      </ul>
-    </li>
-
-    <li class="clx-nav-item">
-      <a href="#" class="clx-nav-link">
-        <i class="fas fa-bell clx-nav-icon"></i> Notificaciones
-      </a>
-    </li>
-  </ul>
-</nav>
+                    <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
+                        @forelse ($misEmpresas as $empresa)
+                        <li>
+                            <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
+                                {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
+                            </a>
+                        </li>
+                        @empty
+                        <li><span class="text-sm text-gray-400">Sin empresas aún</span></li>
+                        @endforelse
+                    </ul>
+                </li>
+                <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="notifications">
+                        <i class="fas fa-bell clx-nav-icon"></i>
+                        Notificaciones
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </aside>
 
     <!-- Contenido principal -->
@@ -123,7 +121,7 @@
                     </button>
                 </div>
                 <div class="text-center mt-6">
-                    <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-md transition">
+                    <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary">
                         Registra tu negocio
                     </a>
                 </div>
@@ -136,7 +134,7 @@
                 <div class="clx-stat-icon primary">
                     <i class="fas fa-calendar-check"></i>
                 </div>
-                <div class="clx-stat-number" id="clx-stat-appointments">{{ number_format($citasMes ?? 0) }}</div>
+                <div class="clx-stat-number" id="clx-stat-appointments">{{ number_format($citosMes ?? $citasMes ?? 0) }}</div>
                 <div class="clx-stat-label">Citas este mes</div>
             </div>
             <div class="clx-stat-card">
@@ -165,30 +163,7 @@
                 </div>
                 <div class="clx-card-body">
                     <div id="clx-appointments-list">
-                        @if(($proximasCitas ?? collect())->isEmpty())
-                            <p class="text-sm text-gray-500">No tienes próximas citas.</p>
-                        @else
-                            <ul class="clx-list">
-                                @foreach($proximasCitas as $cita)
-                                    <li class="clx-list-item">
-                                        <div class="clx-list-title">
-                                            {{ $cita->negocio->neg_nombre_comercial ?? '—' }}
-                                        </div>
-                                        <div class="clx-list-subtitle">
-                                            {{ \Illuminate\Support\Carbon::parse($cita->fecha)->format('d/m/Y') }}
-                                            • {{ \Illuminate\Support\Str::of($cita->hora_inicio)->limit(5,'') }}
-                                            @if(!empty($cita->hora_fin))
-                                                – {{ \Illuminate\Support\Str::of($cita->hora_fin)->limit(5,'') }}
-                                            @endif
-                                            • <em>{{ ucfirst($cita->estado ?? 'pendiente') }}</em>
-                                        </div>
-                                        @if(!empty($cita->notas))
-                                            <div class="clx-list-note">{{ \Illuminate\Support\Str::limit($cita->notas, 80) }}</div>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
+                        <!-- Se llena dinámicamente con JS -->
                     </div>
                 </div>
             </div>
@@ -203,18 +178,7 @@
                 </div>
                 <div class="clx-card-body">
                     <div id="clx-recommendations-list">
-                        @if(($recomendados ?? collect())->isEmpty())
-                            <p class="text-sm text-gray-500">Aún no hay recomendaciones.</p>
-                        @else
-                            <div class="clx-reco-grid">
-                                @foreach($recomendados as $neg)
-                                    <a class="clx-reco-card" href="{{ route('empresa.dashboard', $neg->id) }}">
-                                        <div class="clx-reco-title">{{ $neg->neg_nombre_comercial ?? 'Negocio' }}</div>
-                                        <div class="clx-reco-subtitle">{{ $neg->neg_categoria ?? 'Servicio' }}</div>
-                                    </a>
-                                @endforeach
-                            </div>
-                        @endif
+                        <!-- Se llena dinámicamente con JS -->
                     </div>
                 </div>
             </div>
@@ -236,6 +200,133 @@
     });
 </script>
 
-
 {{-- JavaScript específico del dashboard cliente --}}
 <script src="{{ asset('js/cliente/cliente-dashboard.js') }}"></script>
+
+<script>
+/**
+ * 1) Empaquetar datos del servidor -> window.clxData
+ */
+@php
+  // --- Citas próximas (sin normalizar estados) ---
+  $appointmentsData = ($proximasCitas ?? collect())->map(function($c) {
+      // Fecha (string -> Carbon)
+      $fechaStr = $c->fecha ?? null;
+      $fecha    = $fechaStr ? \Illuminate\Support\Carbon::parse($fechaStr) : null;
+
+      // Formateo de horas HH:mm desde TIME (HH:mm:ss) o string
+      $fmtTime = function ($t) {
+          if (!$t) return null;
+          $s = (string) $t;
+          return substr($s, 0, 5); // "16:10:00" -> "16:10"
+      };
+      $inicio = $fmtTime($c->hora_inicio ?? null);
+      $fin    = $fmtTime($c->hora_fin ?? null);
+
+      // Estado: solo 4 canónicos; fallback a 'pendiente'
+      $raw       = strtolower(trim((string)($c->estado ?? '')));
+      $permitidos = ['pendiente','confirmada','cancelada','completada'];
+      $statusEs  = in_array($raw, $permitidos, true) ? $raw : 'pendiente';
+
+      return [
+          // Texto compacto para cards/listas
+          'time'     => ($fecha ? $fecha->format('d/m/Y') : '—') . ($inicio ? ' • '.$inicio.($fin ? '–'.$fin : '') : ''),
+          // Datos desglosados
+          'date'     => $fecha ? $fecha->format('Y-m-d') : null,
+          'start'    => $inicio,
+          'end'      => $fin,
+          'client'   => $c->nombre_cliente ?? null,
+          'service'  => $c->titulo ?? $c->notas ?? 'Cita',
+          'business' => $c->negocio?->neg_nombre_comercial ?? '—',
+          'status'   => $statusEs,   // ES canónico
+      ];
+  })->values();
+
+  // --- Recomendados (sin los del usuario autenticado) ---
+  $currentUserId = auth()->id();
+  $recomendadosFiltrados = ($recomendados ?? collect())
+      ->filter(function ($n) use ($currentUserId) {
+          $ownerId =
+              $n->user_id
+              ?? $n->owner_id
+              ?? $n->usuario_id
+              ?? optional($n->owner)->id
+              ?? optional($n->usuario)->id
+              ?? null;
+          return (int) $ownerId !== (int) $currentUserId;
+      })
+      ->unique('id');
+
+  $recoData = $recomendadosFiltrados->map(function($n) {
+      return [
+          'id'       => $n->id,
+          'slug'     => $n->slug ?? \Illuminate\Support\Str::slug($n->neg_nombre_comercial ?? 'negocio'),
+          'name'     => $n->neg_nombre_comercial ?? 'Negocio',
+          'service'  => $n->neg_categoria ?? 'Servicio',
+          'rating'   => $n->rating ?? '4.8',
+          'distance' => $n->distance ?? 'cerca',
+      ];
+  })->values();
+
+  // --- Stats desde servidor ---
+  // Nota: "pending" = activas (pendiente + confirmada) según tu controller
+  $serverStats = [
+      'appointmentsMonth' => (int)($citasMes ?? 0),
+      'favorites'         => (int)($favoritosCount ?? 0),
+      'pending'           => (int)($citasPendientes ?? 0),
+  ];
+@endphp
+
+
+window.clxData = {
+  appointments: @json($appointmentsData),
+  recommendations: @json($recoData),
+  stats: @json($serverStats),
+};
+
+/**
+ * 2) Helper para animar números (por si no existe en cliente-dashboard.js)
+ */
+window.clxAnimateNumber = window.clxAnimateNumber || function(el, finalValue, duration = 600) {
+  if (!el) return;
+  const start = 0;
+  const startTime = performance.now();
+  const fmt = new Intl.NumberFormat('es-CO');
+  function tick(now) {
+    const p = Math.min(1, (now - startTime) / duration);
+    const val = Math.round(start + (finalValue - start) * p);
+    el.textContent = fmt.format(val);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+};
+
+/** 3) Navegación a /negocios/{id}-{slug} */
+const NEGOCIOS_BASE = @json(url('/negocios'));
+window.clxViewBusiness = function(id, slug) {
+  const s = (slug ?? '').toString();
+  window.location.href = `${NEGOCIOS_BASE}/${id}-${encodeURIComponent(s)}`;
+};
+
+/**
+ * 4) Llamar las funciones cuando el DOM esté listo
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.clxData) {
+    if (typeof clxLoadAppointments === 'function') clxLoadAppointments();
+    if (typeof clxLoadRecommendations === 'function') clxLoadRecommendations();
+
+    // Stats desde el servidor
+    const s = window.clxData.stats || {appointmentsMonth: 0, favorites: 0, pending: 0};
+    const statAppointments = document.getElementById('clx-stat-appointments');
+    const statFavorites    = document.getElementById('clx-stat-favorites');
+    const statPending      = document.getElementById('clx-stat-pending');
+    const pendingCount     = document.getElementById('clx-pending-count');
+
+    if (statAppointments) clxAnimateNumber(statAppointments, s.appointmentsMonth);
+    if (statFavorites)    clxAnimateNumber(statFavorites,    s.favorites);
+    if (statPending)      clxAnimateNumber(statPending,      s.pending);
+    if (pendingCount)     pendingCount.textContent = `${s.pending} ${s.pending === 1 ? 'cita' : 'citas'}`;
+  }
+});
+</script>

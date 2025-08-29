@@ -7,8 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Cita extends Model
 {
     protected $fillable = [
-        'negocio_id','user_id','nombre_cliente',
-        'fecha','hora_inicio','hora_fin','notas','estado',
+        'negocio_id',
+        'user_id',
+        'nombre_cliente',
+        'fecha',
+        'hora_inicio',
+        'hora_fin',
+        'notas',
+        'estado',
+    ];
+
+    protected $casts = [
+        'fecha' => 'date', // si en BD es DATE; usa 'datetime' si es DATETIME
     ];
 
     public function negocio()

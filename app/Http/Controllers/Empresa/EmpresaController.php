@@ -230,15 +230,81 @@ class EmpresaController extends Controller
         ]);
     }
 
-    public function configCitas($id)
+    public function indexCitas(Request $request, $id)
+    {
+        $empresa = Negocio::findOrFail($id); // valida el id
+
+        $request->validate([
+            'per_page' => 'nullable|integer|min:1|max:200',
+            'estado'   => 'nullable|array',
+            'estado.*' => 'in:pendiente,confirmada,cancelada,completada',
+            'desde'    => 'nullable|date',
+            'hasta'    => 'nullable|date',
+            'q'        => 'nullable|string|max:255',
+        ]);
+
+        $estados = ['pendiente', 'confirmada', 'cancelada', 'completada'];
+
+        $citas = Cita::query()
+            ->where('negocio_id', $empresa->id)
+            ->when($request->filled('q'), function ($q) use ($request) {
+                $term = trim($request->q);
+                $q->where(function ($qq) use ($term) {
+                    $qq->where('nombre_cliente', 'like', "%{$term}%")
+                        ->orWhere('notas', 'like', "%{$term}%");
+                });
+            })
+            ->when($request->filled('estado'), fn($q) => $q->whereIn('estado', (array) $request->estado))
+            ->when($request->filled('desde'), fn($q) => $q->whereDate('fecha', '>=', $request->desde))
+            ->when($request->filled('hasta'), fn($q) => $q->whereDate('fecha', '<=', $request->hasta))
+            ->orderBy('fecha', 'desc')
+            ->paginate((int) $request->input('per_page', 15))
+            ->appends($request->query());
+
+        return view('empresa.configuracion.citas.index', [
+            'empresa' => $empresa,
+            'id'      => $empresa->id, // por si la vista usa $id directamente
+            'citas'   => $citas,
+            'estados' => $estados,
+        ]);
+    }
+
+    public function showCita(Request $request, $id, $citaId)
+    {
+        $empresa = Negocio::findOrFail($id);
+        $cita = Cita::where('negocio_id', $empresa->id)->findOrFail($citaId);
+
+        return view('empresa.configuracion.citas.show', [
+            'empresa' => $empresa,
+            'id'      => $empresa->id,
+            'cita'    => $cita,
+        ]);
+    }
+
+    public function cambiarEstadoCita(Request $request, $id, $citaId)
     {
         $empresa = Negocio::findOrFail($id);
 
-        return view('empresa.configuracion.citas', [
-            'empresa' => $empresa,
-            'currentPage' => 'configuracion',
-            'currentSubPage' => 'citas'
+        $data = $request->validate([
+            'estado' => 'required|in:pendiente,confirmada,cancelada,completada',
         ]);
+
+        $cita = Cita::where('negocio_id', $empresa->id)->findOrFail($citaId);
+        $cita->estado = $data['estado'];
+        $cita->save();
+
+        return back()->with('success', 'Estado actualizado a: ' . ucfirst($data['estado']));
+    }
+
+    public function destroyCita(Request $request, $id, $citaId)
+    {
+        $empresa = Negocio::findOrFail($id);
+        $cita = Cita::where('negocio_id', $empresa->id)->findOrFail($citaId);
+        $cita->delete();
+
+        return redirect()
+            ->route('empresa.configuracion.citas', $empresa->id)
+            ->with('success', 'Cita eliminada correctamente.');
     }
 
     public function configVentas($id)

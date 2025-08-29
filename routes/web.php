@@ -163,10 +163,20 @@ Route::prefix('empresa')->name('empresa.')->group(function () {
     Route::get('/{id}/agenda', [EmpresaController::class, 'agenda'])->name('agenda');
     Route::get('/{id}/clientes', [EmpresaController::class, 'clientes'])->name('clientes');
 
-    // Rutas para las subsecciones de configuración
     Route::prefix('{id}/configuracion')->name('configuracion.')->group(function () {
         Route::get('/negocio', [EmpresaController::class, 'configNegocio'])->name('negocio');
-        Route::get('/citas', [EmpresaController::class, 'configCitas'])->name('citas');
+
+        // INDEXCITAS en EmpresaController (usa {id})
+        Route::get('/citas', [EmpresaController::class, 'indexCitas'])->name('citas');
+        // 👇 nuevas
+        Route::get('/citas/{cita}', [EmpresaController::class, 'showCita'])->name('citas.show');
+        Route::patch('/citas/{cita}/estado', [EmpresaController::class, 'cambiarEstadoCita'])->name('citas.estado');
+        Route::delete('/citas/{cita}', [EmpresaController::class, 'destroyCita'])->name('citas.destroy');
+
+
+        // (opcional) pantalla de ajustes de citas si la quieres aparte
+        // Route::get('/citas/ajustes', [EmpresaController::class, 'configCitas'])->name('citas.ajustes');
+
         Route::get('/ventas', [EmpresaController::class, 'configVentas'])->name('ventas');
         Route::get('/facturacion', [EmpresaController::class, 'configFacturacion'])->name('facturacion');
         Route::get('/equipo', [EmpresaController::class, 'configEquipo'])->name('equipo');
@@ -174,24 +184,18 @@ Route::prefix('empresa')->name('empresa.')->group(function () {
         Route::get('/pagos', [EmpresaController::class, 'configPagos'])->name('pagos');
     });
 
-    // 📦 Rutas para Catálogo de Servicios
     Route::prefix('{id}/catalogo')->name('catalogo.')->group(function () {
-        // Servicios
         Route::get('/servicios', [CatalogoController::class, 'menuServicios'])->name('servicios');
         Route::get('/servicios/crear', [CatalogoController::class, 'formCrearServicio'])->name('servicios.crear');
         Route::post('/servicios', [CatalogoController::class, 'guardarServicio'])->name('servicios.guardar');
-        
-
         Route::get('/servicios/{servicio}/editar', [CatalogoController::class, 'editarServicio'])->name('servicios.editar');
         Route::put('/servicios/{servicio}', [CatalogoController::class, 'actualizarServicio'])->name('servicios.actualizar');
         Route::post('/servicios/{servicio}/duplicar', [CatalogoController::class, 'duplicarServicio'])->name('servicios.duplicar');
         Route::delete('/servicios/{servicio}', [CatalogoController::class, 'eliminarServicio'])->name('servicios.eliminar');
 
-        // Categorías
         Route::post('/categorias', [CatalogoController::class, 'guardarCategoria'])->name('categorias.guardar');
     });
 });
-
 
 // Rutas para la configuración de empresa
 Route::get('/empresa/{id}/configuracion/negocio', [EmpresaController::class, 'negocio'])

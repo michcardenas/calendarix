@@ -29,41 +29,57 @@ function clxInitialize() {
  */
 
 function clxLoadAppointments() {
-    const container = document.getElementById('clx-appointments-list');
-    if (!container) {
-        console.warn('⚠️ Contenedor de citas no encontrado');
-        return;
-    }
-    
-    container.innerHTML = '';
+  const container = document.getElementById('clx-appointments-list');
+  if (!container) {
+    console.warn('⚠️ Contenedor de citas no encontrado');
+    return;
+  }
 
-    clxData.appointments.forEach(appointment => {
-        const appointmentEl = document.createElement('div');
-        appointmentEl.className = 'clx-appointment-item';
-        appointmentEl.innerHTML = `
-            <div class="clx-appointment-time">${appointment.time}</div>
-            <div class="clx-appointment-info">
-                <div class="clx-appointment-service">${appointment.service}</div>
-                <div class="clx-appointment-business">${appointment.business}</div>
-            </div>
-            <div class="clx-appointment-status clx-status-${appointment.status}">
-                ${appointment.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
-            </div>
-        `;
-        
-        // Agregar efecto de entrada suave
-        appointmentEl.style.opacity = '0';
-        appointmentEl.style.transform = 'translateY(20px)';
-        container.appendChild(appointmentEl);
-        
-        // Animar entrada
-        setTimeout(() => {
-            appointmentEl.style.transition = 'all 0.5s ease';
-            appointmentEl.style.opacity = '1';
-            appointmentEl.style.transform = 'translateY(0)';
-        }, 100);
+  container.innerHTML = '';
+
+  const list = (window.clxData && Array.isArray(window.clxData.appointments))
+    ? window.clxData.appointments : [];
+
+  const labels = {
+    pendiente: 'Pendiente',
+    confirmada: 'Confirmada',
+    cancelada: 'Cancelada',
+    completada: 'Completada',
+  };
+
+  list.forEach(appointment => {
+    const raw = (appointment.status ?? '').toString().toLowerCase();
+    const status = (raw === 'pendiente' || raw === 'confirmada' || raw === 'cancelada' || raw === 'completada')
+      ? raw : 'pendiente';
+
+    const appointmentEl = document.createElement('div');
+    appointmentEl.className = 'clx-appointment-item';
+    appointmentEl.innerHTML = `
+      <div class="clx-appointment-time">${appointment.time ?? ''}</div>
+      <div class="clx-appointment-info">
+        <div class="clx-appointment-service">${appointment.service ?? 'Cita'}</div>
+        <div class="clx-appointment-business">${appointment.business ?? '—'}</div>
+      </div>
+      <div class="clx-appointment-status clx-status-es-${status}">
+        ${labels[status]}
+      </div>
+    `;
+
+    // Efecto de entrada suave
+    appointmentEl.style.opacity = '0';
+    appointmentEl.style.transform = 'translateY(20px)';
+    container.appendChild(appointmentEl);
+
+    // Animar entrada
+    requestAnimationFrame(() => {
+      appointmentEl.style.transition = 'all 0.5s ease';
+      appointmentEl.style.opacity = '1';
+      appointmentEl.style.transform = 'translateY(0)';
     });
+  });
 }
+
+
 
 function clxLoadRecommendations() {
     const container = document.getElementById('clx-recommendations-list');
@@ -84,11 +100,11 @@ function clxLoadRecommendations() {
                     ${business.service} • ${business.rating} ⭐ • ${business.distance}
                 </div>
             </div>
-            <button class="clx-btn clx-btn-ghost" style="padding: 0.5rem 1rem; font-size: 0.875rem;" 
-                    onclick="clxViewBusiness(${business.id})">
-                <i class="fas fa-eye"></i>
-                Ver
-            </button>
+<button class="clx-btn clx-btn-ghost" style="padding: 0.5rem 1rem; font-size: 0.875rem;"
+        onclick="clxViewBusiness(${business.id}, '${business.slug ?? ''}')">
+  <i class="fas fa-eye"></i>
+  Ver
+</button>
         `;
         
         // Agregar efecto de entrada escalonado
