@@ -74,12 +74,11 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard-cliente', function () {
-        // Aquí puedes devolver la vista del dashboard de cliente
-        return view('client.dashboard-client');
-    })->name('client.dashboard-client');
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard-cliente', [DashboardController::class, 'cliente'])
+        ->name('client.dashboard-client');
 });
+
     /*
     |--------------------------------------------------------------------------
     | NEGOCIOS DEL USUARIO

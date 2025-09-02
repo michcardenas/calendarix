@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
-use App\Models\User;
 use App\Models\Cita;
 use App\Models\Negocio;
 
@@ -16,17 +14,31 @@ class DashboardController extends Controller
     {
         return view('admin.dashboard-admin');
     }
-    
-   public function dashboard()
-{
-    $user = Auth::user();
-    $user->load('roles');
 
-    if ($user->hasRole('Administrador', 'web')) {
-        return view('admin.dashboard-admin', ['user' => $user]);
+    // Entrypoint: decide a dónde ir según el rol
+    public function dashboard()
+    {
+        $user = Auth::user();
+        $user->load('roles');
+
+        if ($user->hasRole('Administrador', 'web')) {
+            return view('admin.dashboard-admin', ['user' => $user]);
+        }
+
+        if ($user->hasRole('Cliente', 'web')) {
+            // 👉 puedes redirigir a la ruta o llamar al método directamente
+            // return redirect()->route('client.dashboard-client');
+            return $this->cliente(); // evita redirección y duplica menos
+        }
+
+        abort(403, 'No tienes permisos suficientes.');
     }
 
-    if ($user->hasRole('Cliente', 'web')) {
+    // 👉 mismo código que ya tenías para el dashboard de cliente
+    public function cliente()
+    {
+        $user = Auth::user();
+
         // Empresas del usuario
         $misEmpresas = Negocio::where('user_id', $user->id)->get();
 
@@ -37,9 +49,8 @@ class DashboardController extends Controller
         $finSemana    = Carbon::now()->endOfWeek();
 
         // Estados
-        $estadosActivos      = ['pendiente', 'confirmada'];
-        $estadosFinalizados  = ['cancelada', 'completada'];
-        $todosLosEstados     = array_merge($estadosActivos, $estadosFinalizados);
+        $estadosActivos     = ['pendiente', 'confirmada'];
+        $estadosFinalizados = ['cancelada', 'completada'];
 
         // Citas del mes (todas)
         $citasMes = Cita::where('user_id', $user->id)
@@ -53,16 +64,15 @@ class DashboardController extends Controller
             ->groupBy('estado')
             ->pluck('total', 'estado');
 
-        // Normaliza: asegura llaves con cero si no existen
         $citasPendientesSemana  = (int) ($conteosSemana['pendiente']  ?? 0);
         $citasConfirmadasSemana = (int) ($conteosSemana['confirmada'] ?? 0);
         $citasCanceladasSemana  = (int) ($conteosSemana['cancelada']  ?? 0);
         $citasCompletadasSemana = (int) ($conteosSemana['completada'] ?? 0);
 
-        // Compatibilidad: "citasPendientes" = activas (pendiente + confirmada) en la semana
+        // Compatibilidad
         $citasPendientes = $citasPendientesSemana + $citasConfirmadasSemana;
 
-        // Próximas citas (hoy en adelante) solo activas (no canceladas ni completadas)
+        // Próximas citas (hoy en adelante) activas
         $proximasCitas = Cita::with('negocio')
             ->where('user_id', $user->id)
             ->whereDate('fecha', '>=', Carbon::today())
@@ -72,38 +82,28 @@ class DashboardController extends Controller
             ->take(8)
             ->get();
 
-        // Favoritos (si existe)
-        $favoritosCount = 0;
-        try {
-            if (class_exists(\App\Models\Favorito::class)) {
-                $favoritosCount = \App\Models\Favorito::where('user_id', $user->id)->count();
-            } elseif (method_exists($user, 'favoritos')) {
-                $favoritosCount = $user->favoritos()->count();
-            }
-        } catch (\Throwable $e) {
-            $favoritosCount = 0;
-        }
-
         // Recomendados simples
         $recomendados = Negocio::latest()->take(6)->get();
 
-        return view('client.dashboard-client', [
-            'misEmpresas'          => $misEmpresas,
-            'citasMes'             => $citasMes,
-            'favoritosCount'       => $favoritosCount,
-            'citasPendientes'      => $citasPendientes,          // activas (pendiente + confirmada) - compat
-            'proximasCitas'        => $proximasCitas,
-            'recomendados'         => $recomendados,
+        // (Opcional) favoritos
+        $favoritosCount = 0;
+        if (class_exists(\App\Models\Favorito::class)) {
+            $favoritosCount = \App\Models\Favorito::where('user_id', $user->id)->count();
+        } elseif (method_exists($user, 'favoritos')) {
+            $favoritosCount = $user->favoritos()->count();
+        }
 
-            // 👇 nuevos datos por estado en la semana (útiles para cards/gráficas)
-            'citasPendientesSemana'  => $citasPendientesSemana,
-            'citasConfirmadasSemana' => $citasConfirmadasSemana,
-            'citasCanceladasSemana'  => $citasCanceladasSemana,
-            'citasCompletadasSemana' => $citasCompletadasSemana,
+        return view('client.dashboard-client', [
+            'misEmpresas'             => $misEmpresas,
+            'citasMes'                => $citasMes,
+            'favoritosCount'          => $favoritosCount,
+            'citasPendientes'         => $citasPendientes,
+            'proximasCitas'           => $proximasCitas,
+            'recomendados'            => $recomendados,
+            'citasPendientesSemana'   => $citasPendientesSemana,
+            'citasConfirmadasSemana'  => $citasConfirmadasSemana,
+            'citasCanceladasSemana'   => $citasCanceladasSemana,
+            'citasCompletadasSemana'  => $citasCompletadasSemana,
         ]);
     }
-
-    abort(403, 'No tienes permisos suficientes.');
-}
-
 }
