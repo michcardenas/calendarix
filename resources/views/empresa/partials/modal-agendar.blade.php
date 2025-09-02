@@ -6,6 +6,13 @@
 
     <div id="agendarErrors" class="hidden rounded bg-red-50 text-red-700 px-4 py-3 text-sm mb-3"></div>
 
+    @php
+      // Si ya pasas $servicios desde el controlador, comenta/borra estas líneas
+      $servicios = $servicios ?? \App\Models\Empresa\ServicioEmpresa::where('negocio_id', $negocio->id)
+                    ->orderBy('nombre')
+                    ->get(['id','nombre','precio','categoria','descripcion']);
+    @endphp
+
     <form id="formAgendar" method="POST" action="{{ route('agenda.store', $negocio->id) }}" class="space-y-4">
       @csrf
       <input type="hidden" name="fecha" id="agendarFecha"> {{-- YYYY-MM-DD --}}
@@ -20,27 +27,56 @@
       </div>
       @endguest
 
+      {{-- Selección de servicio --}}
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Servicio</label>
+        <select name="servicio_id" id="agendarServicio" required
+                class="mt-1 w-full border rounded-lg px-3 py-2">
+          <option value="">Selecciona un servicio…</option>
+          @foreach ($servicios as $s)
+            <option value="{{ $s->id }}"
+                    data-precio="{{ number_format((float)$s->precio, 2, '.', '') }}"
+                    data-nombre="{{ $s->nombre }}"
+                    data-categoria="{{ $s->categoria }}"
+                    data-descripcion="{{ Str::limit($s->descripcion, 120) }}">
+              {{ $s->nombre }}
+              @if(!is_null($s->precio)) — ${{ number_format($s->precio, 0, ',', '.') }} @endif
+            </option>
+          @endforeach
+        </select>
+        <p class="text-red-600 text-xs mt-1 hidden" data-error-for="servicio_id"></p>
+
+        {{-- Resumen compacto del servicio seleccionado --}}
+        <div id="servicioResumen" class="mt-2 text-xs text-gray-600 hidden">
+          <span class="font-semibold" id="servicioNombre"></span>
+          <span id="servicioCategoria" class="ml-1"></span>
+          <span class="block">Precio: <span id="servicioPrecio" class="font-medium"></span></span>
+          <span id="servicioDescripcion" class="block"></span>
+        </div>
+      </div>
+
       <div>
         <label class="block text-sm font-medium text-gray-700">Fecha</label>
         <input type="text" id="agendarFechaLabel" class="mt-1 w-full border rounded-lg px-3 py-2 bg-gray-100" disabled>
       </div>
 
-      {{-- Rango(s) del día --}}
+      {{-- Selector de rango (si el día tiene más de uno) --}}
       <div id="wrapRango" class="hidden">
         <label class="block text-sm font-medium text-gray-700">Rango horario</label>
         <select id="agendarRango" class="mt-1 w-full border rounded-lg px-3 py-2"></select>
         <p class="text-xs text-gray-500 mt-1" id="hintRango"></p>
       </div>
 
+      {{-- INICIO / FIN en intervalos de 15 min --}}
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-medium text-gray-700">Hora inicio</label>
-          <input type="time" name="hora_inicio" id="agendarHoraInicio" required class="mt-1 w-full border rounded-lg px-3 py-2" step="300">
+          <select name="hora_inicio" id="agendarHoraInicio" required class="mt-1 w-full border rounded-lg px-3 py-2"></select>
           <p class="text-red-600 text-xs mt-1 hidden" data-error-for="hora_inicio"></p>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Hora fin</label>
-          <input type="time" name="hora_fin" id="agendarHoraFin" required class="mt-1 w-full border rounded-lg px-3 py-2" step="300">
+          <select name="hora_fin" id="agendarHoraFin" required class="mt-1 w-full border rounded-lg px-3 py-2"></select>
           <p class="text-red-600 text-xs mt-1 hidden" data-error-for="hora_fin"></p>
         </div>
       </div>
@@ -70,8 +106,16 @@
   const rangoWrap   = document.getElementById('wrapRango');
   const rangoSel    = document.getElementById('agendarRango');
   const hintRango   = document.getElementById('hintRango');
-  const hi = document.getElementById('agendarHoraInicio');
-  const hf = document.getElementById('agendarHoraFin');
+  const hiSel       = document.getElementById('agendarHoraInicio');
+  const hfSel       = document.getElementById('agendarHoraFin');
+
+  // NUEVO: refs de servicio
+  const servicioSel        = document.getElementById('agendarServicio');
+  const servicioResumenBox = document.getElementById('servicioResumen');
+  const servicioNombre     = document.getElementById('servicioNombre');
+  const servicioCategoria  = document.getElementById('servicioCategoria');
+  const servicioPrecio     = document.getElementById('servicioPrecio');
+  const servicioDescripcion= document.getElementById('servicioDescripcion');
 
   // Utils
   const pad2 = n => String(n).padStart(2,'0');
@@ -79,8 +123,7 @@
   const toMDY = ymd => { const [y,m,d]=ymd.split('-'); return `${m}/${d}/${y}`; };
   const jsDayToEmpresa = n => (n === 0 ? 7 : n); // 0=Dom → 7
 
-  // Normaliza cualquiera de estas formas:
-  // [{inicio:'06:30', fin:'18:30'}] o [{hora_inicio:'06:30:00', hora_fin:'18:30:00'}]
+  // Normaliza cualquier forma del backend a {inicio:'HH:MM', fin:'HH:MM'}
   function normalizeRanges(raw) {
     return (raw || []).map(r => {
       const ini = (r.inicio ?? r.hora_inicio ?? '').toString().slice(0,5);
@@ -89,30 +132,81 @@
     }).filter(r => r.inicio && r.fin);
   }
 
-  function setTimeConstraints(range) {
-    if (!range) {
-      hi.removeAttribute('min'); hi.removeAttribute('max');
-      hf.removeAttribute('min'); hf.removeAttribute('max');
-      hintRango.textContent = '';
+  // ====== SERVICIO: resumen dinámico
+  function renderServicioResumen() {
+    const opt = servicioSel?.selectedOptions?.[0];
+    if (!opt || !opt.value) {
+      servicioResumenBox?.classList.add('hidden');
+      servicioNombre.textContent = '';
+      servicioCategoria.textContent = '';
+      servicioPrecio.textContent = '';
+      servicioDescripcion.textContent = '';
       return;
     }
-    hi.min = range.inicio;
-    hi.max = range.fin;
-    hf.min = range.inicio;
-    hf.max = range.fin;
-    hintRango.textContent = `Atención de ${hi.min} a ${hf.max}`;
+    const nombre = opt.dataset.nombre || opt.textContent.trim();
+    const categoria = opt.dataset.categoria || '';
+    const precio = opt.dataset.precio ? Number(opt.dataset.precio) : null;
+    const descripcion = opt.dataset.descripcion || '';
+
+    servicioNombre.textContent = nombre;
+    servicioCategoria.textContent = categoria ? `· ${categoria}` : '';
+    servicioPrecio.textContent = (precio !== null && !Number.isNaN(precio))
+      ? `$${precio.toLocaleString()}`
+      : '—';
+
+    servicioDescripcion.textContent = descripcion || '';
+    servicioResumenBox?.classList.remove('hidden');
   }
 
-  function loadRangesForDate(dateObj) {
+  servicioSel?.addEventListener('change', renderServicioResumen);
+
+  // ✅ FUNCIÓN PURA (NO DOM): devuelve los rangos para una fecha
+  function computeRangesForDate(dateObj) {
     const day = jsDayToEmpresa(dateObj.getDay());
     const map = window.NEGOCIO_HORARIOS || {};
-    const ranges = normalizeRanges(map[day]);
+    return normalizeRanges(map[day] || []);
+  }
+
+  // Construye los <select> de inicio/fin en cuartos de hora dentro del rango, excluyendo reservas del día
+  function buildTimeSelects(range, ymd) {
+    const reservas = (window.RESERVAS && window.RESERVAS[ymd]) ? window.RESERVAS[ymd] : [];
+
+    const fill = (selectEl, values) => {
+      const prev = selectEl.value;
+      selectEl.innerHTML = '';
+      const ph = document.createElement('option');
+      ph.value = ''; ph.textContent = 'Selecciona...';
+      selectEl.appendChild(ph);
+      values.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v; opt.textContent = v;
+        selectEl.appendChild(opt);
+      });
+      if (prev && values.includes(prev)) selectEl.value = prev; else selectEl.value = '';
+    };
+
+    // INICIO: puntos libres de 15' (usa helpers globales del script principal)
+    const freeStarts = (window.generateFreeQuarterSlots || (()=>[]))(range.inicio, range.fin, reservas);
+    fill(hiSel, freeStarts);
+
+    // FIN: depende del inicio y debe dejar [inicio, fin) libre
+    fill(hfSel, []);
+    hiSel.onchange = () => {
+      const start = hiSel.value;
+      if (!start) { fill(hfSel, []); return; }
+      const validEnds = (window.generateValidEnds || (()=>[]))(start, range.fin, reservas);
+      fill(hfSel, validEnds);
+    };
+  }
+
+  // ✅ FUNCIÓN QUE SÍ PINTA
+  function renderRangesForDate(dateObj, ymd) {
+    const ranges = computeRangesForDate(dateObj);
 
     if (!ranges.length) {
-      console.warn('No hay horarios para el día', day, '→ NEGOCIO_HORARIOS:', map);
       rangoWrap.classList.add('hidden');
-      setTimeConstraints(null);
-      hi.value = ''; hf.value = '';
+      hiSel.innerHTML = ''; hfSel.innerHTML = '';
+      hintRango.textContent = '';
       throw new Error('no-attention-day');
     }
 
@@ -125,16 +219,20 @@
         opt.textContent = `${r.inicio} - ${r.fin}`;
         rangoSel.appendChild(opt);
       });
-      setTimeConstraints(ranges[0]);
+      hintRango.textContent = `Atención de ${ranges[0].inicio} a ${ranges[0].fin}`;
+      buildTimeSelects(ranges[0], ymd);
       rangoSel.onchange = () => {
         const idx = parseInt(rangoSel.value, 10);
-        setTimeConstraints(ranges[idx]);
-        hi.value = ''; hf.value = '';
+        const selected = ranges[idx];
+        hintRango.textContent = `Atención de ${selected.inicio} a ${selected.fin}`;
+        buildTimeSelects(selected, ymd);
       };
     } else {
       rangoWrap.classList.add('hidden');
-      setTimeConstraints(ranges[0]);
+      hintRango.textContent = `Atención de ${ranges[0].inicio} a ${ranges[0].fin}`;
+      buildTimeSelects(ranges[0], ymd);
     }
+
     return ranges;
   }
 
@@ -159,12 +257,14 @@
     // Reset UI
     if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
     document.querySelectorAll('#modalAgendar [data-error-for]').forEach(p => { p.classList.add('hidden'); p.textContent = ''; });
-    hi.value = ''; hf.value = '';
+    hiSel.innerHTML = ''; hfSel.innerHTML = '';
+    // reset resumen servicio (mantengo selección pero refresco el resumen)
+    renderServicioResumen();
 
     // Horarios del día
     const dt = new Date(ymd + 'T00:00:00');
     try {
-      loadRangesForDate(dt);
+      renderRangesForDate(dt, ymd);
     } catch(e) {
       if (e.message === 'no-attention-day') {
         if (errBox) { errBox.textContent = 'No se atiende en la fecha seleccionada.'; errBox.classList.remove('hidden'); }
@@ -192,30 +292,49 @@
       fechaHidden.value = `${yy}-${mm}-${dd}`;
     }
 
-    // Validaciones cliente
-    if (!hi.value || !hf.value) {
+    const hi = hiSel.value;
+    const hf = hfSel.value;
+
+    // Validación de servicio (cliente)
+    if (!servicioSel?.value) {
+      const p = document.querySelector('#modalAgendar [data-error-for="servicio_id"]');
+      if (p) { p.textContent = 'Debes seleccionar un servicio.'; p.classList.remove('hidden'); }
+      if (errBox) { errBox.textContent = 'Debes seleccionar un servicio.'; errBox.classList.remove('hidden'); }
+      return;
+    }
+
+    // Validaciones cliente de horas
+    if (!hi || !hf) {
       if (errBox) { errBox.textContent = 'Debes indicar hora de inicio y fin.'; errBox.classList.remove('hidden'); }
       return;
     }
-    if (hf.value <= hi.value) {
+    if (hf <= hi) {
       if (errBox) { errBox.textContent = 'La hora de fin debe ser mayor a la de inicio.'; errBox.classList.remove('hidden'); }
       const pFin = document.querySelector('#modalAgendar [data-error-for="hora_fin"]');
       if (pFin) { pFin.textContent = 'Debe ser mayor a la hora de inicio.'; pFin.classList.remove('hidden'); }
       return;
     }
 
-    // Validar que hi/hf estén dentro del rango seleccionado
+    // Cálculo puro de rangos (NO re-render)
     const dt = new Date(fechaHidden.value + 'T00:00:00');
-    let ranges;
-    try { ranges = loadRangesForDate(dt); } catch { ranges = []; }
+    const ranges = computeRangesForDate(dt);
     if (!ranges.length) {
       if (errBox) { errBox.textContent = 'No se atiende en esa fecha.'; errBox.classList.remove('hidden'); }
       return;
     }
     const chosen = (ranges.length > 1 && rangoSel) ? ranges[parseInt(rangoSel.value || '0', 10)] : ranges[0];
-    const min = chosen.inicio, max = chosen.fin;
-    if (hi.value < min || hf.value > max) {
-      if (errBox) { errBox.textContent = `El horario debe estar entre ${min} y ${max}.`; errBox.classList.remove('hidden'); }
+    if (hi < chosen.inicio || hf > chosen.fin) {
+      if (errBox) { errBox.textContent = `El horario debe estar entre ${chosen.inicio} y ${chosen.fin}.`; errBox.classList.remove('hidden'); }
+      return;
+    }
+
+    // Anti-solape con reservas del día
+    const reservas = (window.RESERVAS && window.RESERVAS[fechaHidden.value]) ? window.RESERVAS[fechaHidden.value] : [];
+    if ((window.overlapsAny || (()=>false))(hi, hf, reservas)) {
+      if (errBox) {
+        errBox.textContent = 'Ese horario ya está reservado. Elige otro intervalo.';
+        errBox.classList.remove('hidden');
+      }
       return;
     }
 

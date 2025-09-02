@@ -101,13 +101,6 @@
                             @foreach($negocio->servicios as $servicio)
                                 <li class="flex justify-between items-center">
                                     <span>{{ $servicio->nombre }} - ${{ number_format($servicio->precio, 0, ',', '.') }}</span>
-                                    <button class="agregar-carrito bg-green-500 hover:bg-green-600 text-white text-sm px-2 py-1 rounded"
-                                            data-tipo="servicio"
-                                            data-id="{{ $servicio->id }}"
-                                            data-nombre="{{ $servicio->nombre }}"
-                                            data-precio="{{ $servicio->precio }}">
-                                        +
-                                    </button>
                                 </li>
                             @endforeach
                         </ul>
@@ -241,28 +234,90 @@ document.addEventListener('DOMContentLoaded', function () {
   // ================== ⏱️ Horarios desde data-atributo ==================
   // <div id="horariosData" data-map='{"1":[{"inicio":"08:00","fin":"17:00"}], ...}'></div>
   const horariosEl = document.getElementById('horariosData');
-  const HORARIOS   = horariosEl ? JSON.parse(horariosEl.dataset.map || '{}') : {};
-  window.NEGOCIO_HORARIOS = HORARIOS;
+  let HORARIOS = {};
+  if (horariosEl && typeof horariosEl.dataset.map === 'string') {
+    try { HORARIOS = JSON.parse(horariosEl.dataset.map || '{}'); }
+    catch { console.warn('horariosData data-map no es JSON válido'); HORARIOS = {}; }
+  }
+
+  // Normalización HH:MM (acepta inicio/fin u hora_inicio/hora_fin)
+  const fix = v => (v||'').toString().slice(0,5);
+  const normalizeRangeArray = arr => (Array.isArray(arr) ? arr : [])
+    .map(r => ({ inicio: fix(r.inicio ?? r.hora_inicio), fin: fix(r.fin ?? r.hora_fin) }))
+    .filter(r => r.inicio && r.fin);
+
+  // Normaliza el objeto 1..7 -> [{inicio,fin}, ...]
+  const NORM = {};
+  Object.keys(HORARIOS).forEach(k => { NORM[k] = normalizeRangeArray(HORARIOS[k]); });
+
+  window.NEGOCIO_HORARIOS = NORM;
 
   // ================== 🔎 Datos de agenda (negocio) ==================
   // Asegúrate de tener en la vista: <div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
   const agendaEl   = document.getElementById('agendaData');
   const NEGOCIO_ID = agendaEl?.dataset?.negocioId || null;
 
+  // ================== 🧠 Helpers compartidos (globales) ==================
+  // Mapa global de reservas: yyyy-mm-dd -> [{inicio:"HH:MM", fin:"HH:MM"}, ...]
+  window.RESERVAS = window.RESERVAS || {};
+
+  window.t2m = function t2m(hhmm) {
+    const [h,m] = (hhmm||'0:0').split(':').map(Number);
+    return h*60 + m;
+  };
+  window.m2t = function m2t(total) {
+    const h = Math.floor(total/60), m = total%60;
+    const pad = n => String(n).padStart(2,'0');
+    return `${pad(h)}:${pad(m)}`;
+  };
+  window.normalizeIntervals = function normalizeIntervals(raw) {
+    return (raw||[])
+      .map(r => ({ inicio: fix(r.inicio ?? r.hora_inicio), fin: fix(r.fin ?? r.hora_fin) }))
+      .filter(r => r.inicio && r.fin && r.fin > r.inicio);
+  };
+  window.overlapsAny = function overlapsAny(aStart, aEnd, intervals) {
+    const A = t2m(aStart), B = t2m(aEnd);
+    for (const it of (intervals||[])) {
+      const C = t2m(it.inicio), D = t2m(it.fin);
+      if (A < D && C < B) return true; // intersección abierta
+    }
+    return false;
+  };
+  window.generateFreeQuarterSlots = function generateFreeQuarterSlots(minHHMM, maxHHMM, reservas) {
+    const out = [];
+    const min = t2m(minHHMM), max = t2m(maxHHMM);
+    for (let t = min; t <= max; t += 15) {
+      const s = m2t(t);
+      if (!overlapsAny(s, m2t(t+15), reservas)) out.push(s);
+    }
+    return out;
+  };
+  window.generateValidEnds = function generateValidEnds(startHHMM, maxHHMM, reservas) {
+    const out = [];
+    const start = t2m(startHHMM), max = t2m(maxHHMM);
+    for (let t = start + 15; t <= max; t += 15) {
+      const cand = m2t(t);
+      if (!overlapsAny(startHHMM, cand, reservas)) out.push(cand);
+    }
+    return out;
+  };
+
   // ================== 📆 Citas del día (panel opcional) ==================
   const fechaInput = document.getElementById('fechaCitas');
   const ulCitas    = document.getElementById('listaCitasDia');
   const vacioLabel = document.getElementById('citasDiaVacio');
 
-  // helpers de fecha
   const pad2  = n => String(n).padStart(2, '0');
   const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
   async function cargarCitasDelDia(fecha) {
-    if (!NEGOCIO_ID) return; // si no hay negocio, no hacemos nada
+    if (!NEGOCIO_ID) return;
     try {
       const res  = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-dia?fecha=${fecha}`);
       const json = await res.json();
+
+      // 🔴 Hidratar RESERVAS del día
+      window.RESERVAS[fecha] = normalizeIntervals(json.items || json.reservas || []);
 
       // --- Panel: lista de citas ---
       if (ulCitas && vacioLabel) {
@@ -291,14 +346,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // --- Calendario: pintar eventos de citas del día ---
       if (window.calendar && Array.isArray(json.events)) {
-        // Elimina eventos previos de origen 'citas'
         window.calendar.getEvents()
           .filter(ev => ev.extendedProps?.source === 'citas')
           .forEach(ev => ev.remove());
 
-        // Agrega los nuevos
         for (const ev of json.events) {
-          // asegurar bandera de origen
           ev.extendedProps = Object.assign({}, ev.extendedProps, { source: 'citas' });
           window.calendar.addEvent(ev);
         }
@@ -332,34 +384,31 @@ document.addEventListener('DOMContentLoaded', function () {
         @endforeach
       ],
 
-      // 👉 Click en un día
-      dateClick(info) {
+      // 👉 Click en un día (ahora async para esperar reservas)
+      dateClick: async function(info) {
         const ymd = toYMD(info.date);
 
-        // 1) Actualiza el panel de "Citas del día" (mostrar SIEMPRE aunque sea pasado/bloqueado)
+        // 1) Actualiza panel + RESERVAS del día
         if (fechaInput) {
           fechaInput.value = ymd;
-          cargarCitasDelDia(ymd);
         }
+        await cargarCitasDelDia(ymd); // ← esperamos para tener RESERVAS listas
 
-        // 2) Reglas para agendar (si tienes modal y quieres abrirlo)
+        // 2) Reglas para agendar
         const today = new Date(); today.setHours(0,0,0,0);
         const clicked = new Date(info.date); clicked.setHours(0,0,0,0);
 
-        // No permitir pasado
         if (clicked < today) return;
 
-        // No permitir día bloqueado (comparando en Y-m-d)
         const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
         if (blocked) return;
 
-        // Aviso si no hay horarios activos para ese día (1=Lun ... 7=Dom)
         const jsDay = clicked.getDay() === 0 ? 7 : clicked.getDay();
         if (!window.NEGOCIO_HORARIOS[jsDay] || window.NEGOCIO_HORARIOS[jsDay].length === 0) {
           console.warn('No hay horarios activos para el día', jsDay, window.NEGOCIO_HORARIOS);
         }
 
-        // Abrir modal de agenda con fecha (si existe tu función)
+        // Abrir modal de agenda con fecha
         if (typeof window.openAgendarModal === 'function') {
           window.openAgendarModal(ymd);
         } else {
@@ -378,13 +427,12 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
     window.calendar = calendar;
 
-    // Carga inicial de citas del día (hoy) si existe el input y el negocio
+    // Carga inicial (hoy) si existe el input y el negocio
     if (fechaInput && NEGOCIO_ID) {
       const hoy = fechaInput.value || toYMD(new Date());
       cargarCitasDelDia(hoy);
     }
   } else {
-    // Si no hay calendario pero sí panel de citas, igual cargamos el listado
     if (fechaInput && NEGOCIO_ID) {
       cargarCitasDelDia(fechaInput.value || toYMD(new Date()));
     }
