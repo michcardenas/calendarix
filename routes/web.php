@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-    Route::middleware(['auth', 'role:Cliente'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
     // Redirige el “dashboard de cliente” a Mis empresas
     Route::get('/cliente/dashboard', function () {
         return redirect()->route('negocio.index');
