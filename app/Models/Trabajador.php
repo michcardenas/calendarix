@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Empresa\Empresa;
 
 class Trabajador extends Model
 {
@@ -19,10 +20,18 @@ class Trabajador extends Model
     ];
 
     /**
-     * Relación con el negocio
+     * Relación con la empresa (negocio)
      */
     public function negocio()
     {
-        return $this->belongsTo(Negocio::class, 'negocio_id');
+        return $this->belongsTo(Empresa::class, 'negocio_id');
+    }
+
+    /**
+     * Citas asignadas a este trabajador
+     */
+    public function citas()
+    {
+        return $this->hasMany(Cita::class, 'trabajador_id');
     }
 }

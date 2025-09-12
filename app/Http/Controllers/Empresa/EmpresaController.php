@@ -230,45 +230,62 @@ class EmpresaController extends Controller
         ]);
     }
 
-    public function indexCitas(Request $request, $id)
-    {
-        $empresa = Negocio::findOrFail($id); // valida el id
+public function indexCitas(Request $request, $id)
+{
+    $estados = ['pendiente','confirmada','cancelada','completada'];
 
-        $request->validate([
-            'per_page' => 'nullable|integer|min:1|max:200',
-            'estado'   => 'nullable|array',
-            'estado.*' => 'in:pendiente,confirmada,cancelada,completada',
-            'desde'    => 'nullable|date',
-            'hasta'    => 'nullable|date',
-            'q'        => 'nullable|string|max:255',
-        ]);
+    // 🔹 Carga la empresa y pásala a la vista
+    $empresa = Negocio::findOrFail($id);
 
-        $estados = ['pendiente', 'confirmada', 'cancelada', 'completada'];
+    $query = Cita::with([
+        'trabajador:id,nombre',
+        'servicio:id,nombre'
+    ])->where('negocio_id', $empresa->id);
 
-        $citas = Cita::query()
-            ->where('negocio_id', $empresa->id)
-            ->when($request->filled('q'), function ($q) use ($request) {
-                $term = trim($request->q);
-                $q->where(function ($qq) use ($term) {
-                    $qq->where('nombre_cliente', 'like', "%{$term}%")
-                        ->orWhere('notas', 'like', "%{$term}%");
-                });
-            })
-            ->when($request->filled('estado'), fn($q) => $q->whereIn('estado', (array) $request->estado))
-            ->when($request->filled('desde'), fn($q) => $q->whereDate('fecha', '>=', $request->desde))
-            ->when($request->filled('hasta'), fn($q) => $q->whereDate('fecha', '<=', $request->hasta))
-            ->orderBy('fecha', 'desc')
-            ->paginate((int) $request->input('per_page', 15))
-            ->appends($request->query());
-
-        return view('empresa.configuracion.citas.index', [
-            'empresa' => $empresa,
-            'id'      => $empresa->id, // por si la vista usa $id directamente
-            'citas'   => $citas,
-            'estados' => $estados,
-        ]);
+    if ($request->filled('q')) {
+        $q = (string) $request->string('q');
+        $query->where(function($qq) use ($q) {
+            $qq->where('nombre_cliente', 'like', "%{$q}%")
+               ->orWhere('notas', 'like', "%{$q}%");
+        });
     }
 
+    if ($request->filled('desde')) {
+        $query->whereDate('fecha', '>=', $request->date('desde'));
+    }
+    if ($request->filled('hasta')) {
+        $query->whereDate('fecha', '<=', $request->date('hasta'));
+    }
+
+    if ($request->filled('estado')) {
+        $query->whereIn('estado', (array) $request->input('estado'));
+    }
+
+    // 🔹 Filtro por trabajador
+    if ($request->filled('trabajador_id')) {
+        $query->where('trabajador_id', (int) $request->input('trabajador_id'));
+    }
+
+    $perPage = (int) $request->input('per_page', 15);
+    $citas = $query
+        ->orderBy('fecha','desc')
+        ->orderBy('hora_inicio')
+        ->paginate($perPage)
+        ->withQueryString();
+
+    // Para el select de filtro
+    $trabajadores = Trabajador::where('negocio_id', $empresa->id)
+        ->orderBy('nombre')
+        ->get(['id','nombre']);
+
+    return view('empresa.configuracion.citas.index', [
+        'id'           => $empresa->id,
+        'empresa'      => $empresa,       // ← IMPORTANTE
+        'citas'        => $citas,
+        'estados'      => $estados,
+        'trabajadores' => $trabajadores,
+    ]);
+}
     public function showCita(Request $request, $id, $citaId)
     {
         $empresa = Negocio::findOrFail($id);

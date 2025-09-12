@@ -55,7 +55,12 @@
 
 {{-- Modales --}}
 @include('empresa.partials.carrito-modal', ['empresa' => $negocio])
-@include('empresa.partials.modal-agendar', ['negocio' => $negocio])
+@include('empresa.partials.modal-agendar', [
+  'negocio'      => $negocio,
+  'servicios'    => $negocio->servicios,   // opcional: ya llegan por relación
+  'trabajadores' => $trabajadores          // ← NUEVO
+])
+
 
 <div class="py-10 relative z-10">
     <div class="max-w-6xl mx-auto">
@@ -250,16 +255,26 @@ document.addEventListener('DOMContentLoaded', function () {
   const NORM = {};
   Object.keys(HORARIOS).forEach(k => { NORM[k] = normalizeRangeArray(HORARIOS[k]); });
 
+  // Horarios del negocio (global)
   window.NEGOCIO_HORARIOS = NORM;
 
   // ================== 🔎 Datos de agenda (negocio) ==================
-  // Asegúrate de tener en la vista: <div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
+  // Asegúrate de tener: <div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
   const agendaEl   = document.getElementById('agendaData');
   const NEGOCIO_ID = agendaEl?.dataset?.negocioId || null;
 
-  // ================== 🧠 Helpers compartidos (globales) ==================
-  // Mapa global de reservas: yyyy-mm-dd -> [{inicio:"HH:MM", fin:"HH:MM"}, ...]
+  // ================== 🧩 Inicialización de estructuras globales ==================
+  // Soporte para horarios/bloqueos por trabajador (si más adelante los cargas)
+  window.TRABAJADOR_HORARIOS = window.TRABAJADOR_HORARIOS || {}; // { [trabajador_id]: { [1..7]: [{inicio,fin}] } }
+  window.TRABAJADOR_BLOQUEOS = window.TRABAJADOR_BLOQUEOS || {}; // { [trabajador_id]: ['YYYY-MM-DD', ...] }
+
+  // Mapa de reservas por fecha y trabajador:
+  // window.RESERVAS['YYYY-MM-DD'][trabajador_id] = [{inicio,fin}, ...]
   window.RESERVAS = window.RESERVAS || {};
+
+  // ================== 🧠 Helpers compartidos (globales) ==================
+  const pad2  = n => String(n).padStart(2, '0');
+  const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
   window.t2m = function t2m(hhmm) {
     const [h,m] = (hhmm||'0:0').split(':').map(Number);
@@ -307,22 +322,33 @@ document.addEventListener('DOMContentLoaded', function () {
   const ulCitas    = document.getElementById('listaCitasDia');
   const vacioLabel = document.getElementById('citasDiaVacio');
 
-  const pad2  = n => String(n).padStart(2, '0');
-  const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-
   async function cargarCitasDelDia(fecha) {
     if (!NEGOCIO_ID) return;
     try {
-      const res  = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-dia?fecha=${fecha}`);
+      const res  = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-dia?fecha=${fecha}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
       const json = await res.json();
 
-      // 🔴 Hidratar RESERVAS del día
-      window.RESERVAS[fecha] = normalizeIntervals(json.items || json.reservas || []);
+      // 🧩 Hidratar RESERVAS por trabajador:
+      // Espera items con { trabajador_id, hora_inicio, hora_fin }
+      window.RESERVAS[fecha] = window.RESERVAS[fecha] || {};
+      // Limpia día previo
+      Object.keys(window.RESERVAS[fecha]).forEach(k => delete window.RESERVAS[fecha][k]);
 
-      // --- Panel: lista de citas ---
+      const items = Array.isArray(json.items) ? json.items : [];
+      for (const c of items) {
+        const tid = c.trabajador_id ?? '0';
+        if (!window.RESERVAS[fecha][tid]) window.RESERVAS[fecha][tid] = [];
+        window.RESERVAS[fecha][tid].push({
+          inicio: (c.hora_inicio || '').toString().slice(0,5),
+          fin:    (c.hora_fin    || '').toString().slice(0,5),
+        });
+      }
+
+      // --- Panel lateral (visual) ---
       if (ulCitas && vacioLabel) {
         ulCitas.innerHTML = '';
-        const items = (json.ok && Array.isArray(json.items)) ? json.items : [];
         if (!items.length) {
           vacioLabel.classList.remove('hidden');
         } else {
@@ -344,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      // --- Calendario: pintar eventos de citas del día ---
+      // --- FullCalendar: dibujar eventos del día ---
       if (window.calendar && Array.isArray(json.events)) {
         window.calendar.getEvents()
           .filter(ev => ev.extendedProps?.source === 'citas')
@@ -384,35 +410,24 @@ document.addEventListener('DOMContentLoaded', function () {
         @endforeach
       ],
 
-      // 👉 Click en un día (ahora async para esperar reservas)
+      // 👉 Click en un día (espera reservas por trabajador antes de abrir modal)
       dateClick: async function(info) {
         const ymd = toYMD(info.date);
 
-        // 1) Actualiza panel + RESERVAS del día
-        if (fechaInput) {
-          fechaInput.value = ymd;
-        }
-        await cargarCitasDelDia(ymd); // ← esperamos para tener RESERVAS listas
+        if (fechaInput) fechaInput.value = ymd;
+        await cargarCitasDelDia(ymd); // ← importante para tener RESERVAS[ymd] listas
 
-        // 2) Reglas para agendar
         const today = new Date(); today.setHours(0,0,0,0);
         const clicked = new Date(info.date); clicked.setHours(0,0,0,0);
-
         if (clicked < today) return;
 
         const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
         if (blocked) return;
 
-        const jsDay = clicked.getDay() === 0 ? 7 : clicked.getDay();
-        if (!window.NEGOCIO_HORARIOS[jsDay] || window.NEGOCIO_HORARIOS[jsDay].length === 0) {
-          console.warn('No hay horarios activos para el día', jsDay, window.NEGOCIO_HORARIOS);
-        }
-
-        // Abrir modal de agenda con fecha
         if (typeof window.openAgendarModal === 'function') {
           window.openAgendarModal(ymd);
         } else {
-          // Fallback mínimo
+          // Fallback mínimo si no está la función
           const modal = document.getElementById('modalAgendar');
           const fechaHidden = document.getElementById('agendarFecha');
           const fechaLabel  = document.getElementById('agendarFechaLabel');
@@ -629,5 +644,16 @@ document.addEventListener('DOMContentLoaded', function () {
   // 🔄 Cargar carrito al iniciar
   actualizarCarrito();
 });
+</script>
+
+<script>
+  // Horarios del negocio ya los cargas como window.NEGOCIO_HORARIOS en el script de abajo.
+  // Estos dos quedan listos por si luego implementas horarios/bloqueos específicos por trabajador:
+  window.TRABAJADOR_HORARIOS = window.TRABAJADOR_HORARIOS || {}; // { [trabajador_id]: { [1..7]: [{inicio,fin}] } }
+  window.TRABAJADOR_BLOQUEOS = window.TRABAJADOR_BLOQUEOS || {}; // { [trabajador_id]: ['YYYY-MM-DD', ...] }
+
+  // Mapa de reservas del día por trabajador:
+  // window.RESERVAS['YYYY-MM-DD'][trabajador_id] = [{inicio,fin}, ...]
+  window.RESERVAS = window.RESERVAS || {};
 </script>
 @endpush

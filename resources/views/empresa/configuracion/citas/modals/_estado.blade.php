@@ -1,3 +1,4 @@
+{{-- resources/views/empresa/configuracion/citas/modals/_estado.blade.php --}}
 <div class="modal fade clx-modal" id="citaEstado-{{ $cita->id }}" tabindex="-1" aria-labelledby="citaEstadoLabel-{{ $cita->id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -9,6 +10,20 @@
       <form action="{{ route('empresa.configuracion.citas.estado', [$id, $cita->id]) }}" method="POST">
         @csrf @method('PATCH')
         <div class="modal-body">
+          {{-- Resumen compacto --}}
+          <div class="small text-muted border rounded p-2 mb-3">
+            <div><strong>Fecha:</strong> {{ optional($cita->fecha)->format('Y-m-d') }}</div>
+            <div><strong>Hora:</strong> {{ \Illuminate\Support\Str::limit($cita->hora_inicio,5,'') ?? '—' }} – {{ \Illuminate\Support\Str::limit($cita->hora_fin,5,'') ?? '—' }}</div>
+            <div><strong>Trabajador:</strong>
+              @if(isset($cita->trabajador) && $cita->trabajador)
+                {{ $cita->trabajador->nombre }} (ID {{ $cita->trabajador_id }})
+              @else
+                —
+              @endif
+            </div>
+            <div><strong>Servicio:</strong> {{ optional($cita->servicio)->nombre ?? '—' }}</div>
+          </div>
+
           <div class="mb-3">
             <label for="estado-{{ $cita->id }}" class="form-label">Estado</label>
             <select id="estado-{{ $cita->id }}" name="estado" class="form-select clx-select">

@@ -1,3 +1,4 @@
+{{-- resources/views/empresa/configuracion/citas/modals/_eliminar.blade.php --}}
 <div class="modal fade clx-modal" id="citaEliminar-{{ $cita->id }}" tabindex="-1" aria-labelledby="citaEliminarLabel-{{ $cita->id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -9,7 +10,21 @@
       <form action="{{ route('empresa.configuracion.citas.destroy', [$id, $cita->id]) }}" method="POST">
         @csrf @method('DELETE')
         <div class="modal-body">
-          <p class="mb-0">¿Seguro que deseas eliminar esta cita? Esta acción no se puede deshacer.</p>
+          <p class="mb-2">¿Seguro que deseas eliminar esta cita? Esta acción no se puede deshacer.</p>
+          {{-- Resumen para confirmar que es la cita correcta --}}
+          <div class="small text-muted border rounded p-2">
+            <div><strong>Fecha:</strong> {{ optional($cita->fecha)->format('Y-m-d') }}</div>
+            <div><strong>Hora:</strong> {{ \Illuminate\Support\Str::limit($cita->hora_inicio,5,'') ?? '—' }} – {{ \Illuminate\Support\Str::limit($cita->hora_fin,5,'') ?? '—' }}</div>
+            <div><strong>Cliente:</strong> {{ $cita->nombre_cliente ?? '—' }}</div>
+            <div><strong>Trabajador:</strong>
+              @if(isset($cita->trabajador) && $cita->trabajador)
+                {{ $cita->trabajador->nombre }} (ID {{ $cita->trabajador_id }})
+              @else
+                —
+              @endif
+            </div>
+            <div><strong>Servicio:</strong> {{ optional($cita->servicio)->nombre ?? '—' }}</div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-clx-outline" data-bs-dismiss="modal">Cancelar</button>

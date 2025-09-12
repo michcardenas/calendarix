@@ -7,10 +7,15 @@
     <div id="agendarErrors" class="hidden rounded bg-red-50 text-red-700 px-4 py-3 text-sm mb-3"></div>
 
     @php
-      // Si ya pasas $servicios desde el controlador, comenta/borra estas líneas
+      // Si ya pasas $servicios y/o $trabajadores desde el controlador, comenta/borra estos bloques:
       $servicios = $servicios ?? \App\Models\Empresa\ServicioEmpresa::where('negocio_id', $negocio->id)
                     ->orderBy('nombre')
                     ->get(['id','nombre','precio','categoria','descripcion']);
+
+      // NUEVO: cargar trabajadores del negocio (id, nombre)
+      $trabajadores = $trabajadores ?? \App\Models\Trabajador::where('negocio_id', $negocio->id)
+                      ->orderBy('nombre')
+                      ->get(['id','nombre']);
     @endphp
 
     <form id="formAgendar" method="POST" action="{{ route('agenda.store', $negocio->id) }}" class="space-y-4">
@@ -53,6 +58,19 @@
           <span class="block">Precio: <span id="servicioPrecio" class="font-medium"></span></span>
           <span id="servicioDescripcion" class="block"></span>
         </div>
+      </div>
+
+      {{-- NUEVO: Selección de trabajador --}}
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Trabajador</label>
+        <select name="trabajador_id" id="agendarTrabajador" required
+                class="mt-1 w-full border rounded-lg px-3 py-2">
+          <option value="">Selecciona un trabajador…</option>
+          @foreach ($trabajadores as $t)
+            <option value="{{ $t->id }}">{{ $t->nombre }}</option>
+          @endforeach
+        </select>
+        <p class="text-red-600 text-xs mt-1 hidden" data-error-for="trabajador_id"></p>
       </div>
 
       <div>
@@ -109,13 +127,14 @@
   const hiSel       = document.getElementById('agendarHoraInicio');
   const hfSel       = document.getElementById('agendarHoraFin');
 
-  // NUEVO: refs de servicio
+  // NUEVO: refs de servicio y trabajador
   const servicioSel        = document.getElementById('agendarServicio');
   const servicioResumenBox = document.getElementById('servicioResumen');
   const servicioNombre     = document.getElementById('servicioNombre');
   const servicioCategoria  = document.getElementById('servicioCategoria');
   const servicioPrecio     = document.getElementById('servicioPrecio');
   const servicioDescripcion= document.getElementById('servicioDescripcion');
+  const trabajadorSel      = document.getElementById('agendarTrabajador'); // ← NUEVO
 
   // Utils
   const pad2 = n => String(n).padStart(2,'0');
@@ -167,9 +186,16 @@
     return normalizeRanges(map[day] || []);
   }
 
-  // Construye los <select> de inicio/fin en cuartos de hora dentro del rango, excluyendo reservas del día
+  // Construye los <select> de inicio/fin
   function buildTimeSelects(range, ymd) {
-    const reservas = (window.RESERVAS && window.RESERVAS[ymd]) ? window.RESERVAS[ymd] : [];
+    // NUEVO: obtener reservas por trabajador si el shape lo permite
+    const reservas = (() => {
+      const dayMap = (window.RESERVAS && window.RESERVAS[ymd]) ? window.RESERVAS[ymd] : null;
+      const tId = trabajadorSel?.value || null;
+      if (dayMap && tId && dayMap[tId]) return dayMap[tId];         // {fecha: {trabajador_id: []}}
+      if (Array.isArray(dayMap)) return dayMap;                      // {fecha: []}
+      return [];                                                     // sin reservas conocidas
+    })();
 
     const fill = (selectEl, values) => {
       const prev = selectEl.value;
@@ -185,11 +211,9 @@
       if (prev && values.includes(prev)) selectEl.value = prev; else selectEl.value = '';
     };
 
-    // INICIO: puntos libres de 15' (usa helpers globales del script principal)
     const freeStarts = (window.generateFreeQuarterSlots || (()=>[]))(range.inicio, range.fin, reservas);
     fill(hiSel, freeStarts);
 
-    // FIN: depende del inicio y debe dejar [inicio, fin) libre
     fill(hfSel, []);
     hiSel.onchange = () => {
       const start = hiSel.value;
@@ -199,7 +223,6 @@
     };
   }
 
-  // ✅ FUNCIÓN QUE SÍ PINTA
   function renderRangesForDate(dateObj, ymd) {
     const ranges = computeRangesForDate(dateObj);
 
@@ -238,7 +261,6 @@
 
   // Abre el modal y ajusta horarios del día
   window.openAgendarModal = function (dateInput) {
-    // Normalizar fecha a Y-m-d
     let ymd = '';
     if (dateInput instanceof Date) {
       ymd = toYMD(dateInput);
@@ -250,18 +272,14 @@
     }
     if (!ymd) return;
 
-    // Setear campos de fecha
     fechaHidden.value = ymd;
     fechaLabel.value  = toMDY(ymd);
 
-    // Reset UI
     if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
     document.querySelectorAll('#modalAgendar [data-error-for]').forEach(p => { p.classList.add('hidden'); p.textContent = ''; });
     hiSel.innerHTML = ''; hfSel.innerHTML = '';
-    // reset resumen servicio (mantengo selección pero refresco el resumen)
     renderServicioResumen();
 
-    // Horarios del día
     const dt = new Date(ymd + 'T00:00:00');
     try {
       renderRangesForDate(dt, ymd);
@@ -271,7 +289,6 @@
       }
     }
 
-    // Mostrar modal
     modal.classList.remove('hidden');
     modal.classList.add('flex');
   };
@@ -282,11 +299,25 @@
     modal.classList.remove('flex');
   });
 
+  // Recalcular slots cuando cambia el trabajador (para tomar sus reservas)
+  trabajadorSel?.addEventListener('change', () => {
+    const ymd = fechaHidden.value;
+    if (!ymd) return;
+    const dt = new Date(ymd + 'T00:00:00');
+
+    // Reiniciar selects y recalcular evitando solapes del trabajador
+    hiSel.innerHTML = ''; hfSel.innerHTML = '';
+    try {
+      renderRangesForDate(dt, ymd);
+    } catch (e) {
+      // noop
+    }
+  });
+
   // Envío AJAX con validaciones
   form?.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    // Garantizar Y-m-d en hidden si alguien manipuló el label
     if (fechaLabel.value && !/^\d{4}-\d{2}-\d{2}$/.test(fechaHidden.value)) {
       const [mm, dd, yy] = fechaLabel.value.split('/');
       fechaHidden.value = `${yy}-${mm}-${dd}`;
@@ -295,7 +326,6 @@
     const hi = hiSel.value;
     const hf = hfSel.value;
 
-    // Validación de servicio (cliente)
     if (!servicioSel?.value) {
       const p = document.querySelector('#modalAgendar [data-error-for="servicio_id"]');
       if (p) { p.textContent = 'Debes seleccionar un servicio.'; p.classList.remove('hidden'); }
@@ -303,7 +333,14 @@
       return;
     }
 
-    // Validaciones cliente de horas
+    // NUEVO: validación de trabajador
+    if (!trabajadorSel?.value) {
+      const p = document.querySelector('#modalAgendar [data-error-for="trabajador_id"]');
+      if (p) { p.textContent = 'Debes seleccionar un trabajador.'; p.classList.remove('hidden'); }
+      if (errBox) { errBox.textContent = 'Debes seleccionar un trabajador.'; errBox.classList.remove('hidden'); }
+      return;
+    }
+
     if (!hi || !hf) {
       if (errBox) { errBox.textContent = 'Debes indicar hora de inicio y fin.'; errBox.classList.remove('hidden'); }
       return;
@@ -315,7 +352,7 @@
       return;
     }
 
-    // Cálculo puro de rangos (NO re-render)
+    // Rango válido del día
     const dt = new Date(fechaHidden.value + 'T00:00:00');
     const ranges = computeRangesForDate(dt);
     if (!ranges.length) {
@@ -328,17 +365,23 @@
       return;
     }
 
-    // Anti-solape con reservas del día
-    const reservas = (window.RESERVAS && window.RESERVAS[fechaHidden.value]) ? window.RESERVAS[fechaHidden.value] : [];
+    // Anti-solape por trabajador (si RESERVAS lo soporta)
+    const reservas = (() => {
+      const dayMap = (window.RESERVAS && window.RESERVAS[fechaHidden.value]) ? window.RESERVAS[fechaHidden.value] : null;
+      const tId = trabajadorSel?.value || null;
+      if (dayMap && tId && dayMap[tId]) return dayMap[tId];
+      if (Array.isArray(dayMap)) return dayMap;
+      return [];
+    })();
+
     if ((window.overlapsAny || (()=>false))(hi, hf, reservas)) {
       if (errBox) {
-        errBox.textContent = 'Ese horario ya está reservado. Elige otro intervalo.';
+        errBox.textContent = 'Ese horario ya está reservado para este trabajador. Elige otro intervalo.';
         errBox.classList.remove('hidden');
       }
       return;
     }
 
-    // Limpiar errores previos
     if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
     document.querySelectorAll('#modalAgendar [data-error-for]').forEach(p => { p.classList.add('hidden'); p.textContent = ''; });
 
@@ -366,13 +409,14 @@
         return;
       }
 
-      // Pintar en calendario si existe window.calendar
+      // Pintar en calendario (incluye extendedProps si el backend los envía)
       if (data.ok && data.event && window.calendar && typeof window.calendar.addEvent === 'function') {
         window.calendar.addEvent({
           title: data.event.title || 'Cita',
           start: data.event.start,
           end:   data.event.end,
-          color: data.event.color || '#4a5eaa'
+          color: data.event.color || '#4a5eaa',
+          extendedProps: data.event.extendedProps || {}
         });
       }
 
