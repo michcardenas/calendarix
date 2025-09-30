@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Empresa\ServicioEmpresa;
-use App\Models\Empresa\Empresa;
+use App\Models\Negocio;
 use App\Models\User;
 use App\Models\Trabajador;
 
@@ -29,11 +29,11 @@ class Cita extends Model
     ];
 
     /**
-     * Relación con el negocio
+     * Relación con el negocio (usa Negocio en lugar de Empresa para acceso completo a atributos)
      */
     public function negocio()
     {
-        return $this->belongsTo(Empresa::class, 'negocio_id');
+        return $this->belongsTo(Negocio::class, 'negocio_id');
     }
 
     /**

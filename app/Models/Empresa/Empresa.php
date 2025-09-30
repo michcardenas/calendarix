@@ -8,6 +8,9 @@ class Empresa extends Model
 {
     protected $table = 'negocios';
 
+    // Permitir acceso a todos los atributos (ya que es un modelo proxy)
+    protected $guarded = [];
+
     public function clientes()
     {
         return $this->hasMany(\App\Models\Cliente::class, 'negocio_id');
