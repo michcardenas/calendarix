@@ -216,7 +216,8 @@
  */
 @php
   // --- Citas próximas (sin normalizar estados) ---
-  $appointmentsData = ($proximasCitas ?? collect())->map(function($c) {
+  $currentUserId = auth()->id();
+  $appointmentsData = ($proximasCitas ?? collect())->map(function($c) use ($currentUserId) {
       // Fecha (string -> Carbon)
       $fechaStr = $c->fecha ?? null;
       $fecha    = $fechaStr ? \Illuminate\Support\Carbon::parse($fechaStr) : null;
@@ -239,11 +240,18 @@
       $servicioNombre = optional($c->servicio)->nombre ?? null;
       $trabajadorNombre = optional($c->trabajador)->nombre ?? null;
 
+      // 🎯 Identificar tipo de cita
+      $esMiCita = $c->user_id == $currentUserId;
+      $tipo = $esMiCita ? 'cliente' : 'negocio'; // soy cliente vs es en mi negocio
+
       // Construir descripción del servicio con trabajador
       $serviceDescription = $servicioNombre ?? $c->notas ?? 'Cita';
       if ($trabajadorNombre) {
           $serviceDescription .= ' con ' . $trabajadorNombre;
       }
+
+      // Nombre del cliente (solo para citas de negocio)
+      $clienteNombre = !$esMiCita ? (optional($c->user)->name ?? $c->nombre_cliente ?? 'Cliente') : null;
 
       return [
           // Texto compacto para cards/listas
@@ -252,11 +260,12 @@
           'date'     => $fecha ? $fecha->format('Y-m-d') : null,
           'start'    => $inicio,
           'end'      => $fin,
-          'client'   => $c->nombre_cliente ?? null,
+          'client'   => $clienteNombre, // Nombre del cliente (solo para citas de negocio)
           'service'  => $serviceDescription,
           'business' => $c->negocio?->neg_nombre_comercial ?? '—',
           'status'   => $statusEs,   // ES canónico
           'trabajador' => $trabajadorNombre,
+          'type'     => $tipo, // 'cliente' o 'negocio'
       ];
   })->values();
 

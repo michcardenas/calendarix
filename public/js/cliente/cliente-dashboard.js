@@ -52,13 +52,28 @@ function clxLoadAppointments() {
     const status = (raw === 'pendiente' || raw === 'confirmada' || raw === 'cancelada' || raw === 'completada')
       ? raw : 'pendiente';
 
+    // 🎯 Tipo de cita: 'cliente' (yo agendé) o 'negocio' (en mi negocio)
+    const tipo = appointment.type ?? 'cliente';
+    const esNegocio = tipo === 'negocio';
+
+    // Badge de tipo
+    const tipoBadge = esNegocio
+      ? '<span class="clx-appointment-type-badge" style="background: #6366f1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 6px;">Mi Negocio</span>'
+      : '';
+
+    // Info adicional para citas de negocio
+    const clienteInfo = esNegocio && appointment.client
+      ? `<div class="clx-appointment-client" style="font-size: 12px; color: #64748b;">Cliente: ${appointment.client}</div>`
+      : '';
+
     const appointmentEl = document.createElement('div');
     appointmentEl.className = 'clx-appointment-item';
     appointmentEl.innerHTML = `
       <div class="clx-appointment-time">${appointment.time ?? ''}</div>
       <div class="clx-appointment-info">
-        <div class="clx-appointment-service">${appointment.service ?? 'Cita'}</div>
+        <div class="clx-appointment-service">${tipoBadge}${appointment.service ?? 'Cita'}</div>
         <div class="clx-appointment-business">${appointment.business ?? '—'}</div>
+        ${clienteInfo}
       </div>
       <div class="clx-appointment-status clx-status-es-${status}">
         ${labels[status]}

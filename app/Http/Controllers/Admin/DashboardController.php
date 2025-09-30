@@ -49,12 +49,13 @@ class DashboardController extends Controller
 
         // Empresas del usuario
         $misEmpresas = Negocio::where('user_id', $user->id)->get();
+        $misEmpresasIds = $misEmpresas->pluck('id')->toArray();
 
         // 🔍 LOG: Empresas encontradas
         Log::info('Dashboard Cliente - Empresas', [
             'user_id' => $user->id,
             'empresas_count' => $misEmpresas->count(),
-            'empresas_ids' => $misEmpresas->pluck('id')->toArray(),
+            'empresas_ids' => $misEmpresasIds,
         ]);
 
         // Rangos de tiempo
@@ -67,8 +68,13 @@ class DashboardController extends Controller
         $estadosActivos     = ['pendiente', 'confirmada'];
         $estadosFinalizados = ['cancelada', 'completada'];
 
-        // Citas del mes (todas)
-        $citasMes = Cita::where('user_id', $user->id)
+        // 🎯 Citas del mes: AMBAS (como cliente Y de mis negocios)
+        $citasMes = Cita::where(function($query) use ($user, $misEmpresasIds) {
+                // Citas donde soy el cliente
+                $query->where('user_id', $user->id)
+                      // O citas en mis negocios
+                      ->orWhereIn('negocio_id', $misEmpresasIds);
+            })
             ->whereBetween('fecha', [$inicioMes->toDateString(), $finMes->toDateString()])
             ->count();
 
@@ -79,8 +85,11 @@ class DashboardController extends Controller
             'rango' => [$inicioMes->toDateString(), $finMes->toDateString()],
         ]);
 
-        // Conteos por estado en la semana
-        $conteosSemana = Cita::where('user_id', $user->id)
+        // Conteos por estado en la semana: AMBAS
+        $conteosSemana = Cita::where(function($query) use ($user, $misEmpresasIds) {
+                $query->where('user_id', $user->id)
+                      ->orWhereIn('negocio_id', $misEmpresasIds);
+            })
             ->whereBetween('fecha', [$inicioSemana->toDateString(), $finSemana->toDateString()])
             ->selectRaw('estado, COUNT(*) AS total')
             ->groupBy('estado')
@@ -94,10 +103,13 @@ class DashboardController extends Controller
         // Compatibilidad
         $citasPendientes = $citasPendientesSemana + $citasConfirmadasSemana;
 
-        // Próximas citas (hoy en adelante) activas
+        // Próximas citas (hoy en adelante) activas: AMBAS
         // Eager loading de relaciones para evitar N+1 queries
-        $proximasCitas = Cita::with(['negocio', 'servicio', 'trabajador'])
-            ->where('user_id', $user->id)
+        $proximasCitas = Cita::with(['negocio', 'servicio', 'trabajador', 'user'])
+            ->where(function($query) use ($user, $misEmpresasIds) {
+                $query->where('user_id', $user->id)
+                      ->orWhereIn('negocio_id', $misEmpresasIds);
+            })
             ->whereDate('fecha', '>=', Carbon::today())
             ->whereIn('estado', $estadosActivos)
             ->orderBy('fecha')
@@ -109,9 +121,12 @@ class DashboardController extends Controller
         Log::info('Dashboard Cliente - Próximas Citas', [
             'user_id' => $user->id,
             'count' => $proximasCitas->count(),
-            'citas' => $proximasCitas->map(function($c) {
+            'citas' => $proximasCitas->map(function($c) use ($user) {
+                // Identificar si es cita como cliente o de mi negocio
+                $esMiCita = $c->user_id == $user->id;
                 return [
                     'id' => $c->id,
+                    'tipo' => $esMiCita ? 'CLIENTE' : 'NEGOCIO',
                     'fecha' => $c->fecha,
                     'hora_inicio' => $c->hora_inicio,
                     'estado' => $c->estado,
@@ -119,6 +134,7 @@ class DashboardController extends Controller
                     'negocio_nombre' => $c->negocio?->neg_nombre_comercial ?? 'NO_CARGADO',
                     'servicio_nombre' => $c->servicio?->nombre ?? 'NO_CARGADO',
                     'trabajador_nombre' => $c->trabajador?->nombre ?? 'NO_CARGADO',
+                    'cliente_nombre' => $c->user?->name ?? $c->nombre_cliente ?? 'NO_CARGADO',
                 ];
             })->toArray(),
         ]);
