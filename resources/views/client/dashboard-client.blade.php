@@ -293,6 +293,15 @@
       'favorites'         => (int)($favoritosCount ?? 0),
       'pending'           => (int)($citasPendientes ?? 0),
   ];
+
+  // 🔍 LOG PHP: Debug de datos antes de pasar a JavaScript
+  \Log::info('Dashboard Cliente - Datos a JavaScript', [
+      'user_id' => auth()->id(),
+      'appointments_count' => $appointmentsData->count(),
+      'recommendations_count' => $recoData->count(),
+      'stats' => $serverStats,
+      'appointments_sample' => $appointmentsData->take(3)->toArray(), // Primeras 3 citas como muestra
+  ]);
 @endphp
 
 
@@ -301,6 +310,17 @@ window.clxData = {
   recommendations: @json($recoData),
   stats: @json($serverStats),
 };
+
+// 🔍 LOG: Debug en consola (solo en desarrollo o cuando haya problemas)
+if (window.location.hostname === 'localhost' || window.location.search.includes('debug=1')) {
+  console.group('🔍 Dashboard Cliente - Debug Data');
+  console.log('📊 Stats:', window.clxData.stats);
+  console.log('📅 Appointments Count:', window.clxData.appointments?.length || 0);
+  console.log('📅 Appointments Data:', window.clxData.appointments);
+  console.log('🏪 Recommendations Count:', window.clxData.recommendations?.length || 0);
+  console.log('🏪 Recommendations Data:', window.clxData.recommendations);
+  console.groupEnd();
+}
 
 /**
  * 2) Helper para animar números (por si no existe en cliente-dashboard.js)

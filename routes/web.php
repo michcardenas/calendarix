@@ -77,6 +77,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard-cliente', [DashboardController::class, 'cliente'])
         ->name('client.dashboard-client');
+
+    // Endpoint de debug para verificar citas (solo autenticados)
+    Route::get('/dashboard-cliente/debug', [DashboardController::class, 'debugCitas'])
+        ->name('client.dashboard-debug');
 });
 
     /*
