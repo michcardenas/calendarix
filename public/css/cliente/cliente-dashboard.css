@@ -554,6 +554,32 @@ body {
     letter-spacing: 0.025em;
 }
 
+/* Estados en español */
+.clx-status-es-pendiente {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.1));
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.clx-status-es-confirmada {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.clx-status-es-cancelada {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(248, 113, 113, 0.1));
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.clx-status-es-completada {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(129, 140, 248, 0.1));
+    color: #4f46e5;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Estados en inglés (legacy - mantener compatibilidad) */
 .clx-status-confirmed {
     background: rgba(16, 185, 129, 0.1);
     color: var(--clx-accent);

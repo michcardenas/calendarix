@@ -14,6 +14,8 @@ use App\Models\Empresa\ServicioEmpresa;
 use Carbon\Carbon;
 use App\Models\Trabajador;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificacionGeneral;
 
 class AgendaController extends Controller
 {
@@ -229,6 +231,9 @@ class AgendaController extends Controller
         $workerTag  = $trabajador?->nombre ? " · {$trabajador->nombre}" : '';
         $title      = ($cita->nombre_cliente ?: ($servicio->nombre ?: 'Cita')) . $workerTag;
 
+        // 📧 ENVIAR EMAILS
+        $this->enviarEmailsCita($cita, $servicio, $trabajador, $negocioId);
+
         return response()->json([
             'ok' => true,
             'event' => [
@@ -321,6 +326,141 @@ public function citasDia(Request $request, $negocioId)
         'items'  => $items,   // ← contiene trabajador_id
         'events' => $events,
     ]);
+}
+
+public function citasMes(Request $request, $negocioId)
+{
+    try {
+        // Obtener mes/año desde la query o usar el actual
+        $year  = $request->query('year', Carbon::now()->year);
+        $month = $request->query('month', Carbon::now()->month);
+
+        $inicio = Carbon::create($year, $month, 1)->startOfMonth();
+        $fin    = Carbon::create($year, $month, 1)->endOfMonth();
+
+        // Cargar todas las citas del mes con relación de trabajador
+        $citas = \App\Models\Cita::with(['trabajador:id,nombre', 'servicio:id,nombre'])
+            ->where('negocio_id', $negocioId)
+            ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+            ->orderBy('fecha')
+            ->orderBy('hora_inicio')
+            ->get([
+                'id',
+                'nombre_cliente',
+                'fecha',
+                'hora_inicio',
+                'hora_fin',
+                'estado',
+                'trabajador_id',
+                'servicio_id',
+            ]);
+
+        // Convertir a formato de eventos para FullCalendar
+        $events = $citas->map(function ($c) {
+            $trabajadorNombre = optional($c->trabajador)->nombre;
+            $servicioNombre = optional($c->servicio)->nombre;
+
+            // Título con información relevante
+            $title = $c->nombre_cliente ?: 'Cita';
+            if ($trabajadorNombre) {
+                $title .= " · {$trabajadorNombre}";
+            }
+
+            return [
+                'id'    => "cita-{$c->id}",
+                'title' => $title,
+                'start' => "{$c->fecha}T{$c->hora_inicio}",
+                'end'   => "{$c->fecha}T{$c->hora_fin}",
+                'color' => $c->estado === 'confirmada' ? '#10b981' : ($c->estado === 'cancelada' ? '#ef4444' : '#6366f1'),
+                'textColor' => '#ffffff',
+                'extendedProps' => [
+                    'type' => 'cita',
+                    'cita_id' => $c->id,
+                    'estado' => $c->estado,
+                    'trabajador_id' => $c->trabajador_id,
+                    'trabajador_nombre' => $trabajadorNombre,
+                    'servicio_id' => $c->servicio_id,
+                    'servicio_nombre' => $servicioNombre,
+                ],
+            ];
+        })->values();
+
+        return response()->json([
+            'ok' => true,
+            'events' => $events,
+        ]);
+    } catch (\Throwable $e) {
+        Log::error('Error al cargar citas del mes: ' . $e->getMessage(), ['negocio_id' => $negocioId]);
+        return response()->json([
+            'ok' => false,
+            'errors' => ['general' => ['Error al cargar citas.']]
+        ], 500);
+    }
+}
+
+/**
+ * Enviar emails de notificación cuando se crea una cita
+ */
+private function enviarEmailsCita($cita, $servicio, $trabajador, $negocioId)
+{
+    try {
+        $negocio = \App\Models\Negocio::find($negocioId);
+        $fechaFormateada = Carbon::parse($cita->fecha)->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
+
+        // 📧 Email al CLIENTE
+        if ($cita->user_id) {
+            $cliente = \App\Models\User::find($cita->user_id);
+            if ($cliente && $cliente->email) {
+                Mail::to($cliente->email)->send(new NotificacionGeneral(
+                    asunto: '✅ Cita Confirmada - ' . ($negocio->neg_nombre_comercial ?? 'Negocio'),
+                    titulo: '¡Tu cita ha sido agendada!',
+                    mensaje: 'Hemos confirmado tu cita exitosamente. Te esperamos en la fecha y hora indicada.',
+                    detalles: [
+                        'Negocio' => $negocio->neg_nombre_comercial ?? 'Sin nombre',
+                        'Servicio' => $servicio->nombre ?? 'Servicio',
+                        'Trabajador' => $trabajador?->nombre ?? 'Por asignar',
+                        'Fecha' => $fechaFormateada,
+                        'Hora' => substr($cita->hora_inicio, 0, 5) . ' - ' . substr($cita->hora_fin, 0, 5),
+                        'Estado' => 'Pendiente de confirmación',
+                    ],
+                    accionTexto: 'Ver mis citas',
+                    accionUrl: url('/dashboard-cliente'),
+                    tipoIcono: 'success'
+                ));
+            }
+        }
+
+        // 📧 Email al DUEÑO DEL NEGOCIO
+        if ($negocio && $negocio->user_id) {
+            $dueno = \App\Models\User::find($negocio->user_id);
+            if ($dueno && $dueno->email) {
+                Mail::to($dueno->email)->send(new NotificacionGeneral(
+                    asunto: '🔔 Nueva Cita Agendada',
+                    titulo: '¡Tienes una nueva cita!',
+                    mensaje: 'Un cliente ha agendado una cita en tu negocio. Revisa los detalles y confirma la disponibilidad.',
+                    detalles: [
+                        'Cliente' => $cita->nombre_cliente ?? 'Cliente',
+                        'Servicio' => $servicio->nombre ?? 'Servicio',
+                        'Trabajador' => $trabajador?->nombre ?? 'Por asignar',
+                        'Fecha' => $fechaFormateada,
+                        'Hora' => substr($cita->hora_inicio, 0, 5) . ' - ' . substr($cita->hora_fin, 0, 5),
+                        'Notas' => $cita->notas ?? 'Sin notas',
+                    ],
+                    accionTexto: 'Ver cita y confirmar',
+                    accionUrl: route('empresa.configuracion.citas', $negocioId),
+                    tipoIcono: 'info'
+                ));
+            }
+        }
+
+        Log::info('Emails de cita enviados', ['cita_id' => $cita->id]);
+    } catch (\Throwable $e) {
+        Log::error('Error al enviar emails de cita: ' . $e->getMessage(), [
+            'cita_id' => $cita->id ?? null,
+            'negocio_id' => $negocioId
+        ]);
+        // No lanzamos excepción para no interrumpir el flujo de la cita
+    }
 }
 
 }

@@ -159,7 +159,14 @@
             <div class="clx-card">
                 <div class="clx-card-header">
                     <h3 class="clx-card-title">Próximas Citas</h3>
-                    <button class="clx-btn clx-btn-ghost">Ver todas</button>
+                    @if($misEmpresas->count() > 0)
+                        @php
+                            $primeraEmpresa = $misEmpresas->first();
+                        @endphp
+                        <a href="{{ route('empresa.configuracion.citas', $primeraEmpresa->id) }}" class="clx-btn clx-btn-ghost">Ver todas</a>
+                    @else
+                        <button class="clx-btn clx-btn-ghost" onclick="alert('Aún no tienes empresas registradas')">Ver todas</button>
+                    @endif
                 </div>
                 <div class="clx-card-body">
                     <div id="clx-appointments-list">
@@ -228,6 +235,16 @@
       $permitidos = ['pendiente','confirmada','cancelada','completada'];
       $statusEs  = in_array($raw, $permitidos, true) ? $raw : 'pendiente';
 
+      // Información del servicio y trabajador
+      $servicioNombre = optional($c->servicio)->nombre ?? null;
+      $trabajadorNombre = optional($c->trabajador)->nombre ?? null;
+
+      // Construir descripción del servicio con trabajador
+      $serviceDescription = $servicioNombre ?? $c->notas ?? 'Cita';
+      if ($trabajadorNombre) {
+          $serviceDescription .= ' con ' . $trabajadorNombre;
+      }
+
       return [
           // Texto compacto para cards/listas
           'time'     => ($fecha ? $fecha->format('d/m/Y') : '—') . ($inicio ? ' • '.$inicio.($fin ? '–'.$fin : '') : ''),
@@ -236,9 +253,10 @@
           'start'    => $inicio,
           'end'      => $fin,
           'client'   => $c->nombre_cliente ?? null,
-          'service'  => $c->titulo ?? $c->notas ?? 'Cita',
+          'service'  => $serviceDescription,
           'business' => $c->negocio?->neg_nombre_comercial ?? '—',
           'status'   => $statusEs,   // ES canónico
+          'trabajador' => $trabajadorNombre,
       ];
   })->values();
 

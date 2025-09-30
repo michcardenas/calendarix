@@ -288,5 +288,8 @@ Route::post('/negocios/{negocio}/agenda', [AgendaController::class, 'store'])
 
 Route::get('/negocios/{negocio}/agenda/citas-dia', [AgendaController::class, 'citasDia'])
     ->name('agenda.citas-dia');
-     
+
+Route::get('/negocios/{negocio}/agenda/citas-mes', [AgendaController::class, 'citasMes'])
+    ->name('agenda.citas-mes');
+
 require __DIR__ . '/auth.php';

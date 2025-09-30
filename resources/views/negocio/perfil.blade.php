@@ -43,6 +43,65 @@
     }
     @keyframes bubblesBefore { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
     @keyframes bubblesAfter  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(30px); } }
+
+    /* Estilos para días pasados en el calendario */
+    .fc-day-past {
+        background-color: #f3f4f6 !important;
+        opacity: 0.6;
+        cursor: not-allowed !important;
+    }
+    .fc-day-past .fc-daygrid-day-number {
+        color: #9ca3af !important;
+        text-decoration: line-through;
+    }
+
+    /* Estilos para días bloqueados */
+    .fc-day-blocked {
+        background-color: #fee2e2 !important;
+        cursor: not-allowed !important;
+    }
+    .fc-day-blocked .fc-daygrid-day-number {
+        color: #dc2626 !important;
+        font-weight: bold;
+    }
+
+    /* Días disponibles - hover effect */
+    .fc .fc-daygrid-day:not(.fc-day-past):not(.fc-day-blocked):hover {
+        background-color: #e0e7ff !important;
+        cursor: pointer;
+    }
+
+    /* Estilos para eventos de citas en el calendario */
+    .fc-event {
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .fc-event:hover {
+        opacity: 0.85;
+    }
+
+    /* Estilos según estado de la cita */
+    .fc-event[style*="rgb(99, 102, 241)"] { /* Pendiente - Indigo */
+        border-left: 3px solid #4f46e5;
+    }
+    .fc-event[style*="rgb(16, 185, 129)"] { /* Confirmada - Verde */
+        border-left: 3px solid #059669;
+    }
+    .fc-event[style*="rgb(239, 68, 68)"] { /* Cancelada - Rojo */
+        border-left: 3px solid #dc2626;
+        opacity: 0.7;
+    }
+
+    /* Tooltip para eventos de citas */
+    .fc-event-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
 
 {{-- Botón carrito flotante --}}
@@ -370,17 +429,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      // --- FullCalendar: dibujar eventos del día ---
-      if (window.calendar && Array.isArray(json.events)) {
-        window.calendar.getEvents()
-          .filter(ev => ev.extendedProps?.source === 'citas')
-          .forEach(ev => ev.remove());
-
-        for (const ev of json.events) {
-          ev.extendedProps = Object.assign({}, ev.extendedProps, { source: 'citas' });
-          window.calendar.addEvent(ev);
-        }
-      }
+      // --- FullCalendar: NO dibujamos eventos aquí, ya se cargan con cargarCitasMes ---
+      // Las citas ya están cargadas en el calendario y no necesitamos duplicarlas
     } catch (e) {
       console.error('Error cargando citas del día:', e);
     }
@@ -389,6 +439,33 @@ document.addEventListener('DOMContentLoaded', function () {
   // ================== 🗓️ Calendario (bloqueos + integración con citas del día) ==================
   const calendarEl = document.getElementById('calendarioBloqueos');
   let calendar;
+
+  // Función para cargar citas del mes
+  async function cargarCitasMes(year, month) {
+    if (!NEGOCIO_ID) return;
+    try {
+      const res = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-mes?year=${year}&month=${month}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const json = await res.json();
+
+      if (json.ok && Array.isArray(json.events)) {
+        // Remover eventos de citas previas
+        if (window.calendar) {
+          window.calendar.getEvents()
+            .filter(ev => ev.extendedProps?.type === 'cita')
+            .forEach(ev => ev.remove());
+
+          // Agregar nuevos eventos de citas
+          json.events.forEach(ev => {
+            window.calendar.addEvent(ev);
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Error cargando citas del mes:', e);
+    }
+  }
 
   if (calendarEl) {
     calendar = new FullCalendar.Calendar(calendarEl, {
@@ -410,20 +487,52 @@ document.addEventListener('DOMContentLoaded', function () {
         @endforeach
       ],
 
+      // 🎨 Estilos personalizados para cada día
+      dayCellClassNames: function(info) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const cellDate = new Date(info.date);
+        cellDate.setHours(0,0,0,0);
+
+        const ymd = toYMD(cellDate);
+        const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
+
+        // Día pasado
+        if (cellDate < today) {
+          return ['fc-day-past'];
+        }
+        // Día bloqueado
+        if (blocked) {
+          return ['fc-day-blocked'];
+        }
+        return [];
+      },
+
+      // 🔄 Cargar citas cuando cambia el mes
+      datesSet: function(dateInfo) {
+        const year = dateInfo.start.getFullYear();
+        const month = dateInfo.start.getMonth() + 1;
+        cargarCitasMes(year, month);
+      },
+
       // 👉 Click en un día (espera reservas por trabajador antes de abrir modal)
       dateClick: async function(info) {
         const ymd = toYMD(info.date);
-
-        if (fechaInput) fechaInput.value = ymd;
-        await cargarCitasDelDia(ymd); // ← importante para tener RESERVAS[ymd] listas
-
         const today = new Date(); today.setHours(0,0,0,0);
         const clicked = new Date(info.date); clicked.setHours(0,0,0,0);
+
+        // No permitir clicks en días pasados
         if (clicked < today) return;
 
+        // No permitir clicks en días bloqueados
         const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
         if (blocked) return;
 
+        // Cargar reservas del día para control de horarios (sin afectar eventos visuales)
+        if (fechaInput) fechaInput.value = ymd;
+        await cargarCitasDelDia(ymd); // ← importante para tener RESERVAS[ymd] listas
+
+        // Abrir modal de agendar
         if (typeof window.openAgendarModal === 'function') {
           window.openAgendarModal(ymd);
         } else {

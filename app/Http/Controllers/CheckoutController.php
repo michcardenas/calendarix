@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\CheckoutDetalle;
 use App\Mail\PedidoConfirmado;
+use App\Mail\NotificacionGeneral;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
@@ -238,8 +239,8 @@ class CheckoutController extends Controller
             $pedido->estado_pago = 'pendiente';
             $pedido->save();
 
-            // Enviar correo (opcionalmente cola)
-            Mail::to($pedido->email)->send(new PedidoConfirmado($pedido));
+            // Enviar emails de notificación
+            $this->enviarEmailsPedido($pedido);
 
             // Limpia el carrito SOLO tras confirmar datos
             Session::forget('carrito');
@@ -318,5 +319,73 @@ class CheckoutController extends Controller
     public function failure()
     {
         return view('checkout.failure');
+    }
+
+    /**
+     * Enviar emails de notificación cuando se confirma un pedido
+     */
+    private function enviarEmailsPedido($pedido)
+    {
+        try {
+            $negocio = Negocio::find($pedido->negocio_id);
+
+            // Construir resumen de productos
+            $resumenProductos = [];
+            foreach ($pedido->detalles as $detalle) {
+                $nombre = $detalle->producto ? $detalle->producto->nombre : ($detalle->servicio->nombre ?? 'Producto');
+                $resumenProductos[] = "{$nombre} × {$detalle->cantidad} = $" . number_format($detalle->precio_total, 0, ',', '.');
+            }
+
+            // 📧 Email al CLIENTE
+            if ($pedido->email) {
+                Mail::to($pedido->email)->send(new NotificacionGeneral(
+                    asunto: '✅ Pedido Confirmado - #' . $pedido->id,
+                    titulo: '¡Gracias por tu pedido!',
+                    mensaje: 'Hemos recibido tu pedido exitosamente. El negocio lo revisará y te confirmará la disponibilidad pronto.',
+                    detalles: [
+                        'Pedido #' => $pedido->id,
+                        'Negocio' => $negocio->neg_nombre_comercial ?? 'Negocio',
+                        'Productos' => implode("\n", $resumenProductos),
+                        'Total' => '$' . number_format($pedido->total, 0, ',', '.'),
+                        'Dirección de entrega' => $pedido->direccion,
+                        'Estado' => 'Pendiente de confirmación',
+                    ],
+                    accionTexto: 'Ver mi pedido',
+                    accionUrl: route('checkout.success'),
+                    tipoIcono: 'success'
+                ));
+            }
+
+            // 📧 Email al DUEÑO DEL NEGOCIO
+            if ($negocio && $negocio->user_id) {
+                $dueno = \App\Models\User::find($negocio->user_id);
+                if ($dueno && $dueno->email) {
+                    Mail::to($dueno->email)->send(new NotificacionGeneral(
+                        asunto: '🛒 Nuevo Pedido - #' . $pedido->id,
+                        titulo: '¡Tienes un nuevo pedido!',
+                        mensaje: 'Un cliente ha realizado un pedido en tu negocio. Revisa los detalles y confirma la disponibilidad de los productos.',
+                        detalles: [
+                            'Pedido #' => $pedido->id,
+                            'Cliente' => $pedido->nombre,
+                            'Teléfono' => $pedido->telefono,
+                            'Email' => $pedido->email,
+                            'Productos' => implode("\n", $resumenProductos),
+                            'Total' => '$' . number_format($pedido->total, 0, ',', '.'),
+                            'Dirección de entrega' => $pedido->direccion,
+                        ],
+                        accionTexto: 'Ver pedido',
+                        accionUrl: route('empresa.dashboard', $negocio->id),
+                        tipoIcono: 'info'
+                    ));
+                }
+            }
+
+            Log::info('Emails de pedido enviados', ['pedido_id' => $pedido->id]);
+        } catch (\Throwable $e) {
+            Log::error('Error al enviar emails de pedido: ' . $e->getMessage(), [
+                'pedido_id' => $pedido->id ?? null
+            ]);
+            // No lanzamos excepción para no interrumpir el flujo del pedido
+        }
     }
 }

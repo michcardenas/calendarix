@@ -9,9 +9,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Mail\NotificacionGeneral;
 
 class NewPasswordController extends Controller
 {
@@ -48,6 +50,26 @@ class NewPasswordController extends Controller
                 ])->save();
 
                 event(new PasswordReset($user));
+
+                // 📧 Enviar email de confirmación de cambio de contraseña
+                try {
+                    Mail::to($user->email)->send(new NotificacionGeneral(
+                        asunto: '✅ Contraseña Restablecida',
+                        titulo: 'Tu contraseña ha sido cambiada',
+                        mensaje: 'Tu contraseña ha sido actualizada exitosamente. Si no fuiste tú quien realizó este cambio, contacta con soporte inmediatamente.',
+                        detalles: [
+                            'Nombre' => $user->name,
+                            'Email' => $user->email,
+                            'Fecha del cambio' => now()->format('d/m/Y H:i'),
+                            'Dirección IP' => $request->ip(),
+                        ],
+                        accionTexto: 'Iniciar Sesión',
+                        accionUrl: route('login'),
+                        tipoIcono: 'success'
+                    ));
+                } catch (\Exception $e) {
+                    \Log::error('Error al enviar email de confirmación de cambio de contraseña', ['error' => $e->getMessage()]);
+                }
             }
         );
 

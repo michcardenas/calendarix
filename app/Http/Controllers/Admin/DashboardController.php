@@ -73,7 +73,7 @@ class DashboardController extends Controller
         $citasPendientes = $citasPendientesSemana + $citasConfirmadasSemana;
 
         // Próximas citas (hoy en adelante) activas
-        $proximasCitas = Cita::with('negocio')
+        $proximasCitas = Cita::with(['negocio', 'servicio', 'trabajador'])
             ->where('user_id', $user->id)
             ->whereDate('fecha', '>=', Carbon::today())
             ->whereIn('estado', $estadosActivos)
