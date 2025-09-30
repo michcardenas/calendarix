@@ -73,6 +73,7 @@ class DashboardController extends Controller
         $citasPendientes = $citasPendientesSemana + $citasConfirmadasSemana;
 
         // Próximas citas (hoy en adelante) activas
+        // Eager loading de relaciones para evitar N+1 queries
         $proximasCitas = Cita::with(['negocio', 'servicio', 'trabajador'])
             ->where('user_id', $user->id)
             ->whereDate('fecha', '>=', Carbon::today())

@@ -81,4 +81,9 @@ class Negocio extends Model
     {
         return $this->hasMany(\App\Models\Producto::class, 'negocio_id');
     }
+
+    public function citas()
+    {
+        return $this->hasMany(Cita::class, 'negocio_id');
+    }
 }
