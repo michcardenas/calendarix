@@ -9,7 +9,9 @@ use App\Models\Negocio;
 use App\Models\Trabajador;
 use App\Models\Cliente;
 use App\Models\Cita;
+use App\Models\Resena;
 use App\Models\Empresa\ServicioEmpresa;
+use Illuminate\Support\Facades\Storage;
 
 class EmpresaController extends Controller
 {
@@ -148,18 +150,29 @@ class EmpresaController extends Controller
     public function storeTrabajador(Request $request)
     {
         $request->validate([
-            'negocio_id' => 'required|exists:negocios,id',
-            'nombre'     => 'required|string|max:255',
-            'email'      => 'nullable|email|max:255',
-            'telefono'   => 'nullable|string|max:20',
+            'negocio_id'     => 'required|exists:negocios,id',
+            'nombre'         => 'required|string|max:255',
+            'email'          => 'nullable|email|max:255',
+            'telefono'       => 'nullable|string|max:20',
+            'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'bio'            => 'nullable|string|max:500',
+            'especialidades' => 'nullable|string|max:255',
         ]);
 
-        Trabajador::create([
-            'negocio_id' => $request->negocio_id,
-            'nombre'     => $request->nombre,
-            'email'      => $request->email,
-            'telefono'   => $request->telefono,
-        ]);
+        $data = [
+            'negocio_id'     => $request->negocio_id,
+            'nombre'         => $request->nombre,
+            'email'          => $request->email,
+            'telefono'       => $request->telefono,
+            'bio'            => $request->bio,
+            'especialidades' => $request->especialidades,
+        ];
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store("trabajadores/{$request->negocio_id}", 'public');
+        }
+
+        Trabajador::create($data);
 
         return redirect()->back()->with('success', 'Trabajador creado correctamente.');
     }
@@ -170,17 +183,32 @@ class EmpresaController extends Controller
     public function updateTrabajador(Request $request, $empresaId, $trabajadorId)
     {
         $request->validate([
-            'nombre'   => 'required|string|max:255',
-            'email'    => 'nullable|email|max:255',
-            'telefono' => 'nullable|string|max:20',
+            'nombre'         => 'required|string|max:255',
+            'email'          => 'nullable|email|max:255',
+            'telefono'       => 'nullable|string|max:20',
+            'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'bio'            => 'nullable|string|max:500',
+            'especialidades' => 'nullable|string|max:255',
         ]);
 
         $trabajador = Trabajador::where('negocio_id', $empresaId)->findOrFail($trabajadorId);
-        $trabajador->update([
-            'nombre'   => $request->nombre,
-            'email'    => $request->email,
-            'telefono' => $request->telefono,
-        ]);
+
+        $data = [
+            'nombre'         => $request->nombre,
+            'email'          => $request->email,
+            'telefono'       => $request->telefono,
+            'bio'            => $request->bio,
+            'especialidades' => $request->especialidades,
+        ];
+
+        if ($request->hasFile('foto')) {
+            if ($trabajador->foto) {
+                Storage::disk('public')->delete($trabajador->foto);
+            }
+            $data['foto'] = $request->file('foto')->store("trabajadores/{$empresaId}", 'public');
+        }
+
+        $trabajador->update($data);
 
         return redirect()->back()->with('success', 'Trabajador actualizado correctamente.');
     }
@@ -194,6 +222,25 @@ class EmpresaController extends Controller
         $trabajador->delete();
 
         return redirect()->back()->with('success', 'Trabajador eliminado correctamente.');
+    }
+
+    public function resenas($empresaId)
+    {
+        $empresa = Negocio::findOrFail($empresaId);
+        $resenas = Resena::with('user', 'cita.servicio')
+            ->where('negocio_id', $empresa->id)
+            ->latest()
+            ->get();
+
+        $promedioRating = $resenas->count() ? round($resenas->avg('rating'), 1) : null;
+
+        return view('empresa.resenas.index', [
+            'empresa'        => $empresa,
+            'resenas'        => $resenas,
+            'promedioRating' => $promedioRating,
+            'currentPage'    => 'resenas',
+            'currentSubPage' => 'resenas',
+        ]);
     }
 
     // ====== CONFIGURACIÓN (subsecciones) ======

@@ -5,18 +5,18 @@
 /* Variables CSS para Calendarix */
 :root {
     /* Colores principales */
-    --clx-primary: #455392;
-    /* Azul profundo (sidebar) */
-    --clx-primary-dark: #3a3e6b;
-    /* Variante más oscura y definida */
-    --clx-primary-light: #7e79c9;
-    /* Violeta pastel elegante */
+    --clx-primary: #5a31d7;
+    /* Violeta brandbook (primary-500) */
+    --clx-primary-dark: #4a22b8;
+    /* Variante oscura (primary-600) */
+    --clx-primary-light: #7b5ce0;
+    /* Variante clara (primary-400) */
 
     /* Fondo y acento */
-    --clx-secondary: #f6f5f7;
-    /* Fondo claro general */
-    --clx-accent: #a49ee8;
-    /* Acento suave (eventos, botones hover) */
+    --clx-secondary: #f3f0ff;
+    /* Fondo claro brandbook (primary-50) */
+    --clx-accent: #32ccbc;
+    /* Acento brandbook (secondary) */
 
     /* Estados */
     --clx-danger: #e74c3c;
@@ -30,9 +30,9 @@
     --clx-text-light: #9c9cb9;
 
     /* Bordes y sombras */
-    --clx-border: #dad8ee;
-    --clx-shadow: 0 4px 6px -1px rgba(126, 121, 201, 0.1);
-    --clx-shadow-lg: 0 10px 15px -3px rgba(126, 121, 201, 0.15);
+    --clx-border: #c7bdf2;
+    --clx-shadow: 0 4px 6px -1px rgba(90, 49, 215, 0.1);
+    --clx-shadow-lg: 0 10px 15px -3px rgba(90, 49, 215, 0.15);
 
     /* Estética */
     --clx-radius: 12px;
@@ -49,7 +49,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
     min-height: 100vh;
     overflow-x: hidden;
@@ -72,7 +72,7 @@ body {
 .clx-shape {
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.03), rgba(124, 58, 237, 0.05));
+    background: linear-gradient(135deg, rgba(90, 49, 215, 0.03), rgba(90, 49, 215, 0.05));
     animation: clx-float 8s ease-in-out infinite;
     backdrop-filter: blur(1px);
 }
@@ -157,7 +157,7 @@ body {
     box-shadow: var(--clx-shadow-lg);
     padding: 2rem 0;
     position: relative;
-    border-right: 1px solid rgba(139, 92, 246, 0.08);
+    border-right: 1px solid rgba(90, 49, 215, 0.08);
 }
 
 .clx-logo {
@@ -193,7 +193,7 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 4px 15px rgba(90, 49, 215, 0.3);
 }
 
 .clx-user-name {
@@ -230,13 +230,13 @@ body {
 }
 
 .clx-nav-link:hover {
-    background: rgba(139, 92, 246, 0.05);
+    background: rgba(90, 49, 215, 0.05);
     color: var(--clx-primary);
     padding-left: 2.5rem;
 }
 
 .clx-nav-link.active {
-    background: rgba(139, 92, 246, 0.1);
+    background: rgba(90, 49, 215, 0.1);
     color: var(--clx-primary);
     font-weight: 600;
 }
@@ -273,7 +273,7 @@ body {
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(90, 49, 215, 0.08);
 }
 
 .clx-welcome {
@@ -345,7 +345,7 @@ body {
 
 .clx-btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.25);
+    box-shadow: 0 8px 25px rgba(90, 49, 215, 0.25);
     background: linear-gradient(135deg, var(--clx-primary-dark) 0%, var(--clx-primary) 100%);
 }
 
@@ -357,13 +357,13 @@ body {
 .clx-btn-secondary {
     background: rgba(255, 255, 255, 0.9);
     color: var(--clx-text);
-    border: 1px solid rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(90, 49, 215, 0.1);
     backdrop-filter: blur(10px);
 }
 
 .clx-btn-secondary:hover {
     background: rgba(255, 255, 255, 1);
-    border-color: rgba(139, 92, 246, 0.2);
+    border-color: rgba(90, 49, 215, 0.2);
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
@@ -371,13 +371,13 @@ body {
 .clx-btn-ghost {
     background: transparent;
     color: var(--clx-text);
-    border: 1px solid rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(90, 49, 215, 0.15);
     backdrop-filter: blur(5px);
 }
 
 .clx-btn-ghost:hover {
-    background: rgba(139, 92, 246, 0.05);
-    border-color: rgba(139, 92, 246, 0.25);
+    background: rgba(90, 49, 215, 0.05);
+    border-color: rgba(90, 49, 215, 0.25);
     color: var(--clx-primary);
 }
 
@@ -397,14 +397,14 @@ body {
     border-radius: var(--clx-radius);
     padding: 1.75rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(90, 49, 215, 0.08);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .clx-stat-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    border-color: rgba(139, 92, 246, 0.15);
+    border-color: rgba(90, 49, 215, 0.15);
 }
 
 .clx-stat-icon {
@@ -475,13 +475,13 @@ body {
     backdrop-filter: blur(20px);
     border-radius: var(--clx-radius);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(90, 49, 215, 0.08);
     overflow: hidden;
 }
 
 .clx-card-header {
     padding: 1.75rem;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+    border-bottom: 1px solid rgba(90, 49, 215, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -504,12 +504,12 @@ body {
     display: flex;
     align-items: center;
     padding: 1.25rem 1.75rem;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.05);
+    border-bottom: 1px solid rgba(90, 49, 215, 0.05);
     transition: var(--clx-transition);
 }
 
 .clx-appointment-item:hover {
-    background: rgba(139, 92, 246, 0.02);
+    background: rgba(90, 49, 215, 0.02);
 }
 
 .clx-appointment-item:last-child {
@@ -525,7 +525,7 @@ body {
     padding: 0.625rem;
     font-weight: 600;
     font-size: 0.875rem;
-    box-shadow: 0 3px 10px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 3px 10px rgba(90, 49, 215, 0.3);
 }
 
 .clx-appointment-info {
@@ -574,9 +574,9 @@ body {
 }
 
 .clx-status-es-completada {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(129, 140, 248, 0.1));
-    color: #4f46e5;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: linear-gradient(135deg, rgba(90, 49, 215, 0.15), rgba(123, 92, 224, 0.1));
+    color: #5a31d7;
+    border: 1px solid rgba(90, 49, 215, 0.2);
 }
 
 /* Estados en inglés (legacy - mantener compatibilidad) */

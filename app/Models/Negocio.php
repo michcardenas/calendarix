@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Empresa\FotoEmpresa;
 use App\Models\Empresa\ServicioEmpresa;
 use App\Models\Empresa\Empresa;
+use App\Models\Resena;
+use Illuminate\Support\Str;
 
 class Negocio extends Model
 {
@@ -19,6 +21,7 @@ class Negocio extends Model
         'neg_acepto',
         'neg_imagen',
         'neg_nombre_comercial',
+        'slug',
         'neg_sitio_web',
         'neg_categorias',
         'neg_equipo',
@@ -30,6 +33,50 @@ class Negocio extends Model
         'neg_facebook',
         'neg_instagram',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($negocio) {
+            if (empty($negocio->slug)) {
+                $negocio->slug = static::generateUniqueSlug(
+                    $negocio->neg_nombre_comercial ?: $negocio->neg_nombre
+                );
+            }
+        });
+
+        static::updating(function ($negocio) {
+            if ($negocio->isDirty('neg_nombre_comercial') && $negocio->neg_nombre_comercial) {
+                $negocio->slug = static::generateUniqueSlug(
+                    $negocio->neg_nombre_comercial,
+                    $negocio->id
+                );
+            }
+        });
+    }
+
+    public static function generateUniqueSlug(string $name, ?int $excludeId = null): string
+    {
+        $base = Str::slug($name);
+        if (empty($base)) {
+            $base = 'negocio';
+        }
+        $slug = $base;
+        $counter = 1;
+        while (true) {
+            $query = static::where('slug', $slug);
+            if ($excludeId) {
+                $query->where('id', '!=', $excludeId);
+            }
+            if (!$query->exists()) {
+                break;
+            }
+            $slug = "{$base}-{$counter}";
+            $counter++;
+        }
+        return $slug;
+    }
 
     protected $casts = [
         'neg_categorias' => 'array',
@@ -77,13 +124,35 @@ class Negocio extends Model
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
 
-    public function productos()
-    {
-        return $this->hasMany(\App\Models\Producto::class, 'negocio_id');
-    }
-
     public function citas()
     {
         return $this->hasMany(Cita::class, 'negocio_id');
+    }
+
+    public function trabajadores()
+    {
+        return $this->hasMany(Trabajador::class, 'negocio_id');
+    }
+
+    public function fotos()
+    {
+        return $this->hasMany(FotoEmpresa::class, 'negocio_id')->orderBy('orden');
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(Resena::class, 'negocio_id')->latest();
+    }
+
+    public function scopeWithPerfilData($query)
+    {
+        return $query->with([
+            'servicios',
+            'trabajadores',
+            'fotos',
+            'horarios',
+            'bloqueos',
+            'resenas' => fn($q) => $q->with('user')->latest(),
+        ]);
     }
 }

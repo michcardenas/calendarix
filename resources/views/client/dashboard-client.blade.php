@@ -1,6 +1,17 @@
 {{-- CSS específico del dashboard cliente --}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/cliente/cliente-dashboard.css') }}">
+
+{{-- Fix: modales altos — card scrollable cuando excede el viewport --}}
+<style>
+    .fixed.inset-0.z-50 > div {
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+    }
+</style>
 
 {{-- Container principal del dashboard --}}
 <div id="clx-dash-container" class="clx-container">
@@ -18,7 +29,7 @@
     <aside class="clx-sidebar">
         <div class="clx-logo">
             <h1>
-                <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix Logo" style="height: 64px; vertical-align: middle; margin-right: 8px;">
+                <img src="{{ asset('images/morado.png') }}" alt="Calendarix Logo" style="height: 64px; vertical-align: middle; margin-right: 8px;">
                 Calendarix
             </h1>
         </div>
@@ -190,8 +201,127 @@
                 </div>
             </div>
         </section>
+
+        {{-- Citas completadas + Dejar reseña --}}
+        @if(isset($citasCompletadas) && $citasCompletadas->count())
+        <section style="margin-top: 1.5rem;">
+            <div class="clx-card">
+                <div class="clx-card-header">
+                    <h3 class="clx-card-title">Citas Completadas</h3>
+                </div>
+                <div class="clx-card-body">
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        @foreach($citasCompletadas as $citaComp)
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem;">
+                                <div>
+                                    <p style="font-weight: 600; color: #1f2937; font-size: 0.9rem;">
+                                        {{ $citaComp->negocio->neg_nombre_comercial ?? 'Negocio' }}
+                                    </p>
+                                    <p style="font-size: 0.8rem; color: #6b7280;">
+                                        {{ $citaComp->servicio->nombre ?? 'Servicio' }}
+                                        @if($citaComp->trabajador) &middot; {{ $citaComp->trabajador->nombre }} @endif
+                                        &middot; {{ \Carbon\Carbon::parse($citaComp->fecha)->format('d/m/Y') }}
+                                    </p>
+                                </div>
+                                @if(in_array($citaComp->id, $resenasExistentes ?? []))
+                                    <span style="font-size: 0.75rem; color: #32ccbc; font-weight: 500;">
+                                        <i class="fas fa-check-circle"></i> Reseñada
+                                    </span>
+                                @else
+                                    <button onclick="document.getElementById('modalResena{{ $citaComp->id }}').classList.remove('hidden')"
+                                            style="background-color: #5a31d7; color: white; border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500; cursor: pointer;">
+                                        <i class="fas fa-star"></i> Dejar reseña
+                                    </button>
+                                @endif
+                            </div>
+
+                            {{-- Modal de reseña --}}
+                            @if(!in_array($citaComp->id, $resenasExistentes ?? []))
+                            <div id="modalResena{{ $citaComp->id }}" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+                                <div style="background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+                                    <button onclick="document.getElementById('modalResena{{ $citaComp->id }}').classList.add('hidden')"
+                                            style="position: absolute; top: 0.75rem; right: 0.75rem; background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.1rem;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #5a31d7; margin-bottom: 0.25rem;">Dejar Reseña</h2>
+                                    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem;">
+                                        {{ $citaComp->negocio->neg_nombre_comercial ?? '' }} &middot; {{ $citaComp->servicio->nombre ?? '' }}
+                                    </p>
+                                    <form action="{{ route('resenas.store') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="cita_id" value="{{ $citaComp->id }}">
+
+                                        <div style="margin-bottom: 1rem;">
+                                            <label style="display: block; font-size: 0.85rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Calificación</label>
+                                            <div class="star-rating-input" data-cita="{{ $citaComp->id }}" style="display: flex; gap: 0.25rem;">
+                                                @for($s = 1; $s <= 5; $s++)
+                                                    <label style="cursor: pointer;">
+                                                        <input type="radio" name="rating" value="{{ $s }}" required style="display: none;">
+                                                        <i class="fas fa-star star-icon" data-value="{{ $s }}" style="font-size: 1.5rem; color: #d1d5db; transition: color 0.15s;"></i>
+                                                    </label>
+                                                @endfor
+                                            </div>
+                                        </div>
+
+                                        <div style="margin-bottom: 1rem;">
+                                            <label style="display: block; font-size: 0.85rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Comentario</label>
+                                            <textarea name="comentario" rows="3" required maxlength="1000" placeholder="Contanos tu experiencia..."
+                                                      style="width: 100%; border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.9rem; resize: vertical; outline: none; font-family: inherit;"></textarea>
+                                        </div>
+
+                                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                            <button type="button" onclick="document.getElementById('modalResena{{ $citaComp->id }}').classList.add('hidden')"
+                                                    style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border: none; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                                Cancelar
+                                            </button>
+                                            <button type="submit"
+                                                    style="padding: 0.5rem 1rem; background: #5a31d7; color: white; border: none; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer; font-weight: 500;">
+                                                Enviar Reseña
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+        @endif
+
     </main>
 </div>
+
+{{-- Star rating interactive JS --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.star-rating-input').forEach(function(container) {
+        const stars = container.querySelectorAll('.star-icon');
+        stars.forEach(function(star) {
+            star.addEventListener('mouseenter', function() {
+                const val = parseInt(this.dataset.value);
+                stars.forEach(function(s) {
+                    s.style.color = parseInt(s.dataset.value) <= val ? '#facc15' : '#d1d5db';
+                });
+            });
+            star.addEventListener('click', function() {
+                const val = parseInt(this.dataset.value);
+                this.closest('label').querySelector('input').checked = true;
+                stars.forEach(function(s) {
+                    s.dataset.selected = parseInt(s.dataset.value) <= val ? '1' : '0';
+                    s.style.color = parseInt(s.dataset.value) <= val ? '#facc15' : '#d1d5db';
+                });
+            });
+        });
+        container.addEventListener('mouseleave', function() {
+            stars.forEach(function(s) {
+                s.style.color = s.dataset.selected === '1' ? '#facc15' : '#d1d5db';
+            });
+        });
+    });
+});
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -17,6 +17,9 @@ class Trabajador extends Model
         'nombre',
         'email',
         'telefono',
+        'foto',
+        'bio',
+        'especialidades',
     ];
 
     /**

@@ -154,7 +154,9 @@ class AgendaController extends Controller
             'hora_inicio'    => ['required', 'date_format:H:i'],
             'hora_fin'       => ['required', 'date_format:H:i', 'after:hora_inicio'],
             'notas'          => ['nullable', 'string'],
-            'nombre_cliente' => Auth::check() ? ['nullable', 'string', 'max:255'] : ['required', 'string', 'max:255'],
+            'nombre_cliente'   => ['required', 'string', 'max:255'],
+            'telefono_cliente' => ['required', 'string', 'max:30'],
+            'email_cliente'    => ['required', 'email', 'max:255'],
             'servicio_id'    => [
                 'required',
                 'integer',
@@ -215,7 +217,9 @@ class AgendaController extends Controller
         $cita = Cita::create([
             'negocio_id'     => $negocioId,
             'user_id'        => Auth::id(),               // puede ser null
-            'nombre_cliente' => $request->input('nombre_cliente'),
+            'nombre_cliente'   => $validated['nombre_cliente'],
+            'telefono_cliente' => $validated['telefono_cliente'],
+            'email_cliente'    => $validated['email_cliente'],
             'fecha'          => $validated['fecha'],
             'hora_inicio'    => $validated['hora_inicio'],
             'hora_fin'       => $validated['hora_fin'],
@@ -408,26 +412,28 @@ private function enviarEmailsCita($cita, $servicio, $trabajador, $negocioId)
         $fechaFormateada = Carbon::parse($cita->fecha)->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
 
         // 📧 Email al CLIENTE
-        if ($cita->user_id) {
+        $emailCliente = $cita->email_cliente;
+        if (!$emailCliente && $cita->user_id) {
             $cliente = \App\Models\User::find($cita->user_id);
-            if ($cliente && $cliente->email) {
-                Mail::to($cliente->email)->send(new NotificacionGeneral(
-                    asunto: '✅ Cita Confirmada - ' . ($negocio->neg_nombre_comercial ?? 'Negocio'),
-                    titulo: '¡Tu cita ha sido agendada!',
-                    mensaje: 'Hemos confirmado tu cita exitosamente. Te esperamos en la fecha y hora indicada.',
-                    detalles: [
-                        'Negocio' => $negocio->neg_nombre_comercial ?? 'Sin nombre',
-                        'Servicio' => $servicio->nombre ?? 'Servicio',
-                        'Trabajador' => $trabajador?->nombre ?? 'Por asignar',
-                        'Fecha' => $fechaFormateada,
-                        'Hora' => substr($cita->hora_inicio, 0, 5) . ' - ' . substr($cita->hora_fin, 0, 5),
-                        'Estado' => 'Pendiente de confirmación',
-                    ],
-                    accionTexto: 'Ver mis citas',
-                    accionUrl: url('/dashboard-cliente'),
-                    tipoIcono: 'success'
-                ));
-            }
+            $emailCliente = $cliente?->email;
+        }
+        if ($emailCliente) {
+            Mail::to($emailCliente)->send(new NotificacionGeneral(
+                asunto: '✅ Cita Confirmada - ' . ($negocio->neg_nombre_comercial ?? 'Negocio'),
+                titulo: '¡Tu cita ha sido agendada!',
+                mensaje: 'Hemos confirmado tu cita exitosamente. Te esperamos en la fecha y hora indicada.',
+                detalles: [
+                    'Negocio' => $negocio->neg_nombre_comercial ?? 'Sin nombre',
+                    'Servicio' => $servicio->nombre ?? 'Servicio',
+                    'Trabajador' => $trabajador?->nombre ?? 'Por asignar',
+                    'Fecha' => $fechaFormateada,
+                    'Hora' => substr($cita->hora_inicio, 0, 5) . ' - ' . substr($cita->hora_fin, 0, 5),
+                    'Estado' => 'Pendiente de confirmación',
+                ],
+                accionTexto: 'Ver mis citas',
+                accionUrl: url('/dashboard-cliente'),
+                tipoIcono: 'success'
+            ));
         }
 
         // 📧 Email al DUEÑO DEL NEGOCIO
@@ -440,6 +446,8 @@ private function enviarEmailsCita($cita, $servicio, $trabajador, $negocioId)
                     mensaje: 'Un cliente ha agendado una cita en tu negocio. Revisa los detalles y confirma la disponibilidad.',
                     detalles: [
                         'Cliente' => $cita->nombre_cliente ?? 'Cliente',
+                        'Teléfono' => $cita->telefono_cliente ?? 'No proporcionado',
+                        'Email' => $cita->email_cliente ?? 'No proporcionado',
                         'Servicio' => $servicio->nombre ?? 'Servicio',
                         'Trabajador' => $trabajador?->nombre ?? 'Por asignar',
                         'Fecha' => $fechaFormateada,

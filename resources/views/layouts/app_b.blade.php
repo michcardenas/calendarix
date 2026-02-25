@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Calendarix - Reserva servicios de belleza y bienestar')</title>
+    <title>@yield('title', 'Calendarix - Reserva cualquier servicio cerca de ti')</title>
     
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700&family=sora:400,500,600,700,800" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,14 +24,20 @@
            ============================================ */
 
         :root {
-            /* Colores principales */
-            --primary-600: #4a5eaa;
-            --primary-500: #5a6ebd;
-            --primary-400: #7E79C9;
-            --primary-300: #a3a0db;
-            --primary-200: #c7c5e8;
-            --primary-100: #e8e7f5;
-            --primary-50: #f4f3fa;
+            /* Colores principales — Brandbook Calendarix */
+            --primary-600: #4a22b8;
+            --primary-500: #5a31d7;
+            --primary-400: #7b5ce0;
+            --primary-300: #a38ee9;
+            --primary-200: #c7bdf2;
+            --primary-100: #ebe7fa;
+            --primary-50: #f3f0ff;
+
+            /* Marca */
+            --secondary: #32ccbc;
+            --accent: #ffa8d7;
+            --lilac: #df8be8;
+            --turq-light: #90f7ec;
             
             /* Neutrales */
             --gray-900: #111827;
@@ -77,7 +84,7 @@
         }
 
         body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--gray-800);
             line-height: 1.6;
             background: var(--white);
@@ -118,10 +125,10 @@
         .app-logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.25rem;
             text-decoration: none;
             color: var(--gray-900);
-            font-family: 'Sora', sans-serif;
+            font-family: 'IBM Plex Sans', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
         }
@@ -232,7 +239,7 @@
             align-items: center;
             gap: 0.75rem;
             color: var(--white);
-            font-family: 'Sora', sans-serif;
+            font-family: 'IBM Plex Sans', sans-serif;
             font-weight: 700;
             font-size: 1.25rem;
             margin-bottom: 1rem;
@@ -240,7 +247,6 @@
 
         .app-footer-brand img {
             height: 36px;
-            filter: brightness(0) invert(1);
         }
 
         .app-footer-description {
@@ -268,7 +274,7 @@
         }
 
         .app-footer-social a:hover {
-            background: var(--primary-500);
+            background: var(--secondary);
             color: var(--white);
         }
 
@@ -295,7 +301,7 @@
         }
 
         .app-footer-links a:hover {
-            color: var(--white);
+            color: var(--secondary);
         }
 
         .app-footer-bottom {
@@ -430,7 +436,7 @@
     <header class="app-header" id="app-header">
         <div class="app-header-container">
             <a href="{{ url('/') }}" class="app-logo">
-                <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix">
+                <img src="{{ asset('images/morado.png') }}" alt="Calendarix">
                 <span>Calendarix</span>
             </a>
 
@@ -468,12 +474,12 @@
             <div class="app-footer-grid">
                 <div>
                     <div class="app-footer-brand">
-                        <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix">
+                        <img src="{{ asset('images/azul.png') }}" alt="Calendarix">
                         <span>Calendarix</span>
                     </div>
                     <p class="app-footer-description">
-                        La plataforma líder en Colombia para reservar servicios de belleza y bienestar.
-                        Conectamos clientes con los mejores profesionales.
+                        La plataforma para reservar cualquier servicio cerca de ti.
+                        Conectamos clientes con los mejores profesionales y negocios.
                     </p>
                     <div class="app-footer-social">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>

@@ -23,7 +23,7 @@
             margin: 0 auto;
             background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(98, 116, 201, 0.12);
+            box-shadow: 0 10px 40px rgba(90, 49, 215, 0.12);
             overflow: hidden;
         }
 
@@ -151,13 +151,13 @@
             border-radius: 10px;
             font-weight: 600;
             font-size: 15px;
-            box-shadow: 0 4px 15px rgba(98, 116, 201, 0.3);
+            box-shadow: 0 4px 15px rgba(90, 49, 215, 0.3);
             transition: all 0.3s ease;
         }
 
         .email-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(98, 116, 201, 0.4);
+            box-shadow: 0 6px 20px rgba(90, 49, 215, 0.4);
         }
 
         .email-footer {

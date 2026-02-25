@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Models\Cita;
 use App\Models\Negocio;
+use App\Models\Resena;
 
 class DashboardController extends Controller
 {
@@ -163,6 +164,15 @@ class DashboardController extends Controller
             ],
         ]);
 
+        $citasCompletadas = Cita::with(['negocio', 'servicio', 'trabajador'])
+            ->where('user_id', $user->id)
+            ->where('estado', 'completada')
+            ->orderByDesc('fecha')
+            ->take(10)
+            ->get();
+
+        $resenasExistentes = Resena::where('user_id', $user->id)->pluck('cita_id')->toArray();
+
         return view('client.dashboard-client', [
             'misEmpresas'             => $misEmpresas,
             'citasMes'                => $citasMes,
@@ -174,6 +184,8 @@ class DashboardController extends Controller
             'citasConfirmadasSemana'  => $citasConfirmadasSemana,
             'citasCanceladasSemana'   => $citasCanceladasSemana,
             'citasCompletadasSemana'  => $citasCompletadasSemana,
+            'citasCompletadas'        => $citasCompletadas,
+            'resenasExistentes'       => $resenasExistentes,
         ]);
     }
 

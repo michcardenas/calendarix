@@ -11,7 +11,7 @@
 <div class="auth-main-container" id="auth-login">
     <div class="auth-card-content">
         <div class="auth-header">
-            <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix Logo" style="height: 86px; width: auto;" />
+            <img src="{{ asset('images/morado.png') }}" alt="Calendarix Logo" style="height: 86px; width: auto;" />
             <h1 class="auth-title">Iniciar Sesión</h1>
             <p class="auth-subtitle">Bienvenido de nuevo</p>
         </div>

@@ -38,10 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Expandir la primera sección por defecto
-        const firstSection = document.querySelector('.admin-nav-section');
-        if (firstSection) {
-            firstSection.classList.add('expanded');
+        // Expandir la sección activa (puesta por Blade), o la primera como fallback
+        const alreadyExpanded = document.querySelector('.admin-nav-section.expanded');
+        if (!alreadyExpanded) {
+            const firstSection = document.querySelector('.admin-nav-section');
+            if (firstSection) firstSection.classList.add('expanded');
         }
 
         // Manejar clicks en links demo
@@ -265,8 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 🎉 Mensaje de bienvenida
-    setTimeout(() => {
-        showToast('🚀 Dashboard cargado correctamente. Explora las opciones del menú lateral!', 'info');
-    }, 1500);
+    // Exponer showToast para uso externo (e.g. desde @push('scripts') en vistas)
+    window.adminShowToast = showToast;
 });

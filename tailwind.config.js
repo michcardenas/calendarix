@@ -11,8 +11,15 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                primary: '#5a31d7',
+                secondary: '#32ccbc',
+                accent: '#ffa8d7',
+                lilac: '#df8be8',
+                'turq-light': '#90f7ec',
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['IBM Plex Sans', ...defaultTheme.fontFamily.sans],
             },
         },
     },

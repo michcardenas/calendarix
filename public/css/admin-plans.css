@@ -1,0 +1,527 @@
+/* ============================================
+   ADMIN PLANS CSS - CALENDARIX
+   public/css/admin-plans.css
+   ============================================ */
+
+:root {
+    --plan-primary:    #6366f1;
+    --plan-success:    #10b981;
+    --plan-warning:    #f59e0b;
+    --plan-danger:     #ef4444;
+    --plan-wa:         #25d366;
+    --plan-text:       #1f2937;
+    --plan-text-light: #6b7280;
+    --plan-border:     #e5e7eb;
+    --plan-bg:         #f8fafc;
+    --plan-white:      #ffffff;
+    --plan-shadow:     0 1px 3px rgba(0,0,0,.10);
+    --plan-shadow-lg:  0 10px 25px rgba(0,0,0,.10);
+}
+
+/* ── CONTAINER ─────────────────────────────── */
+.plans-container {
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--plan-text);
+}
+
+/* ── HEADER ────────────────────────────────── */
+.plans-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.plans-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--plan-text);
+    margin: 0 0 .25rem;
+}
+
+.plans-title i {
+    color: var(--plan-primary);
+    margin-right: .5rem;
+}
+
+.plans-subtitle {
+    color: var(--plan-text-light);
+    font-size: .875rem;
+    margin: 0;
+}
+
+/* ── ALERTS ────────────────────────────────── */
+.plans-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .875rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    font-size: .9rem;
+}
+
+.plans-alert i { margin-top: .1rem; }
+
+.plans-alert-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.plans-alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* ── EMPTY STATE ───────────────────────────── */
+.plans-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--plan-text-light);
+    background: var(--plan-white);
+    border-radius: 12px;
+    box-shadow: var(--plan-shadow);
+}
+
+.plans-empty-icon {
+    font-size: 3rem;
+    color: var(--plan-border);
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* ── GRID ──────────────────────────────────── */
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+/* ── PLAN CARD ─────────────────────────────── */
+.plan-card {
+    background: var(--plan-white);
+    border-radius: 14px;
+    box-shadow: var(--plan-shadow);
+    padding: 1.5rem;
+    position: relative;
+    border: 2px solid transparent;
+    transition: box-shadow .2s, border-color .2s;
+}
+
+.plan-card:hover {
+    box-shadow: var(--plan-shadow-lg);
+    border-color: var(--plan-primary);
+}
+
+.plan-card--inactive {
+    opacity: .65;
+}
+
+.plan-card__badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .2rem .65rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.badge--active   { background: #d1fae5; color: #065f46; }
+.badge--inactive { background: #f3f4f6; color: #6b7280; }
+
+.plan-card__header { margin-bottom: 1rem; }
+
+.plan-card__name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 .5rem;
+    padding-right: 5rem;
+}
+
+.plan-card__price {
+    display: flex;
+    align-items: baseline;
+    gap: .2rem;
+    margin-bottom: .5rem;
+}
+
+.price-currency {
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--plan-text-light);
+    text-transform: uppercase;
+}
+
+.price-amount {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--plan-primary);
+    line-height: 1;
+}
+
+.price-interval {
+    font-size: .875rem;
+    color: var(--plan-text-light);
+}
+
+.plan-card__desc {
+    font-size: .85rem;
+    color: var(--plan-text-light);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.plan-card__professionals {
+    font-size: .85rem;
+    color: var(--plan-text);
+    background: #f0f9ff;
+    border-radius: 8px;
+    padding: .5rem .75rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.plan-card__professionals i { color: var(--plan-primary); }
+
+.plan-card__extra {
+    margin-left: auto;
+    font-size: .78rem;
+    color: var(--plan-text-light);
+    background: var(--plan-bg);
+    padding: .15rem .5rem;
+    border-radius: 6px;
+}
+
+/* ── FEATURES LIST ─────────────────────────── */
+.plan-card__features {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+}
+
+.plan-card__features li {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .85rem;
+}
+
+.feature--on { color: var(--plan-text); }
+.feature--off { color: #d1d5db; text-decoration: line-through; }
+
+.feature--on i  { color: var(--plan-success); width: 14px; }
+.feature--off i { color: #d1d5db; width: 14px; }
+
+/* ── CARD ACTIONS ──────────────────────────── */
+.plan-card__actions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--plan-border);
+    padding-top: 1rem;
+}
+
+/* ── BUTTONS ───────────────────────────────── */
+.btn-new-plan,
+.btn-plan {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .55rem 1rem;
+    border-radius: 8px;
+    font-size: .875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: opacity .15s, transform .1s;
+    white-space: nowrap;
+}
+
+.btn-new-plan:hover,
+.btn-plan:hover {
+    opacity: .88;
+    transform: translateY(-1px);
+}
+
+.btn-new-plan {
+    background: var(--plan-primary);
+    color: #fff;
+}
+
+.btn-plan--edit       { background: #ede9fe; color: #4f46e5; }
+.btn-plan--toggle-off { background: #fef9c3; color: #854d0e; }
+.btn-plan--toggle-on  { background: #d1fae5; color: #065f46; }
+.btn-plan--delete     { background: #fee2e2; color: #991b1b; }
+.btn-plan--save       { background: var(--plan-primary); color: #fff; }
+.btn-plan--secondary  { background: var(--plan-bg); color: var(--plan-text); border: 1px solid var(--plan-border); }
+
+/* ── FORM CONTAINER ────────────────────────── */
+.plan-form-container {
+    padding: 1.5rem;
+    max-width: 860px;
+    margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.plan-form-card {
+    background: var(--plan-white);
+    border-radius: 14px;
+    box-shadow: var(--plan-shadow-lg);
+    overflow: hidden;
+}
+
+.plan-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--plan-border);
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.plan-form-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--plan-text);
+}
+
+.plan-form-title i {
+    color: var(--plan-primary);
+    margin-right: .5rem;
+}
+
+/* ── FORM SECTIONS ─────────────────────────── */
+.plan-form-section {
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--plan-border);
+}
+
+.plan-form-section:last-of-type { border-bottom: none; }
+
+.plan-form-section-title {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--plan-text);
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.plan-form-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 1rem;
+    background: var(--plan-primary);
+    border-radius: 2px;
+}
+
+.plan-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.plan-form-row--3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 600px) {
+    .plan-form-row,
+    .plan-form-row--3 { grid-template-columns: 1fr; }
+}
+
+.plan-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    margin-bottom: .75rem;
+}
+
+.plan-form-label {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--plan-text);
+}
+
+.required { color: var(--plan-danger); }
+
+.plan-form-control {
+    padding: .6rem .85rem;
+    border: 1.5px solid var(--plan-border);
+    border-radius: 8px;
+    font-size: .9rem;
+    color: var(--plan-text);
+    background: var(--plan-white);
+    transition: border-color .2s;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.plan-form-control:focus {
+    border-color: var(--plan-primary);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+}
+
+.plan-form-textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.plan-form-hint {
+    font-size: .78rem;
+    color: var(--plan-text-light);
+}
+
+/* ── PRICE PREFIX INPUT ────────────────────── */
+.plan-input-prefix {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.prefix-symbol {
+    position: absolute;
+    left: .85rem;
+    font-weight: 700;
+    color: var(--plan-text-light);
+    pointer-events: none;
+    font-size: .9rem;
+}
+
+.plan-form-control--prefixed {
+    padding-left: 1.75rem;
+}
+
+/* ── TOGGLES GRID ──────────────────────────── */
+.plan-toggles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+}
+
+@media (max-width: 600px) {
+    .plan-toggles-grid { grid-template-columns: 1fr; }
+}
+
+.plan-toggle-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .875rem 1rem;
+    border: 1.5px solid var(--plan-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+}
+
+.plan-toggle-item:hover {
+    border-color: var(--plan-primary);
+    background: #fafafe;
+}
+
+.plan-toggle-info {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.plan-toggle-icon {
+    font-size: 1.1rem;
+    color: var(--plan-primary);
+    margin-top: .1rem;
+    width: 1.2rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.plan-toggle-icon--wa     { color: var(--plan-wa); }
+.plan-toggle-icon--active { color: var(--plan-success); }
+
+.plan-toggle-label {
+    display: block;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--plan-text);
+}
+
+.plan-toggle-desc {
+    display: block;
+    font-size: .78rem;
+    color: var(--plan-text-light);
+    margin-top: .1rem;
+}
+
+/* Hide native checkbox, use custom switch */
+.plan-toggle-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.plan-toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background: #d1d5db;
+    border-radius: 99px;
+    flex-shrink: 0;
+    transition: background .2s;
+    cursor: pointer;
+}
+
+.plan-toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.plan-toggle-checkbox:checked + .plan-toggle-switch {
+    background: var(--plan-primary);
+}
+
+.plan-toggle-checkbox:checked + .plan-toggle-switch::after {
+    transform: translateX(18px);
+}
+
+/* ── FORM ACTIONS ──────────────────────────── */
+.plan-form-actions {
+    display: flex;
+    gap: .75rem;
+    padding: 1.25rem 1.75rem;
+    background: var(--plan-bg);
+    border-top: 1px solid var(--plan-border);
+    flex-wrap: wrap;
+}

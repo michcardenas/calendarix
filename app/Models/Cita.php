@@ -14,6 +14,8 @@ class Cita extends Model
         'negocio_id',
         'user_id',
         'nombre_cliente',
+        'telefono_cliente',
+        'email_cliente',
         'fecha',
         'hora_inicio',
         'hora_fin',
@@ -21,7 +23,7 @@ class Cita extends Model
         'estado',
         'servicio_id',
         'precio_cerrado',
-        'trabajador_id',   // ← nuevo campo
+        'trabajador_id',
     ];
 
     protected $casts = [

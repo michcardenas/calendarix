@@ -5,33 +5,33 @@
           class="modal-content" style="background-color: #f6f5f7;">
       @csrf @method('PUT')
 
-      <div class="modal-header" style="background-color: #4a5eaa;">
+      <div class="modal-header" style="background-color: #5a31d7;">
         <h5 class="modal-title text-white font-bold">Editar servicio</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body grid grid-cols-1 md:grid-cols-2 gap-4 text-[#444478]">
+      <div class="modal-body grid grid-cols-1 md:grid-cols-2 gap-4 text-[#374151]">
         <div>
           <label class="text-sm font-medium">Nombre</label>
           <input type="text" name="nombre" value="{{ $servicio->nombre }}"
-                 class="form-control border-[#7e79c9]" required>
+                 class="form-control border-[#a38ee9]" required>
         </div>
 
         <div>
           <label class="text-sm font-medium">Precio (COP)</label>
           <input type="number" name="precio" value="{{ $servicio->precio }}"
-                 class="form-control border-[#7e79c9]" required>
+                 class="form-control border-[#a38ee9]" required>
         </div>
 
         <div class="md:col-span-2">
           <label class="text-sm font-medium">Duración estimada</label>
           <input type="text" name="duracion" value="{{ $servicio->duracion ?? '' }}"
-                 class="form-control border-[#7e79c9]" placeholder="Ej: 30 minutos">
+                 class="form-control border-[#a38ee9]" placeholder="Ej: 30 minutos">
         </div>
 
         <div class="md:col-span-2">
           <label class="text-sm font-medium">Descripción</label>
-          <textarea name="descripcion" class="form-control border-[#7e79c9]" rows="2">{{ $servicio->descripcion }}</textarea>
+          <textarea name="descripcion" class="form-control border-[#a38ee9]" rows="2">{{ $servicio->descripcion }}</textarea>
         </div>
 
         {{-- Categoría: igual UX que en “crear” --}}
@@ -43,7 +43,7 @@
 
         <div class="md:col-span-2">
           <label class="text-sm font-medium">Selecciona una categoría</label>
-          <select id="categoria_select_{{ $servicio->id }}" class="form-control border-[#7e79c9]">
+          <select id="categoria_select_{{ $servicio->id }}" class="form-control border-[#a38ee9]">
             <option value="">-- Escoge una existente --</option>
             @foreach($categorias as $cat)
               <option value="{{ $cat }}" {{ $cat === $catActual ? 'selected' : '' }}>
@@ -55,7 +55,7 @@
 
           <input type="text"
                  id="categoria_manual_{{ $servicio->id }}"
-                 class="form-control mt-2 border-[#7e79c9] {{ $catEnLista ? 'd-none hidden' : '' }}"
+                 class="form-control mt-2 border-[#a38ee9] {{ $catEnLista ? 'd-none hidden' : '' }}"
                  placeholder="Escribe nueva categoría"
                  value="{{ $catEnLista ? '' : $catActual }}">
 
@@ -66,9 +66,9 @@
 
       <div class="modal-footer">
         <button type="submit" class="px-4 py-2 rounded text-white"
-                style="background-color: #4a5eaa;"
-                onmouseover="this.style.backgroundColor='#3a457a'"
-                onmouseout="this.style.backgroundColor='#4a5eaa'">
+                style="background-color: #5a31d7;"
+                onmouseover="this.style.backgroundColor='#4a22b8'"
+                onmouseout="this.style.backgroundColor='#5a31d7'">
           Actualizar
         </button>
       </div>

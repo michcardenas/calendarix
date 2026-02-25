@@ -62,23 +62,28 @@ php artisan test --filter TestName  # Run specific test
 
 **Important**: When writing queries or relationships, verify which model is being used in that context. They are interchangeable in terms of data but have different relationship definitions.
 
+### Key Models
+
+- `Cita` — Appointments (fecha, hora_inicio, hora_fin, trabajador_id, servicio_id)
+- `Trabajador` — Workers/staff members
+- `HorarioLaboral` — Business working hours by day of week (1–7)
+- `DiaBloqueado` — Blocked dates
+- `Producto` / `ImagenProducto` — Products and their images
+- `Checkout` / `CheckoutDetalle` — Orders and line items
+- `Cliente` — Clients associated with a business
+- `ServicioEmpresa` (`app/Models/Empresa/ServicioEmpresa.php`) — Services offered
+
 ### Appointment Booking System
 
 The appointment system is worker-centric with anti-overlap validation:
 
-1. **Models involved**:
-   - `Cita`: Appointments with fecha, hora_inicio, hora_fin, trabajador_id, servicio_id
-   - `Trabajador`: Workers/staff members assigned to appointments
-   - `HorarioLaboral`: Business working hours by day of week (1-7)
-   - `DiaBloqueado`: Blocked dates where no appointments can be made
-
-2. **Scheduling logic** (see `resources/views/empresa/partials/modal-agendar.blade.php`):
+1. **Scheduling logic** (see `resources/views/empresa/partials/modal-agendar.blade.php`):
    - Global variables `window.NEGOCIO_HORARIOS`, `window.RESERVAS`, `window.TRABAJADOR_HORARIOS` manage schedules
    - Time slots are 15-minute intervals
    - Validation prevents overlapping appointments for the same worker
    - Frontend generates available slots by filtering out occupied time ranges
 
-3. **Calendar integration** (`resources/views/negocio/perfil.blade.php`):
+2. **Calendar integration** (`resources/views/negocio/perfil.blade.php`):
    - FullCalendar displays appointments, blocked dates, and past dates with visual differentiation
    - AJAX endpoints: `/negocios/{id}/agenda/citas-dia` (single day), `/negocios/{id}/agenda/citas-mes` (month view)
    - Event colors by status: pendiente (indigo), confirmada (green), cancelada (red)
@@ -88,9 +93,10 @@ The appointment system is worker-centric with anti-overlap validation:
 Controllers are organized by user role/context:
 
 - **`Admin/`**: Admin dashboard and user management
-- **`Empresa/`**: Business owner dashboard features (agenda, catalogo, configuracion, clientes, productos)
-- **`negocio/`**: Public-facing business registration flow
-- **`Auth/`**: Laravel Breeze authentication + Google OAuth
+- **`Empresa/`**: Business owner dashboard — `AgendaController`, `CatalogoController`, `ConfiguracionEmpresaController`, `DashboardEmpresaController`, `ProductoController`, `ServicioEmpresaController`, `BloquesController`, `EditorEmpresaController`, `NegocioConfiguracionController`
+- **`negocio/NegocioController`**: Multi-step business registration wizard
+- **`Auth/`**: Laravel Breeze authentication + Google OAuth (`GoogleController`)
+- **Root**: `CheckoutController`, `CarritoController`, `NegocioController` (public profile), `ProfileController`
 
 ### Authentication & Authorization
 
@@ -104,14 +110,19 @@ Controllers are organized by user role/context:
 
 - **`layouts/app.blade.php`**: Public layout with FullCalendar, Tailwind
 - **`layouts/empresa.blade.php`**: Business dashboard layout with sidebar navigation
-- **`empresa/partials/`**: Reusable modals (modal-agendar.blade.php for appointments, carrito-modal.blade.php for cart)
+- **`empresa/partials/`**: Reusable modals — `modal-agendar.blade.php` (appointments), `carrito-modal.blade.php` (cart), `modal-nuevo-servicio.blade.php`, `modal-editar-servicio.blade.php`
+- **`empresa/bloques/`**: Profile block partials — `contacto`, `galeria`, `horario`, `servicios`, `ubicacion`
+- **`empresa/trabajadores/`**: Workers management views with create/edit modals
+- **`empresa/clientes/`**: Clients management views with create/edit modals
 - **`negocio/perfil.blade.php`**: Public business profile page with calendar, services, products, cart
+- **`checkout/`**: Order flow views (index, confirmar, success, failure, pedidos)
 
 ### Shopping Cart & Checkout
 
 - Cart stored in localStorage (`carritoNegocio` key)
 - Supports both products (`Producto`) and services (`ServicioEmpresa`)
-- AJAX checkout flow: `CheckoutController` handles cart validation, order creation
+- `CarritoController` handles cart item operations; `CheckoutController` handles order creation
+- Orders stored in `Checkout` (header) + `CheckoutDetalle` (line items) models
 - Email confirmation sent via `emails/pedido-confirmado.blade.php`
 - Order status tracking: pendiente, confirmado, enviado, completado, cancelado
 
@@ -182,16 +193,15 @@ Multi-step wizard in `/negocio/` routes:
 
 ## Dependencies
 
-- **Backend**: Laravel 12, Spatie Laravel-Permission (roles)
+- **Backend**: Laravel 12, Spatie Laravel-Permission (roles), Laravel Socialite (Google OAuth)
 - **Frontend**: Alpine.js, Tailwind CSS 3, FullCalendar
 - **Build**: Vite 6
 - **Database**: SQLite (dev), configurable for MySQL/PostgreSQL
 
 ## Important Notes
 
-- This is a XAMPP-hosted project (Windows environment: `c:\xampp1\htdocs\calendarix`)
-- Uses database queues (SESSION_DRIVER=database, QUEUE_CONNECTION=database)
-- Google OAuth configured via Laravel Socialite
+- Windows development environment: project at `c:\Users\HP\Documents\Calendarix\calendarix`
+- Uses database driver for sessions, queues, and cache (`SESSION_DRIVER=database`, `QUEUE_CONNECTION=database`, `CACHE_STORE=database`)
 - Appointments use worker-level scheduling, not just business-level
 - Cart system supports mixed items (products + services)
 
@@ -202,5 +212,8 @@ Key route patterns to be aware of:
 - **Public business profile**: `/negocios/{id}-{slug}` - SEO-friendly business pages
 - **Business dashboard**: `/empresa/{id}/dashboard` - Owner management interface
 - **Catalog management**: `/empresa/{id}/catalogo/servicios` and `/empresa/{id}/catalogo/productos`
+- **Workers management**: `/empresa/{empresa}/trabajadores` (CRUD)
+- **Clients management**: `/empresa/{empresa}/clientes` (CRUD)
 - **Agenda/Calendar**: `/empresa/{id}/agenda` (management) vs `/negocios/{id}/agenda/*` (public booking)
+- **Appointments config**: `/empresa/{id}/configuracion/citas` (status changes, view, delete)
 - **API endpoints**: Most AJAX calls follow `/negocios/{id}/agenda/citas-dia` pattern for public, `/empresa/{id}/*` for authenticated

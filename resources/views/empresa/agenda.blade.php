@@ -20,17 +20,17 @@ $diasSemana = [
 
         {{-- Encabezado --}}
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold" style="color: #4a5eaa;">📆 Agenda</h1>
+            <h1 class="text-3xl font-bold" style="color: #5a31d7;">📆 Agenda</h1>
             <a href="{{ route('empresa.agenda.configurar', $empresa->id) }}"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-md"
-                style="background-color: #4a5eaa;">
+                style="background-color: #5a31d7;">
                 Configurar horarios
             </a>
         </div>
 
         {{-- Horarios Laborales --}}
         <section>
-            <h2 class="text-lg font-semibold mb-3" style="color: #4a5eaa;">🕓 Horario Laboral</h2>
+            <h2 class="text-lg font-semibold mb-3" style="color: #5a31d7;">🕓 Horario Laboral</h2>
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                 <table class="w-full text-sm text-gray-700">
                     <thead style="background-color: #f6f5f7;" class="text-left text-xs uppercase">
@@ -63,7 +63,7 @@ $diasSemana = [
 
         {{-- Calendario --}}
         <section>
-            <h2 class="text-lg font-semibold mb-3" style="color: #4a5eaa;">📅 Calendario</h2>
+            <h2 class="text-lg font-semibold mb-3" style="color: #5a31d7;">📅 Calendario</h2>
             <div id="calendar" class="bg-white rounded-xl shadow-sm p-4"></div>
         </section>
 
@@ -82,17 +82,17 @@ $diasSemana = [
         --fc-border-color: transparent;
         --fc-today-bg-color: #f6f5f7;
         --fc-page-bg-color: transparent;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'IBM Plex Sans', sans-serif;
     }
 
     .fc .fc-toolbar-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #4a5eaa;
+        color: #5a31d7;
     }
 
     .fc .fc-button {
-        background: #4a5eaa;
+        background: #5a31d7;
         border: none;
         padding: 0.4rem 0.8rem;
         border-radius: 6px;
@@ -103,7 +103,7 @@ $diasSemana = [
     }
 
     .fc .fc-button:hover {
-        background: #6C88C4;
+        background: #7b5ce0;
     }
 
     .fc .fc-daygrid-event {

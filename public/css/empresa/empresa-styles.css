@@ -5,7 +5,7 @@
    ================================= */
 :root {
     /* Gradiente principal de Calendarix */
-    --primary-gradient: linear-gradient(135deg, #7e79c9 0%, #a49ee8 100%);
+    --primary-gradient: linear-gradient(135deg, #5a31d7 0%, #7b5ce0 100%);
 
     /* Estados */
     --success-color: #2ecc71; /* Verde suave y visible */

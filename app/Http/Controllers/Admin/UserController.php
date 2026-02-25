@@ -12,15 +12,15 @@ class UserController extends Controller
     // Mostrar listado de usuarios
     public function index()
     {
-        $users = User::with('roles')->paginate(10); // paginación
-        return view('admin.users.index', compact('users'));
+        $users = User::with('roles')->paginate(10);
+        return view('admin.users.index', compact('users') + ['activeMenu' => 'users']);
     }
 
     // Mostrar formulario para crear un nuevo usuario
     public function create()
     {
-        $roles = \Spatie\Permission\Models\Role::all(); // Asegúrate de importar Role
-        return view('admin.users.create', compact('roles'));
+        $roles = \Spatie\Permission\Models\Role::all();
+        return view('admin.users.create', compact('roles') + ['activeMenu' => 'users.create']);
     }
 
     // Guardar nuevo usuario
@@ -48,7 +48,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = \Spatie\Permission\Models\Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user', 'roles') + ['activeMenu' => 'users']);
     }
 
     // Actualizar usuario existente

@@ -1,16 +1,18 @@
-
-{{-- CSS específico del dashboard admin --}}
-      
-        <link rel="stylesheet" href="{{ asset('css/admin-uedit.css') }}">
+@extends('layouts.admin')
+@section('title', 'Editar Usuario')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-uedit.css') }}">
+@endpush
+@section('admin-content')
 
 <div class="form-container">
     <div class="form-card">
         <h2 class="form-title">Editar Usuario</h2>
-        
+
         <form action="{{ route('admin.users.update', $user) }}" method="POST" id="edit-user-form">
-            @csrf 
+            @csrf
             @method('PUT')
-            
+
             <!-- Campo Nombre -->
             <div class="form-group">
                 <label for="usr_name" class="form-label">
@@ -20,19 +22,19 @@
                     </svg>
                     Nombre Completo
                 </label>
-                <input 
-                    type="text" 
-                    id="usr_name" 
-                    name="name" 
-                    class="form-control" 
-                    required 
+                <input
+                    type="text"
+                    id="usr_name"
+                    name="name"
+                    class="form-control"
+                    required
                     value="{{ old('name', $user->name) }}"
                     placeholder="Ingresa el nombre completo"
                     autocomplete="name"
                 >
                 <div class="feedback-message" id="name-feedback"></div>
             </div>
-            
+
             <!-- Campo Email -->
             <div class="form-group">
                 <label for="usr_email" class="form-label">
@@ -42,19 +44,19 @@
                     </svg>
                     Correo Electrónico
                 </label>
-                <input 
-                    type="email" 
-                    id="usr_email" 
-                    name="email" 
-                    class="form-control" 
-                    required 
+                <input
+                    type="email"
+                    id="usr_email"
+                    name="email"
+                    class="form-control"
+                    required
                     value="{{ old('email', $user->email) }}"
                     placeholder="usuario@ejemplo.com"
                     autocomplete="email"
                 >
                 <div class="feedback-message" id="email-feedback"></div>
             </div>
-            
+
             <!-- Campo Rol -->
             <div class="form-group">
                 <label for="usr_role" class="form-label">
@@ -67,7 +69,7 @@
                 <select name="role" id="usr_role" class="form-control" required>
                     <option value="">Selecciona un rol</option>
                     @foreach ($roles as $role)
-                        <option value="{{ $role->id }}" 
+                        <option value="{{ $role->id }}"
                                 {{ $user->roles->first()?->id == $role->id ? 'selected' : '' }}>
                             {{ $role->name }}
                         </option>
@@ -75,7 +77,7 @@
                 </select>
                 <div class="feedback-message" id="role-feedback"></div>
             </div>
-            
+
             <!-- Botones de Acción -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-with-icon" id="usr_update_submit">
@@ -86,7 +88,7 @@
                     </svg>
                     Actualizar Usuario
                 </button>
-                
+
                 <a href="{{ route('admin.users.index') }}" class="btn btn-secondary btn-with-icon">
                     <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="15,18 9,12 15,6"></polyline>
@@ -107,8 +109,8 @@
     </div>
 @endif
 
+@endsection
 
-
-
-        {{-- JavaScript Admin Dashboard --}}
-<script src="{{ asset('js/admin-uedit.js') }}"></script>
+@push('scripts')
+    <script src="{{ asset('js/admin-uedit.js') }}"></script>
+@endpush

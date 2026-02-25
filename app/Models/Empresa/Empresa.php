@@ -21,8 +21,13 @@ class Empresa extends Model
         return $this->hasMany(\App\Models\Trabajador::class, 'negocio_id');
     }
 
-    public function productos()
+    public function fotos()
     {
-        return $this->hasMany(\App\Models\Producto::class, 'negocio_id');
+        return $this->hasMany(\App\Models\Empresa\FotoEmpresa::class, 'negocio_id')->orderBy('orden');
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(\App\Models\Resena::class, 'negocio_id')->latest();
     }
 }

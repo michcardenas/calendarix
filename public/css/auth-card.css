@@ -6,8 +6,8 @@
   /* 🎨 Paleta suave y elegante actualizada */
   --bg-base: #f6f5f7;
   --bg-gradient: linear-gradient(135deg, #f6f5f7 0%, #f0f0f5 25%, #e8e8f0 50%, #e2e1eb 75%, #dddceb 100%);
-  --accent-gradient: linear-gradient(135deg, #7e79c9 0%, #6b65bb 50%, #444478 100%);
-  --secondary-gradient: linear-gradient(135deg, #f59db5 0%, #7e79c9 50%, #444478 100%);
+  --accent-gradient: linear-gradient(135deg, #5a31d7 0%, #7b5ce0 50%, #4a22b8 100%);
+  --secondary-gradient: linear-gradient(135deg, #ffa8d7 0%, #5a31d7 50%, #4a22b8 100%);
 
   /* 🌈 Colores base */
   --neutral-white: #ffffff;
@@ -585,7 +585,7 @@ body::after {
 }
 
 .auth-bottom-link a {
-    background: linear-gradient(135deg, #7e79c9 0%, #5e5ca5 100%);
+    background: linear-gradient(135deg, #5a31d7 0%, #7b5ce0 100%);
     color: var(--neutral-white);
     padding: 0.5rem 1.25rem;
     border-radius: 9999px;
@@ -594,11 +594,11 @@ body::after {
     text-decoration: none;
     display: inline-block;
     transition: background 0.3s ease;
-    box-shadow: 0 4px 8px rgba(94, 92, 165, 0.2);
+    box-shadow: 0 4px 8px rgba(90, 49, 215, 0.2);
 }
 
 .auth-bottom-link a:hover {
-    background: linear-gradient(135deg, #5e5ca5 0%, #444478 100%);
+    background: linear-gradient(135deg, #4a22b8 0%, #5a31d7 100%);
 }
 
 

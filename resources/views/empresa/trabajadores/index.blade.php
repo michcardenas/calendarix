@@ -7,17 +7,17 @@
         {{-- Encabezado --}}
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-2xl font-bold text-[#4a5eaa]">👷 Trabajadores</h2>
+                <h2 class="text-2xl font-bold text-[#5a31d7]">👷 Trabajadores</h2>
                 <p class="text-sm text-[#3B4269B3]">Gestión de tu equipo de trabajo.</p>
             </div>
             <button onclick="document.getElementById('modalCrearTrabajador').classList.remove('hidden')"
-                class="bg-[#4a5eaa] hover:bg-[#6C88C4] text-white px-4 py-2 rounded text-sm transition-all">
+                class="bg-[#5a31d7] hover:bg-[#7b5ce0] text-white px-4 py-2 rounded text-sm transition-all">
                 <i class="fas fa-user-plus mr-2"></i> Nuevo Trabajador
             </button>
         </div>
 
         {{-- Tabla de trabajadores --}}
-        <div class="bg-white rounded-lg shadow overflow-x-auto border border-[#4a5eaa1A]">
+        <div class="bg-white rounded-lg shadow overflow-x-auto border border-[#5a31d71A]">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
                 <thead class="bg-[#f6f5f7] text-[#3B4269] font-semibold">
                     <tr>
@@ -35,7 +35,7 @@
                             <td class="px-4 py-2">{{ $trabajador->telefono ?? '—' }}</td>
                             <td class="px-4 py-2 text-center space-x-2">
                                 <button onclick="document.getElementById('modalEditarTrabajador{{ $trabajador->id }}').classList.remove('hidden')"
-                                    class="text-[#4a5eaa] hover:underline font-medium">Editar</button>
+                                    class="text-[#5a31d7] hover:underline font-medium">Editar</button>
 
                                 <form action="{{ route('empresa.trabajadores.destroy', ['empresa' => $empresa->id, 'trabajador' => $trabajador->id]) }}"
                                     method="POST" class="inline">

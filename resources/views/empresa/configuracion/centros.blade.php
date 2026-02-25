@@ -5,7 +5,7 @@
 @section('content')
 <div class="px-8 py-10 min-h-screen">
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-[#4a5eaa]">🏢 Centros</h2>
+        <h2 class="text-2xl font-bold text-[#5a31d7]">🏢 Centros</h2>
         <p class="text-sm text-[#3B4269B3]">Gestiona la información y las ubicaciones de los centros de tu negocio.</p>
     </div>
 
@@ -33,7 +33,7 @@
                                     <div class="flex flex-col sm:flex-row gap-2">
                                         <input type="text" name="direccion"
                                                value="{{ $centro['direccion'] }}"
-                                               class="form-input px-4 py-2 rounded-md border border-[#D1D5DB] focus:ring-[#4a5eaa] focus:border-[#4a5eaa] text-sm w-full sm:w-auto"
+                                               class="form-input px-4 py-2 rounded-md border border-[#D1D5DB] focus:ring-[#5a31d7] focus:border-[#5a31d7] text-sm w-full sm:w-auto"
                                                required>
 
                                         <button type="submit"
@@ -51,7 +51,7 @@
                                 <span class="text-xs text-gray-500 mt-1 block">Centro principal</span>
                             </div>
 
-                            <button class="text-[#4a5eaa] hover:underline text-sm font-medium"
+                            <button class="text-[#5a31d7] hover:underline text-sm font-medium"
                                     onclick="editarDireccion('principal')">
                                 ✏️ Editar
                             </button>
@@ -62,7 +62,7 @@
         @endif
 
         <div class="text-right mt-4">
-            <button class="bg-[#4a5eaa] hover:bg-[#6C88C4] text-white px-4 py-2 rounded-lg text-sm font-medium">
+            <button class="bg-[#5a31d7] hover:bg-[#7b5ce0] text-white px-4 py-2 rounded-lg text-sm font-medium">
                 <i class="fas fa-plus mr-1"></i> Añadir Centro
             </button>
         </div>

@@ -3,11 +3,11 @@
 /* ===== VARIABLES CSS ===== */
 :root {
     /* Colores */
-    --primary: #4a5eaa;
-    --primary-light: #5e63b2;
-    --primary-dark: #2c376c;
-    --secondary: #f6f5f7;
-    --background: #f6f5f7;
+    --primary: #5a31d7;
+    --primary-light: #7b5ce0;
+    --primary-dark: #4a22b8;
+    --secondary: #f3f0ff;
+    --background: #f3f0ff;
     --white: #ffffff;
     --text-primary: #f6f5f7;
     --text-secondary: #e0def2;
@@ -15,15 +15,15 @@
     --border: #d4d2e9;
 
     /* Sidebar */
-    --sidebar-bg: #4a5eaa;
-    --sidebar-bg-light: #5a67a8;
+    --sidebar-bg: #5a31d7;
+    --sidebar-bg-light: #7b5ce0;
     --sidebar-text: #f6f5f7;
     --sidebar-text-muted: #d6d3f0;
     --sidebar-hover: rgba(255, 255, 255, 0.08);
     --sidebar-active: var(--primary);
 
     /* Cards */
-    --card-bg: #444478;
+    --card-bg: #4a22b8;
     --card-border: rgba(255, 255, 255, 0.1);
     --card-hover: #565689;
 

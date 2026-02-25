@@ -11,19 +11,18 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Controladores de administración
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PlanController;
 
 // Controladores del negocio/empresa
 use App\Http\Controllers\negocio\NegocioController;
 use App\Http\Controllers\Empresa\DashboardEmpresaController;
-use App\Http\Controllers\Empresa\FotoController;
+use App\Http\Controllers\Empresa\GaleriaController;
+use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\Empresa\ServicioEmpresaController;
 use App\Http\Controllers\Empresa\EmpresaController;
 use App\Http\Controllers\Empresa\NegocioConfiguracionController;
 use App\Http\Controllers\Empresa\CatalogoController;
-use App\Http\Controllers\Empresa\ProductoController;
 use App\Http\Controllers\Empresa\AgendaController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\CarritoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +31,8 @@ use App\Http\Controllers\CarritoController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $plans = \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get();
+    return view('welcome', compact('plans'));
 });
 
 // Login tradicional
@@ -101,6 +101,8 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::resource('users', UserController::class);
+    Route::resource('plans', PlanController::class);
+    Route::patch('plans/{plan}/toggle', [PlanController::class, 'toggleActive'])->name('plans.toggle');
 });
 
 
@@ -224,20 +226,6 @@ Route::put('/empresa/configuracion/procedencia/{id}', [NegocioConfiguracionContr
 Route::post('/empresa/configuracion/procedencia', [NegocioConfiguracionController::class, 'actualizarProcedencia'])
     ->name('empresa.configuracion.procedencia.update');
 
-//productos
-Route::get('/empresa/{id}/catalogo/producto/crear', [ProductoController::class, 'create'])
-    ->name('producto.crear');
-Route::post('/empresa/catalogo/producto', [ProductoController::class, 'store'])->name('producto.store');
-Route::post('/empresa/catalogo/producto/guardar', [ProductoController::class, 'guardar'])->name('producto.guardar');
-Route::get('/empresa/{id}/catalogo/productos', [ProductoController::class, 'panel'])->name('producto.panel');
-// Mostrar el formulario de edición
-Route::get('/empresa/catalogo/producto/{producto}/editar', [ProductoController::class, 'edit'])->name('producto.editar');
-// Guardar cambios del producto
-Route::put('/empresa/catalogo/producto/{producto}', [ProductoController::class, 'update'])->name('producto.actualizar');
-// Eliminar un producto
-Route::delete('/empresa/catalogo/producto/{producto}', [ProductoController::class, 'destroy'])->name('producto.eliminar');
-Route::delete('/empresa/productos/imagen/{id}', [ProductoController::class, 'eliminarImagen'])->name('producto.imagen.eliminar');
-Route::put('/empresa/catalogo/producto/{producto}/actualizar', [ProductoController::class, 'update'])->name('producto.actualizar');
 Route::get('/empresa/{empresa}/clientes', [EmpresaController::class, 'clientes'])
     ->name('empresa.clientes.index');
 
@@ -257,6 +245,22 @@ Route::prefix('empresa/{empresa}/trabajadores')->group(function () {
     Route::delete('/{trabajador}/eliminar', [EmpresaController::class, 'destroyTrabajador'])->name('empresa.trabajadores.destroy');
 });
 
+// Galería de fotos
+Route::get('/empresa/{empresa}/galeria', [GaleriaController::class, 'index'])->name('empresa.galeria.index');
+Route::prefix('empresa/{empresa}/galeria')->group(function () {
+    Route::post('/subir', [GaleriaController::class, 'store'])->name('empresa.galeria.store');
+    Route::delete('/{foto}/eliminar', [GaleriaController::class, 'destroy'])->name('empresa.galeria.destroy');
+});
+
+// Reseñas - empresa panel
+Route::get('/empresa/{empresa}/resenas', [EmpresaController::class, 'resenas'])->name('empresa.resenas.index');
+
+// Reseñas - acciones (autenticadas)
+Route::middleware('auth')->group(function () {
+    Route::post('/resenas', [ResenaController::class, 'store'])->name('resenas.store');
+    Route::post('/resenas/{resena}/responder', [ResenaController::class, 'responder'])->name('resenas.responder');
+});
+
 //agenda
 Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('empresa.agenda');
 // routes/web.php
@@ -264,29 +268,17 @@ Route::get('/empresa/{id}/agenda/configurar', [AgendaController::class, 'configu
 
 Route::post('/empresa/{id}/agenda/bloqueados', [AgendaController::class, 'guardarBloqueados'])->name('agenda.guardar_bloqueados');
 
-Route::get('/negocios/{id}-{slug}', [\App\Http\Controllers\NegocioController::class, 'show'])
-    ->name('negocios.show');
+// URL amigable con slug (sin ID)
+Route::get('/negocios/{slug}', [\App\Http\Controllers\NegocioController::class, 'show'])
+    ->name('negocios.show')
+    ->where('slug', '[a-z0-9\-]+');
 
-Route::get('/empresa/{id}/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/empresa/{id}/checkout/add', [CheckoutController::class, 'add'])->name('checkout.add');
-Route::post('/empresa/{id}/checkout/finalizar', [CheckoutController::class, 'finalizar'])->name('checkout.finalizar');
+// Redirect 301 de la URL vieja (con ID) a la nueva
+Route::get('/negocios/{id}-{oldSlug}', function ($id, $oldSlug) {
+    $negocio = \App\Models\Negocio::findOrFail($id);
+    return redirect()->route('negocios.show', ['slug' => $negocio->slug], 301);
+})->where('id', '[0-9]+');
 
-Route::get('/empresa/{id}/catalogo/pedidos', [CheckoutController::class, 'pedidos'])->name('checkout.pedidos');
-Route::put('/checkout/{checkout}/estado', [CheckoutController::class, 'cambiarEstado'])->name('checkout.estado');
-Route::post('/checkout/{id}/remove', [CheckoutController::class, 'remove'])->name('checkout.remove');
-Route::post('/carrito/agregar', [CarritoController::class, 'agregar'])->name('carrito.agregar');
-Route::get('/checkout/confirmar/{id}', [CheckoutController::class, 'confirmar'])->name('checkout.confirmar');
-Route::post('/checkout/confirmar/{id}', [CheckoutController::class, 'guardarDatos'])->name('checkout.guardar');
-Route::post('/checkout/{empresa}/finalizar', [CheckoutController::class, 'finalizar'])
-    ->name('checkout.finalizar');  // abre modal (sin BD)
-
-Route::post('/checkout/{empresa}/confirmar', [CheckoutController::class, 'confirmar'])
-    ->name('checkout.confirmar');  // crea en BD
-
-Route::get('/checkout/{pedido}/success', fn($id) => view('checkout.success', compact('id')))
-    ->name('checkout.success');
-Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::get('/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
 Route::post('/negocios/{negocio}/agenda', [AgendaController::class, 'store'])
      ->name('agenda.store');
 

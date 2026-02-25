@@ -1,7 +1,9 @@
-{{-- CSS específico del dashboard admin --}}
-      
-        <link rel="stylesheet" href="{{ asset('css/admin-users.css') }}">
-
+@extends('layouts.admin')
+@section('title', 'Usuarios')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-users.css') }}">
+@endpush
+@section('admin-content')
 
 <div class="container mt-4">
     <!-- Título solo -->
@@ -49,19 +51,19 @@
                     <td>{{ $usr_user->email }}</td>
                     <td>{{ $usr_user->roles->first()?->name ?? '—' }}</td>
                     <td>
-                        <a href="{{ route('admin.users.edit', $usr_user) }}" 
-                           class="btn btn-sm btn-warning" 
+                        <a href="{{ route('admin.users.edit', $usr_user) }}"
+                           class="btn btn-sm btn-warning"
                            id="usr_edit_{{ $usr_user->id }}"
                            title="Editar usuario">
                            Editar
                         </a>
-                        <form action="{{ route('admin.users.destroy', $usr_user) }}" 
-                              method="POST" 
+                        <form action="{{ route('admin.users.destroy', $usr_user) }}"
+                              method="POST"
                               class="delete-form"
                               style="display:inline-block;">
                             @csrf @method('DELETE')
-                            <button type="submit" 
-                                    class="btn btn-sm btn-danger" 
+                            <button type="submit"
+                                    class="btn btn-sm btn-danger"
                                     id="usr_delete_{{ $usr_user->id }}"
                                     title="Eliminar usuario"
                                     data-confirm-message="¿Estás seguro de eliminar al usuario '{{ $usr_user->name }}'?">
@@ -81,5 +83,8 @@
     </div>
 </div>
 
-{{-- JavaScript Admin Dashboard --}}
-<script src="{{ asset('js/admin-users.js') }}"></script>
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('js/admin-users.js') }}"></script>
+@endpush

@@ -8,12 +8,12 @@
        Calendarix Design Tokens
        =========================== */
     :root {
-        --clx-primary: #455392;
-        --clx-primary-dark: #3a3e6b;
-        --clx-primary-light: #7e79c9;
+        --clx-primary: #5a31d7;
+        --clx-primary-dark: #4a22b8;
+        --clx-primary-light: #7b5ce0;
 
-        --clx-secondary: #f6f5f7;
-        --clx-accent: #a49ee8;
+        --clx-secondary: #f3f0ff;
+        --clx-accent: #32ccbc;
 
         --clx-danger: #e74c3c;
         --clx-warning: #f1c40f;
@@ -23,9 +23,9 @@
         --clx-text: #374151;
         --clx-text-light: #9c9cb9;
 
-        --clx-border: #dad8ee;
-        --clx-shadow: 0 4px 6px -1px rgba(126, 121, 201, 0.1);
-        --clx-shadow-lg: 0 10px 15px -3px rgba(126, 121, 201, 0.15);
+        --clx-border: #c7bdf2;
+        --clx-shadow: 0 4px 6px -1px rgba(90, 49, 215, 0.1);
+        --clx-shadow-lg: 0 10px 15px -3px rgba(90, 49, 215, 0.15);
 
         --clx-radius: 12px;
         --clx-radius-sm: 8px;
@@ -56,7 +56,7 @@
     }
     .clx-input:focus, .clx-select:focus {
         border-color: var(--clx-accent);
-        box-shadow: 0 0 0 0.2rem rgba(164, 158, 232, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(90, 49, 215, 0.25);
     }
 
     /* Buttons */
@@ -80,7 +80,7 @@
 
     /* Tabla */
     .clx-table thead th { background: var(--clx-primary); color: #fff; border: none; }
-    .clx-table tbody tr:hover { background: rgba(164, 158, 232, 0.07); }
+    .clx-table tbody tr:hover { background: rgba(90, 49, 215, 0.07); }
     .clx-table td, .clx-table th { border-color: var(--clx-border) !important; }
 
     /* Badges por estado */

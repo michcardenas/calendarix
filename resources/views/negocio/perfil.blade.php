@@ -1,277 +1,689 @@
-@extends('layouts.app')
-
+@extends('layouts.perfil-negocio')
 @section('title', $negocio->neg_nombre_comercial ?? 'Perfil del Negocio')
 
 @section('content')
 <style>
-    body::before,
-    body::after {
+    :root {
+        --primary: #5a31d7;
+        --primary-light: #7b5ce0;
+        --primary-dark: #4a22b8;
+        --accent: #32ccbc;
+        --accent-light: #5ee0d4;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-400: #9ca3af;
+        --gray-600: #4b5563;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+    }
+
+    /* ===== RESET BASE ===== */
+    * { box-sizing: border-box; }
+
+    /* ===== FULLCALENDAR ===== */
+    .fc-day-past { background-color: #f3f4f6 !important; opacity: 0.6; cursor: not-allowed !important; }
+    .fc-day-past .fc-daygrid-day-number { color: #9ca3af !important; text-decoration: line-through; }
+    .fc-day-blocked { background-color: #fee2e2 !important; cursor: not-allowed !important; }
+    .fc-day-blocked .fc-daygrid-day-number { color: #dc2626 !important; font-weight: bold; }
+    .fc .fc-daygrid-day:not(.fc-day-past):not(.fc-day-blocked):hover { background-color: #ede9fe !important; cursor: pointer; }
+    .fc-event { border-radius: 4px; padding: 2px 4px; font-size: 0.75rem; font-weight: 500; cursor: pointer; }
+    .fc .fc-toolbar-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--gray-800); }
+    .fc .fc-button { background: var(--primary) !important; border-color: var(--primary) !important; font-size: 0.75rem !important; padding: 4px 10px !important; border-radius: 6px !important; }
+    .fc .fc-button:hover { background: var(--primary-light) !important; }
+    .fc .fc-col-header-cell { background: #faf9ff; }
+    .fc .fc-col-header-cell-cushion { color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
+
+    /* ===== SCROLLBAR ===== */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ===== COVER ===== */
+    .cover-wrap {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background: #e5e7eb;
+        height: 200px;
+    }
+    @media (min-width: 640px) { .cover-wrap { height: 270px; } }
+    @media (min-width: 1024px) { .cover-wrap { height: 340px; } }
+
+    /* ===== INFO BAR ===== */
+    .infobar-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 18px;
+    }
+    @media (min-width: 640px) {
+        .infobar-row {
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+    }
+    .infobar-text { text-align: center; flex: 1; min-width: 0; }
+    @media (min-width: 640px) { .infobar-text { text-align: left; } }
+    .infobar-tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin-top: 6px; }
+    @media (min-width: 640px) { .infobar-tags { justify-content: flex-start; } }
+    .infobar-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; margin-top: 8px; font-size: 0.78rem; color: var(--gray-600); }
+    @media (min-width: 640px) { .infobar-meta { justify-content: flex-start; } }
+
+    /* ===== AVATAR ===== */
+    .avatar-ring {
+        width: 96px; height: 96px; min-width: 96px;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 20px rgba(90,49,215,0.18), 0 2px 8px rgba(0,0,0,0.12);
+        overflow: hidden;
+        background: #fff;
+        margin-top: -48px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+    }
+    @media (min-width: 640px) {
+        .avatar-ring { width: 116px; height: 116px; min-width: 116px; margin-top: -58px; }
+    }
+    @media (min-width: 1024px) {
+        .avatar-ring { width: 128px; height: 128px; min-width: 128px; margin-top: -64px; }
+    }
+    .avatar-ring img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ===== BTN AGENDAR ===== */
+    .btn-agendar {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 11px 24px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+        box-shadow: 0 4px 15px rgba(90,49,215,0.35);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+    .btn-agendar:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(90,49,215,0.45);
+    }
+    .btn-agendar:active { transform: translateY(0); }
+    .btn-agendar-desktop { display: none; }
+    @media (min-width: 640px) { .btn-agendar-desktop { display: inline-flex; } }
+
+    /* ===== LAYOUT GRID ===== */
+    .perfil-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 1.25rem 1rem 5.5rem;
+    }
+    @media (min-width: 1024px) {
+        .perfil-grid {
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+            padding: 1.5rem 1rem 2.5rem;
+        }
+    }
+
+    /* ===== CARDS ===== */
+    .perfil-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #ece9f8;
+        box-shadow: 0 1px 4px rgba(90,49,215,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        padding: 1.25rem;
+        transition: box-shadow 0.2s ease;
+    }
+    @media (min-width: 640px) { .perfil-card { padding: 1.5rem; } }
+    .perfil-card-hover:hover {
+        box-shadow: 0 4px 20px rgba(90,49,215,0.1), 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .card-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 14px 0;
+    }
+    .card-title i { color: var(--primary); font-size: 0.9rem; }
+
+    /* ===== SIDEBAR STICKY ===== */
+    .col-left { display: flex; flex-direction: column; gap: 1.25rem; }
+    .col-right { display: flex; flex-direction: column; gap: 1.25rem; }
+    @media (min-width: 1024px) {
+        .col-right { position: sticky; top: 76px; align-self: start; }
+    }
+
+    /* ===== EQUIPO ===== */
+    .team-scroll { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; }
+    .team-item {
+        display: flex; flex-direction: column; align-items: center;
+        flex-shrink: 0; width: 68px;
+        transition: transform 0.2s ease;
+    }
+    .team-item:hover { transform: translateY(-3px); }
+    .team-avatar {
+        width: 52px; height: 52px; border-radius: 50%;
+        object-fit: cover; display: block;
+        border: 2px solid rgba(90,49,215,0.15);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .team-avatar-initials {
+        width: 52px; height: 52px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 700; font-size: 0.85rem;
+        box-shadow: 0 2px 8px rgba(90,49,215,0.25);
+    }
+
+    /* ===== GALERÍA ===== */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    @media (min-width: 480px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 768px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+    .gallery-item {
+        aspect-ratio: 1;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+    }
+    .gallery-item img {
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+        transition: transform 0.35s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-item::after {
         content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-repeat: no-repeat;
-        background-size: cover;
-        z-index: 0;
+        position: absolute; inset: 0;
+        background: rgba(90,49,215,0);
+        transition: background 0.25s ease;
+        border-radius: 10px;
         pointer-events: none;
     }
-    body::before {
-        background:
-            radial-gradient(circle 160px at 10% 20%, rgba(126, 121, 201, 0.28), transparent 60%),
-            radial-gradient(circle 120px at 30% 40%, rgba(90, 78, 187, 0.25), transparent 60%),
-            radial-gradient(circle 150px at 50% 20%, rgba(126, 121, 201, 0.3), transparent 60%),
-            radial-gradient(circle 130px at 70% 35%, rgba(90, 78, 187, 0.3), transparent 60%),
-            radial-gradient(circle 180px at 85% 10%, rgba(126, 121, 201, 0.25), transparent 60%),
-            radial-gradient(circle 100px at 20% 75%, rgba(90, 78, 187, 0.22), transparent 60%),
-            radial-gradient(circle 120px at 45% 90%, rgba(126, 121, 201, 0.26), transparent 60%),
-            radial-gradient(circle 140px at 80% 80%, rgba(90, 78, 187, 0.3), transparent 60%);
-        animation: bubblesBefore 18s ease-in-out infinite;
-    }
-    body::after {
-        background:
-            radial-gradient(circle 130px at 15% 50%, rgba(126, 121, 201, 0.2), transparent 60%),
-            radial-gradient(circle 160px at 35% 60%, rgba(90, 78, 187, 0.28), transparent 60%),
-            radial-gradient(circle 120px at 55% 45%, rgba(126, 121, 201, 0.24), transparent 60%),
-            radial-gradient(circle 140px at 75% 55%, rgba(90, 78, 187, 0.22), transparent 60%),
-            radial-gradient(circle 160px at 90% 35%, rgba(126, 121, 201, 0.23), transparent 60%),
-            radial-gradient(circle 100px at 10% 85%, rgba(90, 78, 187, 0.2), transparent 60%),
-            radial-gradient(circle 150px at 40% 10%, rgba(126, 121, 201, 0.28), transparent 60%),
-            radial-gradient(circle 130px at 60% 85%, rgba(90, 78, 187, 0.25), transparent 60%);
-        animation: bubblesAfter 22s ease-in-out infinite reverse;
-    }
-    @keyframes bubblesBefore { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
-    @keyframes bubblesAfter  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(30px); } }
+    .gallery-item:hover::after { background: rgba(90,49,215,0.18); }
 
-    /* Estilos para días pasados en el calendario */
-    .fc-day-past {
-        background-color: #f3f4f6 !important;
-        opacity: 0.6;
-        cursor: not-allowed !important;
-    }
-    .fc-day-past .fc-daygrid-day-number {
-        color: #9ca3af !important;
-        text-decoration: line-through;
-    }
+    /* ===== LIGHTBOX ===== */
+    .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); align-items: center; justify-content: center; z-index: 999; animation: lbIn 0.2s ease; }
+    @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
+    .lightbox.open { display: flex; }
 
-    /* Estilos para días bloqueados */
-    .fc-day-blocked {
-        background-color: #fee2e2 !important;
-        cursor: not-allowed !important;
-    }
-    .fc-day-blocked .fc-daygrid-day-number {
-        color: #dc2626 !important;
-        font-weight: bold;
-    }
-
-    /* Días disponibles - hover effect */
-    .fc .fc-daygrid-day:not(.fc-day-past):not(.fc-day-blocked):hover {
-        background-color: #e0e7ff !important;
+    /* ===== SERVICIOS ===== */
+    .servicio-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
         cursor: pointer;
+        border-radius: 8px;
+        transition: background 0.15s;
+        margin: 0 -4px;
+        padding-left: 4px;
+        padding-right: 4px;
     }
+    .servicio-row:last-child { border-bottom: none; }
+    .servicio-row:hover { background: #faf9ff; }
 
-    /* Estilos para eventos de citas en el calendario */
-    .fc-event {
-        border-radius: 4px;
-        padding: 2px 4px;
-        font-size: 0.75rem;
-        font-weight: 500;
+    /* ===== RESEÑAS ===== */
+    .resena-item { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+    .resena-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .stars-display { display: inline-flex; gap: 2px; }
+    .stars-display i { font-size: 0.62rem; }
+
+    /* ===== HORARIOS ===== */
+    .horario-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 0.82rem;
+        border-bottom: 1px solid #f8f8fb;
+    }
+    .horario-row:last-child { border-bottom: none; }
+
+    /* ===== CONTACTO ===== */
+    .contacto-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.82rem;
+        color: var(--gray-600);
+        padding: 5px 0;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+    .contacto-row:hover { color: var(--primary); }
+    .contacto-icon {
+        width: 28px; height: 28px;
+        border-radius: 8px;
+        background: #f0ecff;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .contacto-icon i { color: var(--primary); font-size: 0.75rem; }
+
+    /* ===== STICKY MÓVIL ===== */
+    .sticky-bar {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 40;
+        padding: 12px 16px;
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid #ece9f8;
+        box-shadow: 0 -4px 20px rgba(90,49,215,0.1);
+    }
+    @media (min-width: 1024px) { .sticky-bar { display: none; } }
+    .btn-agendar-full {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: none;
+        border-radius: 14px;
         cursor: pointer;
-        transition: opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(90,49,215,0.35);
+        transition: all 0.2s;
     }
-    .fc-event:hover {
-        opacity: 0.85;
+    .btn-agendar-full:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(90,49,215,0.45); }
+
+    /* ===== BADGE VIRTUAL ===== */
+    .badge-virtual {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: rgba(50,204,188,0.12);
+        color: #0ea5a0;
+        font-size: 0.7rem; font-weight: 700;
+        padding: 3px 10px; border-radius: 999px;
+    }
+    .badge-cat {
+        display: inline-flex; align-items: center;
+        background: rgba(90,49,215,0.1);
+        color: var(--primary);
+        font-size: 0.7rem; font-weight: 600;
+        padding: 3px 10px; border-radius: 999px;
     }
 
-    /* Estilos según estado de la cita */
-    .fc-event[style*="rgb(99, 102, 241)"] { /* Pendiente - Indigo */
-        border-left: 3px solid #4f46e5;
-    }
-    .fc-event[style*="rgb(16, 185, 129)"] { /* Confirmada - Verde */
-        border-left: 3px solid #059669;
-    }
-    .fc-event[style*="rgb(239, 68, 68)"] { /* Cancelada - Rojo */
-        border-left: 3px solid #dc2626;
-        opacity: 0.7;
+    /* ===== PRECIO ===== */
+    .precio-tag {
+        font-weight: 800;
+        font-size: 0.9rem;
+        color: var(--primary);
+        background: rgba(90,49,215,0.07);
+        padding: 3px 8px;
+        border-radius: 6px;
     }
 
-    /* Tooltip para eventos de citas */
-    .fc-event-title {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    /* ===== RATING GRANDE ===== */
+    .rating-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 4px 12px;
+        font-size: 0.82rem;
+        color: #92400e;
+        font-weight: 600;
     }
 </style>
 
-{{-- Botón carrito flotante --}}
-<div class="fixed top-6 right-6 z-50">
-    <button id="carritoButton" class="relative bg-[#4a5eaa] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#3d4e94] transition">
-        🛒 Carrito
-        <span id="carritoCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
-    </button>
-</div>
-
-{{-- Modales --}}
-@include('empresa.partials.carrito-modal', ['empresa' => $negocio])
 @include('empresa.partials.modal-agendar', [
-  'negocio'      => $negocio,
-  'servicios'    => $negocio->servicios,   // opcional: ya llegan por relación
-  'trabajadores' => $trabajadores          // ← NUEVO
+    'negocio'      => $negocio,
+    'servicios'    => $negocio->servicios,
+    'trabajadores' => $trabajadores
 ])
 
+@php
+    $resolveImg = function($path) {
+        if (!$path) return null;
+        if (str_starts_with($path, 'http')) return $path;
+        if (str_starts_with($path, '/')) return $path;
+        return asset('storage/' . $path);
+    };
+    $imgPortada = $resolveImg($negocio->neg_portada);
+    $imgPerfil  = $resolveImg($negocio->neg_imagen) ?? asset('images/default-user.png');
+@endphp
 
-<div class="py-10 relative z-10">
-    <div class="max-w-6xl mx-auto">
+{{-- ===== PORTADA ===== --}}
+<div class="cover-wrap">
+    <div id="portadaFallback"
+         style="position:absolute;inset:0;background:linear-gradient(135deg,#5a31d7 0%,#7b5ce0 50%,#32ccbc 100%);{{ $imgPortada ? 'display:none;' : '' }}">
+    </div>
+    @if($imgPortada)
+        <img src="{{ $imgPortada }}"
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;"
+             alt="Portada"
+             onerror="this.style.display='none';document.getElementById('portadaFallback').style.display='block';">
+    @endif
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.1) 50%,transparent 100%);"></div>
+</div>
 
-        {{-- Portada --}}
-        <div class="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl mb-14 bg-[#4a5eaa]">
-            @if($negocio->neg_portada)
-                <img src="{{ $negocio->neg_portada }}" class="absolute inset-0 w-full h-full object-cover" alt="Portada">
-            @endif
-        </div>
+{{-- ===== INFO BAR ===== --}}
+<div style="background:#fff;border-bottom:1px solid #ece9f8;box-shadow:0 2px 8px rgba(90,49,215,0.06);">
+    <div style="max-width:1152px;margin:0 auto;padding:0 1rem;">
+        <div class="infobar-row">
 
-        {{-- Encabezado --}}
-        <div class="relative -mt-32 flex items-center gap-8 px-10 pb-10">
-            <div class="shrink-0">
-                <img src="{{ $negocio->neg_imagen ?? '/images/default-user.png' }}"
-                     class="w-40 h-40 rounded-full border-4 border-white object-cover shadow-xl bg-white"
-                     alt="Avatar">
+            <div class="avatar-ring">
+                <img src="{{ $imgPerfil }}"
+                     alt="{{ $negocio->neg_nombre_comercial }}"
+                     onerror="this.src='{{ asset('images/default-user.png') }}'">
             </div>
-            <div>
-                <h1 class="text-4xl font-extrabold text-[#4a5eaa]">{{ $negocio->neg_nombre_comercial }}</h1>
-                <p class="text-lg text-[#3B4269B3]">{{ $negocio->neg_categoria }}</p>
-            </div>
-        </div>
 
-        {{-- Secciones --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 px-10">
-            <div class="space-y-6">
-                {{-- Información --}}
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-[#4a5eaa]">
-                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">📄 Información del negocio</h3>
-                    <ul class="text-base text-gray-700 space-y-2">
-                        <li><strong>Email:</strong> {{ $negocio->neg_email }}</li>
-                        <li><strong>Teléfono:</strong> {{ $negocio->neg_telefono }}</li>
-                        <li><strong>Dirección:</strong> {{ $negocio->neg_direccion }}</li>
-                    </ul>
-                </div>
+            <div class="infobar-text">
+                <h1 style="font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;color:var(--gray-900);line-height:1.15;margin:0;letter-spacing:-0.02em;">
+                    {{ $negocio->neg_nombre_comercial ?? $negocio->neg_nombre }}
+                </h1>
 
-                {{-- Servicios --}}
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-[#4a5eaa]">
-                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">💼 Servicios</h3>
-                    @if($negocio->servicios->count())
-                        <ul class="list-disc pl-5 text-base text-gray-700 space-y-2">
-                            @foreach($negocio->servicios as $servicio)
-                                <li class="flex justify-between items-center">
-                                    <span>{{ $servicio->nombre }} - ${{ number_format($servicio->precio, 0, ',', '.') }}</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <p class="text-base text-gray-500">Este negocio aún no tiene servicios registrados.</p>
+                <div class="infobar-tags">
+                    @if(is_array($negocio->neg_categorias))
+                        @foreach($negocio->neg_categorias as $cat)
+                            <span class="badge-cat">{{ $cat }}</span>
+                        @endforeach
+                    @endif
+                    @if($promedioRating)
+                        <div class="rating-summary">
+                            <i class="fas fa-star" style="color:#f59e0b;font-size:0.75rem;"></i>
+                            <strong>{{ $promedioRating }}</strong>
+                            <span style="font-weight:400;color:#b45309;">({{ $totalResenas }} reseñas)</span>
+                        </div>
                     @endif
                 </div>
 
-                {{-- Productos --}}
-                <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-[#4a5eaa]">
-                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">🛒 Productos</h3>
-                    @if($negocio->productos && $negocio->productos->count())
-                        <ul class="divide-y divide-gray-200">
-                            @foreach($negocio->productos as $producto)
-                                <li class="py-3">
-                                    <div class="flex items-center gap-4">
-                                        <img src="{{ $producto->imagen ?? '/images/product-placeholder.png' }}"
-                                             class="w-14 h-14 object-cover rounded-md border"
-                                             alt="{{ $producto->nombre }}">
-                                        <div class="flex-1">
-                                            <h4 class="font-bold text-gray-800">{{ $producto->nombre }}</h4>
-                                            <p class="text-sm text-gray-600">{{ $producto->descripcion_breve }}</p>
-                                            <div class="flex items-center justify-between mt-1">
-                                                <p class="text-sm text-[#4a5eaa] font-semibold">
-                                                    ${{ number_format($producto->precio_venta, 0, ',', '.') }}
-                                                    @if($producto->activar_oferta && $producto->precio_promocional)
-                                                        <span class="text-sm line-through text-gray-400 ml-2">
-                                                            ${{ number_format($producto->precio_promocional, 0, ',', '.') }}
-                                                        </span>
-                                                    @endif
-                                                </p>
-                                                <button class="agregar-carrito bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
-                                                        data-tipo="producto"
-                                                        data-id="{{ $producto->id }}"
-                                                        data-nombre="{{ $producto->nombre }}"
-                                                        data-precio="{{ $producto->precio_venta }}">
-                                                    +
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <p class="text-base text-gray-500">Este negocio aún no tiene productos registrados.</p>
+                <div class="infobar-meta">
+                    @if($negocio->neg_direccion)
+                        <span><i class="fas fa-map-marker-alt" style="color:var(--primary);margin-right:4px;"></i>{{ $negocio->neg_direccion }}</span>
+                    @endif
+                    @if($negocio->neg_telefono)
+                        <a href="tel:{{ $negocio->neg_telefono }}" style="color:inherit;text-decoration:none;">
+                            <i class="fas fa-phone" style="color:var(--primary);margin-right:4px;"></i>{{ $negocio->neg_telefono }}
+                        </a>
+                    @endif
+                    @if($negocio->neg_virtual)
+                        <span class="badge-virtual"><i class="fas fa-laptop"></i>Atención virtual</span>
+                    @endif
+                    @if($negocio->neg_facebook)
+                        <a href="{{ $negocio->neg_facebook }}" target="_blank" style="color:#9ca3af;font-size:1.05rem;text-decoration:none;" onmouseover="this.style.color='#1877F2'" onmouseout="this.style.color='#9ca3af'"><i class="fab fa-facebook"></i></a>
+                    @endif
+                    @if($negocio->neg_instagram)
+                        <a href="{{ $negocio->neg_instagram }}" target="_blank" style="color:#9ca3af;font-size:1.05rem;text-decoration:none;" onmouseover="this.style.color='#E4405F'" onmouseout="this.style.color='#9ca3af'"><i class="fab fa-instagram"></i></a>
+                    @endif
+                    @if($negocio->neg_sitio_web)
+                        <a href="{{ $negocio->neg_sitio_web }}" target="_blank" style="color:#9ca3af;font-size:1.05rem;text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='#9ca3af'"><i class="fas fa-globe"></i></a>
                     @endif
                 </div>
             </div>
 
-            {{-- Horarios y Calendario --}}
-            <div class="lg:col-span-2 space-y-6">
-                {{-- 📆 Citas del día (NUEVO) --}}
-                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-semibold text-[#4a5eaa]">📆 Citas del día</h3>
-                        <input type="date" id="fechaCitas" class="border rounded-lg px-3 py-2"
-                               value="{{ now()->toDateString() }}">
-                    </div>
-                    <div id="citasDiaVacio" class="text-gray-500 hidden">No hay citas para esta fecha.</div>
-                    <ul id="listaCitasDia" class="divide-y">
-                        {{-- se llena por JS --}}
-                    </ul>
-                </div>
-
-                {{-- Horarios --}}
-                <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
-                    <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">⏰ Horarios de Atención</h3>
-                    <table class="w-full text-base">
-                        <thead>
-                            <tr class="text-gray-600 border-b">
-                                <th class="py-2 text-left">Día</th>
-                                <th>Inicio</th>
-                                <th>Fin</th>
-                                <th>Activo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($negocio->horarios as $h)
-                                <tr class="border-b text-gray-700">
-                                    <td class="py-2">
-                                        {{ \Carbon\Carbon::create()->startOfWeek()->addDays($h->dia_semana - 1)->locale('es')->isoFormat('dddd') }}
-                                    </td>
-                                    <td>{{ $h->hora_inicio ?? '—' }}</td>
-                                    <td>{{ $h->hora_fin ?? '—' }}</td>
-                                    <td>
-                                        {!! $h->activo ? '<span class="text-green-600 font-semibold">Sí</span>' : '<span class="text-red-600">No</span>' !!}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                {{-- Calendario --}}
-                @if($negocio->bloqueos->count())
-                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-[#4a5eaa]">
-                        <h3 class="text-xl font-semibold mb-4 text-[#4a5eaa]">📅 Días Bloqueados</h3>
-                        <div id="calendarioBloqueos" class="rounded overflow-hidden"></div>
-                    </div>
-                @endif
-            </div>
+            <button onclick="window.openAgendarModal()" class="btn-agendar btn-agendar-desktop">
+                <i class="fas fa-calendar-plus"></i> Agendar Cita
+            </button>
         </div>
     </div>
 </div>
 
-{{-- 📦 Horarios + NegocioID para JS --}}
+{{-- ===== EQUIPO ===== --}}
+@if($trabajadores->count())
+<div style="background:#faf9ff;border-bottom:1px solid #ece9f8;">
+    <div style="max-width:1152px;margin:0 auto;padding:14px 1rem 16px;">
+        <p style="font-size:0.68rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 12px 0;">
+            <i class="fas fa-users" style="color:var(--primary);margin-right:5px;"></i>Nuestro equipo
+        </p>
+        <div class="team-scroll scrollbar-hide">
+            @foreach($trabajadores as $trab)
+                <div class="team-item">
+                    @if($trab->foto)
+                        <img src="{{ asset('storage/' . $trab->foto) }}" alt="{{ $trab->nombre }}" class="team-avatar">
+                    @else
+                        <div class="team-avatar-initials">{{ strtoupper(substr($trab->nombre, 0, 2)) }}</div>
+                    @endif
+                    <p style="font-size:0.68rem;color:var(--gray-800);font-weight:600;margin-top:6px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;">{{ $trab->nombre }}</p>
+                    @if($trab->especialidades)
+                        <p style="font-size:0.62rem;color:var(--gray-400);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;margin-top:1px;">{{ $trab->especialidades }}</p>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
+
+{{-- ===== MAIN GRID ===== --}}
+<div style="background:var(--gray-50);">
+    <div class="perfil-grid">
+
+        {{-- COLUMNA IZQUIERDA --}}
+        <div class="col-left">
+
+            {{-- Calendario --}}
+            <div class="perfil-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+                    <h2 class="card-title" style="margin:0;">
+                        <i class="fas fa-calendar-alt"></i>Reserva tu cita
+                    </h2>
+                    <span style="font-size:0.72rem;color:var(--gray-400);background:#f8f6ff;padding:4px 10px;border-radius:20px;">
+                        <i class="fas fa-hand-pointer" style="color:var(--primary);margin-right:3px;font-size:0.65rem;"></i>Seleccioná un día disponible
+                    </span>
+                </div>
+                <div id="calendarioCitas" style="border-radius:10px;overflow:hidden;"></div>
+                <button onclick="window.openAgendarModal()" class="btn-agendar-full" style="margin-top:1rem;">
+                    <i class="fas fa-calendar-plus"></i> Agendar Cita
+                </button>
+            </div>
+
+            {{-- Reseñas --}}
+            @if($resenas->count())
+            <div class="perfil-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+                    <h2 class="card-title" style="margin:0;">
+                        <i class="fas fa-star"></i>Reseñas
+                    </h2>
+                    @if($promedioRating)
+                        <div class="rating-summary">
+                            <i class="fas fa-star" style="color:#f59e0b;font-size:0.75rem;"></i>
+                            <strong>{{ $promedioRating }}</strong>
+                            <span style="font-weight:400;">({{ $totalResenas }})</span>
+                        </div>
+                    @endif
+                </div>
+                @foreach($resenas->take(5) as $resena)
+                    <div class="resena-item">
+                        <div style="display:flex;align-items:flex-start;gap:10px;">
+                            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:700;flex-shrink:0;">
+                                {{ strtoupper(substr($resena->user->name ?? 'C', 0, 2)) }}
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:3px;">
+                                    <span style="font-weight:700;color:var(--gray-800);font-size:0.85rem;">{{ $resena->user->name ?? 'Cliente' }}</span>
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div class="stars-display">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="fas fa-star" style="color:{{ $i <= $resena->rating ? '#f59e0b' : '#e5e7eb' }};"></i>
+                                            @endfor
+                                        </div>
+                                        <span style="font-size:0.72rem;color:var(--gray-400);">{{ $resena->created_at->format('d/m/Y') }}</span>
+                                    </div>
+                                </div>
+                                <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.55;margin:0;">{{ $resena->comentario }}</p>
+                                @if($resena->respuesta_negocio)
+                                    <div style="margin-top:8px;padding:8px 12px;border-left:3px solid var(--primary);background:linear-gradient(135deg,#faf9ff,#f5f3ff);border-radius:0 8px 8px 0;">
+                                        <p style="font-size:0.72rem;font-weight:700;color:var(--primary);margin:0 0 3px 0;"><i class="fas fa-reply" style="margin-right:4px;"></i>Respuesta del negocio</p>
+                                        <p style="font-size:0.82rem;color:var(--gray-600);margin:0;">{{ $resena->respuesta_negocio }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            @endif
+
+            {{-- Galería --}}
+            @if($negocio->fotos->count())
+            <div class="perfil-card">
+                <h2 class="card-title">
+                    <i class="fas fa-images"></i>Galería
+                    <span style="font-size:0.72rem;font-weight:500;color:var(--gray-400);margin-left:auto;">{{ $negocio->fotos->count() }} fotos</span>
+                </h2>
+                <div class="gallery-grid">
+                    @foreach($negocio->fotos as $foto)
+                        <div class="gallery-item" onclick="document.getElementById('lb{{ $foto->id }}').classList.add('open')">
+                            <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto">
+                        </div>
+                        <div id="lb{{ $foto->id }}" class="lightbox" onclick="this.classList.remove('open')">
+                            <img src="{{ asset('storage/' . $foto->ruta) }}"
+                                 style="max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,0.6);display:block;"
+                                 alt="Foto">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+        </div>
+
+        {{-- SIDEBAR --}}
+        <div class="col-right">
+
+            {{-- Servicios --}}
+            @if($negocio->servicios->count())
+            <div class="perfil-card perfil-card-hover">
+                <h2 class="card-title"><i class="fas fa-concierge-bell"></i>Servicios</h2>
+                @foreach($negocio->servicios as $servicio)
+                    <div class="servicio-row" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-weight:600;color:var(--gray-800);font-size:0.85rem;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $servicio->nombre }}</p>
+                            @if($servicio->duracion)
+                                <p style="font-size:0.72rem;color:var(--gray-400);margin:2px 0 0 0;">
+                                    <i class="far fa-clock" style="margin-right:3px;"></i>{{ $servicio->duracion }}
+                                </p>
+                            @endif
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;">
+                            <span class="precio-tag">${{ number_format($servicio->precio, 0, ',', '.') }}</span>
+                            <p style="font-size:0.7rem;font-weight:600;color:var(--accent);margin:3px 0 0 0;">Reservar →</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            @endif
+
+            {{-- Horarios --}}
+            @if($negocio->horarios->count())
+            <div class="perfil-card perfil-card-hover">
+                <h2 class="card-title"><i class="far fa-clock"></i>Horarios</h2>
+                @foreach($negocio->horarios as $h)
+                    <div class="horario-row" style="{{ $h->activo ? '' : 'opacity:0.38;' }}">
+                        <span style="font-weight:600;color:var(--gray-800);font-size:0.82rem;text-transform:capitalize;">
+                            {{ \Carbon\Carbon::create()->startOfWeek()->addDays($h->dia_semana - 1)->locale('es')->isoFormat('dddd') }}
+                        </span>
+                        @if($h->activo && $h->hora_inicio && $h->hora_fin)
+                            <span style="font-size:0.8rem;color:var(--gray-600);font-weight:500;">
+                                {{ substr($h->hora_inicio,0,5) }} – {{ substr($h->hora_fin,0,5) }}
+                            </span>
+                        @else
+                            <span style="font-size:0.72rem;color:#ef4444;font-weight:700;background:#fef2f2;padding:2px 8px;border-radius:6px;">Cerrado</span>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+            @endif
+
+            {{-- Contacto --}}
+            <div class="perfil-card perfil-card-hover">
+                <h2 class="card-title"><i class="fas fa-address-card"></i>Contacto</h2>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    @if($negocio->neg_telefono)
+                        <a href="tel:{{ $negocio->neg_telefono }}" class="contacto-row">
+                            <div class="contacto-icon"><i class="fas fa-phone"></i></div>
+                            <span style="padding-top:5px;">{{ $negocio->neg_telefono }}</span>
+                        </a>
+                    @endif
+                    @if($negocio->neg_email)
+                        <a href="mailto:{{ $negocio->neg_email }}" class="contacto-row">
+                            <div class="contacto-icon"><i class="fas fa-envelope"></i></div>
+                            <span style="padding-top:5px;word-break:break-all;">{{ $negocio->neg_email }}</span>
+                        </a>
+                    @endif
+                    @if($negocio->neg_direccion)
+                        <div class="contacto-row">
+                            <div class="contacto-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <span style="padding-top:5px;">{{ $negocio->neg_direccion }}</span>
+                        </div>
+                    @endif
+                    @if($negocio->neg_pais)
+                        <div class="contacto-row">
+                            <div class="contacto-icon"><i class="fas fa-globe-americas"></i></div>
+                            <span style="padding-top:5px;">{{ $negocio->neg_pais }}</span>
+                        </div>
+                    @endif
+                </div>
+                @if($negocio->neg_facebook || $negocio->neg_instagram || $negocio->neg_sitio_web)
+                <div style="display:flex;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6;">
+                    @if($negocio->neg_facebook)
+                        <a href="{{ $negocio->neg_facebook }}" target="_blank"
+                           style="width:36px;height:36px;border-radius:10px;background:#f0f0f8;display:flex;align-items:center;justify-content:center;color:#9ca3af;text-decoration:none;transition:all 0.2s;font-size:1rem;"
+                           onmouseover="this.style.background='#1877F2';this.style.color='#fff'"
+                           onmouseout="this.style.background='#f0f0f8';this.style.color='#9ca3af'">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    @endif
+                    @if($negocio->neg_instagram)
+                        <a href="{{ $negocio->neg_instagram }}" target="_blank"
+                           style="width:36px;height:36px;border-radius:10px;background:#f0f0f8;display:flex;align-items:center;justify-content:center;color:#9ca3af;text-decoration:none;transition:all 0.2s;font-size:1rem;"
+                           onmouseover="this.style.background='#E4405F';this.style.color='#fff'"
+                           onmouseout="this.style.background='#f0f0f8';this.style.color='#9ca3af'">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    @endif
+                    @if($negocio->neg_sitio_web)
+                        <a href="{{ $negocio->neg_sitio_web }}" target="_blank"
+                           style="width:36px;height:36px;border-radius:10px;background:#f0f0f8;display:flex;align-items:center;justify-content:center;color:#9ca3af;text-decoration:none;transition:all 0.2s;font-size:1rem;"
+                           onmouseover="this.style.background='var(--primary)';this.style.color='#fff'"
+                           onmouseout="this.style.background='#f0f0f8';this.style.color='#9ca3af'">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                    @endif
+                </div>
+                @endif
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{-- STICKY MÓVIL --}}
+<div class="sticky-bar">
+    <button onclick="window.openAgendarModal()" class="btn-agendar-full">
+        <i class="fas fa-calendar-plus"></i> Agendar Cita
+    </button>
+</div>
+
 @php
     $horariosMap = $negocio->horarios
         ->where('activo', 1)
@@ -283,486 +695,121 @@
                     'fin'    => $h->hora_fin    ? substr($h->hora_fin, 0, 5) : null,
                 ];
             })->values();
-        })
-        ->toArray();
+        })->toArray();
 @endphp
-
-<div id="horariosData" data-map='@json($horariosMap)'></div>
-<div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
+<div id="horariosData" data-map='@json($horariosMap)' style="display:none;"></div>
+<div id="agendaData" data-negocio-id="{{ $negocio->id }}" style="display:none;"></div>
 
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  // ================== ⏱️ Horarios desde data-atributo ==================
-  // <div id="horariosData" data-map='{"1":[{"inicio":"08:00","fin":"17:00"}], ...}'></div>
   const horariosEl = document.getElementById('horariosData');
   let HORARIOS = {};
   if (horariosEl && typeof horariosEl.dataset.map === 'string') {
-    try { HORARIOS = JSON.parse(horariosEl.dataset.map || '{}'); }
-    catch { console.warn('horariosData data-map no es JSON válido'); HORARIOS = {}; }
+    try { HORARIOS = JSON.parse(horariosEl.dataset.map || '{}'); } catch { HORARIOS = {}; }
   }
-
-  // Normalización HH:MM (acepta inicio/fin u hora_inicio/hora_fin)
   const fix = v => (v||'').toString().slice(0,5);
   const normalizeRangeArray = arr => (Array.isArray(arr) ? arr : [])
     .map(r => ({ inicio: fix(r.inicio ?? r.hora_inicio), fin: fix(r.fin ?? r.hora_fin) }))
     .filter(r => r.inicio && r.fin);
-
-  // Normaliza el objeto 1..7 -> [{inicio,fin}, ...]
   const NORM = {};
   Object.keys(HORARIOS).forEach(k => { NORM[k] = normalizeRangeArray(HORARIOS[k]); });
-
-  // Horarios del negocio (global)
   window.NEGOCIO_HORARIOS = NORM;
 
-  // ================== 🔎 Datos de agenda (negocio) ==================
-  // Asegúrate de tener: <div id="agendaData" data-negocio-id="{{ $negocio->id }}"></div>
-  const agendaEl   = document.getElementById('agendaData');
+  const agendaEl = document.getElementById('agendaData');
   const NEGOCIO_ID = agendaEl?.dataset?.negocioId || null;
-
-  // ================== 🧩 Inicialización de estructuras globales ==================
-  // Soporte para horarios/bloqueos por trabajador (si más adelante los cargas)
-  window.TRABAJADOR_HORARIOS = window.TRABAJADOR_HORARIOS || {}; // { [trabajador_id]: { [1..7]: [{inicio,fin}] } }
-  window.TRABAJADOR_BLOQUEOS = window.TRABAJADOR_BLOQUEOS || {}; // { [trabajador_id]: ['YYYY-MM-DD', ...] }
-
-  // Mapa de reservas por fecha y trabajador:
-  // window.RESERVAS['YYYY-MM-DD'][trabajador_id] = [{inicio,fin}, ...]
+  window.TRABAJADOR_HORARIOS = window.TRABAJADOR_HORARIOS || {};
+  window.TRABAJADOR_BLOQUEOS = window.TRABAJADOR_BLOQUEOS || {};
   window.RESERVAS = window.RESERVAS || {};
 
-  // ================== 🧠 Helpers compartidos (globales) ==================
-  const pad2  = n => String(n).padStart(2, '0');
+  const pad2 = n => String(n).padStart(2, '0');
   const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
-  window.t2m = function t2m(hhmm) {
-    const [h,m] = (hhmm||'0:0').split(':').map(Number);
-    return h*60 + m;
+  window.t2m = function(hhmm) { const [h,m]=(hhmm||'0:0').split(':').map(Number); return h*60+m; };
+  window.m2t = function(total) { const h=Math.floor(total/60),m=total%60; return `${pad2(h)}:${pad2(m)}`; };
+  window.normalizeIntervals = function(raw) {
+    return (raw||[]).map(r=>({inicio:fix(r.inicio??r.hora_inicio),fin:fix(r.fin??r.hora_fin)})).filter(r=>r.inicio&&r.fin&&r.fin>r.inicio);
   };
-  window.m2t = function m2t(total) {
-    const h = Math.floor(total/60), m = total%60;
-    const pad = n => String(n).padStart(2,'0');
-    return `${pad(h)}:${pad(m)}`;
-  };
-  window.normalizeIntervals = function normalizeIntervals(raw) {
-    return (raw||[])
-      .map(r => ({ inicio: fix(r.inicio ?? r.hora_inicio), fin: fix(r.fin ?? r.hora_fin) }))
-      .filter(r => r.inicio && r.fin && r.fin > r.inicio);
-  };
-  window.overlapsAny = function overlapsAny(aStart, aEnd, intervals) {
-    const A = t2m(aStart), B = t2m(aEnd);
-    for (const it of (intervals||[])) {
-      const C = t2m(it.inicio), D = t2m(it.fin);
-      if (A < D && C < B) return true; // intersección abierta
-    }
+  window.overlapsAny = function(aStart,aEnd,intervals) {
+    const A=t2m(aStart),B=t2m(aEnd);
+    for(const it of (intervals||[])){const C=t2m(it.inicio),D=t2m(it.fin);if(A<D&&C<B)return true;}
     return false;
   };
-  window.generateFreeQuarterSlots = function generateFreeQuarterSlots(minHHMM, maxHHMM, reservas) {
-    const out = [];
-    const min = t2m(minHHMM), max = t2m(maxHHMM);
-    for (let t = min; t <= max; t += 15) {
-      const s = m2t(t);
-      if (!overlapsAny(s, m2t(t+15), reservas)) out.push(s);
-    }
+  window.generateFreeQuarterSlots = function(minHHMM,maxHHMM,reservas) {
+    const out=[],min=t2m(minHHMM),max=t2m(maxHHMM);
+    for(let t=min;t<=max;t+=15){const s=m2t(t);if(!overlapsAny(s,m2t(t+15),reservas))out.push(s);}
     return out;
   };
-  window.generateValidEnds = function generateValidEnds(startHHMM, maxHHMM, reservas) {
-    const out = [];
-    const start = t2m(startHHMM), max = t2m(maxHHMM);
-    for (let t = start + 15; t <= max; t += 15) {
-      const cand = m2t(t);
-      if (!overlapsAny(startHHMM, cand, reservas)) out.push(cand);
-    }
+  window.generateValidEnds = function(startHHMM,maxHHMM,reservas) {
+    const out=[],start=t2m(startHHMM),max=t2m(maxHHMM);
+    for(let t=start+15;t<=max;t+=15){const cand=m2t(t);if(!overlapsAny(startHHMM,cand,reservas))out.push(cand);}
     return out;
   };
 
-  // ================== 📆 Citas del día (panel opcional) ==================
-  const fechaInput = document.getElementById('fechaCitas');
-  const ulCitas    = document.getElementById('listaCitasDia');
-  const vacioLabel = document.getElementById('citasDiaVacio');
-
-  async function cargarCitasDelDia(fecha) {
-    if (!NEGOCIO_ID) return;
+  window.cargarCitasDelDia = async function(fecha) {
+    if(!NEGOCIO_ID)return;
     try {
-      const res  = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-dia?fecha=${fecha}`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      const json = await res.json();
-
-      // 🧩 Hidratar RESERVAS por trabajador:
-      // Espera items con { trabajador_id, hora_inicio, hora_fin }
-      window.RESERVAS[fecha] = window.RESERVAS[fecha] || {};
-      // Limpia día previo
-      Object.keys(window.RESERVAS[fecha]).forEach(k => delete window.RESERVAS[fecha][k]);
-
-      const items = Array.isArray(json.items) ? json.items : [];
-      for (const c of items) {
-        const tid = c.trabajador_id ?? '0';
-        if (!window.RESERVAS[fecha][tid]) window.RESERVAS[fecha][tid] = [];
-        window.RESERVAS[fecha][tid].push({
-          inicio: (c.hora_inicio || '').toString().slice(0,5),
-          fin:    (c.hora_fin    || '').toString().slice(0,5),
-        });
+      const res=await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-dia?fecha=${fecha}`,{headers:{'X-Requested-With':'XMLHttpRequest'}});
+      const json=await res.json();
+      window.RESERVAS[fecha]={};
+      for(const c of (Array.isArray(json.items)?json.items:[])){
+        const tid=c.trabajador_id??'0';
+        if(!window.RESERVAS[fecha][tid])window.RESERVAS[fecha][tid]=[];
+        window.RESERVAS[fecha][tid].push({inicio:(c.hora_inicio||'').toString().slice(0,5),fin:(c.hora_fin||'').toString().slice(0,5)});
       }
+    } catch(e){console.error('Error cargando citas del día:',e);}
+  };
 
-      // --- Panel lateral (visual) ---
-      if (ulCitas && vacioLabel) {
-        ulCitas.innerHTML = '';
-        if (!items.length) {
-          vacioLabel.classList.remove('hidden');
-        } else {
-          vacioLabel.classList.add('hidden');
-          for (const c of items) {
-            const li = document.createElement('li');
-            li.className = 'py-3 flex items-start justify-between';
-            li.innerHTML = `
-              <div>
-                <div class="font-semibold text-gray-800">${c.nombre_cliente ?? 'Cita'}</div>
-                <div class="text-sm text-gray-600">
-                  ${c.hora_inicio} – ${c.hora_fin}${c.estado ? ` · <span class="uppercase">${c.estado}</span>` : ''}
-                </div>
-                ${c.notas ? `<div class="text-sm text-gray-500 mt-1">${c.notas}</div>` : ''}
-              </div>
-            `;
-            ulCitas.appendChild(li);
-          }
-        }
+  async function cargarCitasMes(year,month) {
+    if(!NEGOCIO_ID)return;
+    try {
+      const res=await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-mes?year=${year}&month=${month}`,{headers:{'X-Requested-With':'XMLHttpRequest'}});
+      const json=await res.json();
+      if(json.ok&&Array.isArray(json.events)&&window.calendar){
+        window.calendar.getEvents().filter(ev=>ev.extendedProps?.type==='cita').forEach(ev=>ev.remove());
+        json.events.forEach(ev=>{window.calendar.addEvent(ev);});
       }
-
-      // --- FullCalendar: NO dibujamos eventos aquí, ya se cargan con cargarCitasMes ---
-      // Las citas ya están cargadas en el calendario y no necesitamos duplicarlas
-    } catch (e) {
-      console.error('Error cargando citas del día:', e);
-    }
+    } catch(e){console.error('Error cargando citas del mes:',e);}
   }
 
-  // ================== 🗓️ Calendario (bloqueos + integración con citas del día) ==================
-  const calendarEl = document.getElementById('calendarioBloqueos');
-  let calendar;
-
-  // Función para cargar citas del mes
-  async function cargarCitasMes(year, month) {
-    if (!NEGOCIO_ID) return;
-    try {
-      const res = await fetch(`/negocios/${NEGOCIO_ID}/agenda/citas-mes?year=${year}&month=${month}`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
-      const json = await res.json();
-
-      if (json.ok && Array.isArray(json.events)) {
-        // Remover eventos de citas previas
-        if (window.calendar) {
-          window.calendar.getEvents()
-            .filter(ev => ev.extendedProps?.type === 'cita')
-            .forEach(ev => ev.remove());
-
-          // Agregar nuevos eventos de citas
-          json.events.forEach(ev => {
-            window.calendar.addEvent(ev);
-          });
-        }
-      }
-    } catch (e) {
-      console.error('Error cargando citas del mes:', e);
-    }
-  }
-
-  if (calendarEl) {
-    calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      locale: 'es',
-      height: 500,
-      headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
-
-      // Eventos iniciales (bloqueos)
-      events: [
+  const calendarEl=document.getElementById('calendarioCitas');
+  if(calendarEl){
+    const calendar=new FullCalendar.Calendar(calendarEl,{
+      initialView:'dayGridMonth',
+      locale:'es',
+      height:520,
+      headerToolbar:{left:'prev,next today',center:'title',right:''},
+      events:[
         @foreach($negocio->bloqueos as $bloqueo)
-        {
-          title: 'Bloqueado',
-          start: '{{ \Carbon\Carbon::parse($bloqueo->fecha_bloqueada)->format('Y-m-d') }}',
-          allDay: true,
-          color: '#dc2626',
-          extendedProps: { blocked: true }
-        },
+        {title:'Bloqueado',start:'{{ \Carbon\Carbon::parse($bloqueo->fecha_bloqueada)->format('Y-m-d') }}',allDay:true,color:'#dc2626',extendedProps:{blocked:true}},
         @endforeach
       ],
-
-      // 🎨 Estilos personalizados para cada día
-      dayCellClassNames: function(info) {
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const cellDate = new Date(info.date);
-        cellDate.setHours(0,0,0,0);
-
-        const ymd = toYMD(cellDate);
-        const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
-
-        // Día pasado
-        if (cellDate < today) {
-          return ['fc-day-past'];
-        }
-        // Día bloqueado
-        if (blocked) {
-          return ['fc-day-blocked'];
-        }
-        return [];
+      dayCellClassNames:function(info){
+        const today=new Date();today.setHours(0,0,0,0);
+        const cell=new Date(info.date);cell.setHours(0,0,0,0);
+        const ymd=toYMD(cell);
+        const blocked=calendar.getEvents().some(ev=>ev.extendedProps?.blocked&&toYMD(ev.start)===ymd);
+        if(cell<today)return['fc-day-past'];
+        if(blocked)return['fc-day-blocked'];
+        return[];
       },
-
-      // 🔄 Cargar citas cuando cambia el mes
-      datesSet: function(dateInfo) {
-        const year = dateInfo.start.getFullYear();
-        const month = dateInfo.start.getMonth() + 1;
-        cargarCitasMes(year, month);
-      },
-
-      // 👉 Click en un día (espera reservas por trabajador antes de abrir modal)
-      dateClick: async function(info) {
-        const ymd = toYMD(info.date);
-        const today = new Date(); today.setHours(0,0,0,0);
-        const clicked = new Date(info.date); clicked.setHours(0,0,0,0);
-
-        // No permitir clicks en días pasados
-        if (clicked < today) return;
-
-        // No permitir clicks en días bloqueados
-        const blocked = calendar.getEvents().some(ev => ev.extendedProps?.blocked && toYMD(ev.start) === ymd);
-        if (blocked) return;
-
-        // Cargar reservas del día para control de horarios (sin afectar eventos visuales)
-        if (fechaInput) fechaInput.value = ymd;
-        await cargarCitasDelDia(ymd); // ← importante para tener RESERVAS[ymd] listas
-
-        // Abrir modal de agendar
-        if (typeof window.openAgendarModal === 'function') {
-          window.openAgendarModal(ymd);
-        } else {
-          // Fallback mínimo si no está la función
-          const modal = document.getElementById('modalAgendar');
-          const fechaHidden = document.getElementById('agendarFecha');
-          const fechaLabel  = document.getElementById('agendarFechaLabel');
-          if (fechaHidden) fechaHidden.value = ymd;
-          if (fechaLabel)  fechaLabel.value  = `${ymd.split('-')[1]}/${ymd.split('-')[2]}/${ymd.split('-')[0]}`;
-          modal?.classList.remove('hidden');
-          modal?.classList.add('flex');
-        }
+      datesSet:function(di){cargarCitasMes(di.start.getFullYear(),di.start.getMonth()+1);},
+      dateClick:async function(info){
+        const ymd=toYMD(info.date);
+        const today=new Date();today.setHours(0,0,0,0);
+        const clicked=new Date(info.date);clicked.setHours(0,0,0,0);
+        if(clicked<today)return;
+        const blocked=calendar.getEvents().some(ev=>ev.extendedProps?.blocked&&toYMD(ev.start)===ymd);
+        if(blocked)return;
+        await window.cargarCitasDelDia(ymd);
+        if(typeof window.openAgendarModal==='function')window.openAgendarModal({date:ymd});
       },
     });
-
     calendar.render();
-    window.calendar = calendar;
-
-    // Carga inicial (hoy) si existe el input y el negocio
-    if (fechaInput && NEGOCIO_ID) {
-      const hoy = fechaInput.value || toYMD(new Date());
-      cargarCitasDelDia(hoy);
-    }
-  } else {
-    if (fechaInput && NEGOCIO_ID) {
-      cargarCitasDelDia(fechaInput.value || toYMD(new Date()));
-    }
+    window.calendar=calendar;
   }
-
-  // ================== 🛒 Carrito ==================
-  let carrito = JSON.parse(localStorage.getItem('carritoNegocio')) || [];
-  const modalCarrito = document.getElementById('modalCarrito');
-  const lista = document.getElementById('carritoItems');
-  const total = document.getElementById('carritoTotal');
-  const count = document.getElementById('carritoCount');
-  const inputHidden = document.getElementById('carritoJsonInput');
-
-  function guardarCarrito() { localStorage.setItem('carritoNegocio', JSON.stringify(carrito)); }
-
-  function actualizarCarrito() {
-    if (!lista) return;
-    lista.innerHTML = '';
-    let suma = 0;
-
-    if (carrito.length === 0) {
-      lista.innerHTML = `<li class="text-gray-500 text-sm text-center py-4">Tu carrito está vacío.</li>`;
-    }
-
-    carrito.forEach((item, index) => {
-      const subtotal = (Number(item.precio) || 0) * (Number(item.cantidad) || 0);
-      suma += subtotal;
-
-      const li = document.createElement('li');
-      li.className = 'py-2 flex justify-between items-center border-b border-gray-100';
-      li.innerHTML = `
-        <div>
-          <span class="font-medium">${item.nombre}</span>
-          <span class="ml-2 text-gray-500 text-sm">($${Number(item.precio).toLocaleString()} x ${item.cantidad})</span><br>
-          <span class="text-xs text-gray-600">Subtotal: $${subtotal.toLocaleString()}</span>
-        </div>
-        <button data-index="${index}" class="eliminar-item text-red-500 hover:text-red-700 text-sm">Quitar</button>
-      `;
-      lista.appendChild(li);
-    });
-
-    if (total) total.textContent = '$' + suma.toLocaleString();
-    if (count) count.textContent = carrito.length;
-    if (inputHidden) inputHidden.value = JSON.stringify(carrito);
-    guardarCarrito();
-  }
-
-  // ➕ Agregar al carrito
-  document.querySelectorAll('.agregar-carrito').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const nuevoItem = {
-        id: this.dataset.id,
-        nombre: this.dataset.nombre,
-        precio: parseFloat(this.dataset.precio),
-        tipo: this.dataset.tipo,
-        cantidad: parseInt(this.dataset.cantidad || '1')
-      };
-
-      const existente = carrito.find(item => item.id === nuevoItem.id && item.tipo === nuevoItem.tipo);
-      if (existente) existente.cantidad += nuevoItem.cantidad;
-      else carrito.push(nuevoItem);
-
-      actualizarCarrito();
-
-      const toast = document.createElement('div');
-      toast.textContent = `${nuevoItem.nombre} agregado al carrito`;
-      toast.className = 'fixed bottom-6 right-6 bg-black/80 text-white text-sm px-4 py-2 rounded shadow-lg z-50 animate-bounce';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2000);
-    });
-  });
-
-  // 🧹 Eliminar del carrito
-  lista?.addEventListener('click', function (e) {
-    if (e.target.classList.contains('eliminar-item')) {
-      const index = parseInt(e.target.dataset.index);
-      carrito.splice(index, 1);
-      actualizarCarrito();
-    }
-  });
-
-  // 🪟 Abrir/Cerrar modal carrito
-  document.getElementById('carritoButton')?.addEventListener('click', () => {
-    modalCarrito?.classList.remove('hidden');
-  });
-  document.getElementById('cerrarModalCarrito')?.addEventListener('click', () => {
-    modalCarrito?.classList.add('hidden');
-  });
-
-  // =============== MODAL CHECKOUT (AJAX) ===============
-  let checkoutMount = document.getElementById('checkoutModalMount');
-  if (!checkoutMount) {
-    checkoutMount = document.createElement('div');
-    checkoutMount.id = 'checkoutModalMount';
-    document.body.appendChild(checkoutMount);
-  }
-
-  function openCheckoutModal() {
-    const m = document.getElementById('modalCheckout');
-    if (m) { m.classList.remove('hidden'); m.classList.add('flex'); bindCheckoutModalEvents(); }
-  }
-  function closeCheckoutModal() {
-    const m = document.getElementById('modalCheckout');
-    if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
-  }
-  function bindCheckoutModalEvents() {
-    const modal = document.getElementById('modalCheckout');
-    if (!modal) return;
-
-    modal.querySelectorAll('[data-close-checkout]').forEach(btn => btn.addEventListener('click', closeCheckoutModal));
-
-    const innerForm = modal.querySelector('#checkoutGuardarForm');
-    if (!innerForm) return;
-
-    innerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const errBox = modal.querySelector('#checkoutErrors');
-      if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
-      modal.querySelectorAll('[data-error-for]').forEach(p => { p.classList.add('hidden'); p.textContent = ''; });
-
-      const fd = new FormData(innerForm);
-      try {
-        const res = await fetch(innerForm.action, {
-          method: 'POST',
-          headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': fd.get('_token') },
-          body: fd
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          if (res.status === 422 && data.errors) {
-            Object.entries(data.errors).forEach(([name, msgs]) => {
-              const p = modal.querySelector(`[data-error-for="${name}"]`);
-              if (p) { p.textContent = msgs[0]; p.classList.remove('hidden'); }
-            });
-            if (data.errors.general && errBox) {
-              errBox.textContent = data.errors.general[0]; errBox.classList.remove('hidden');
-            }
-          } else if (errBox) {
-            errBox.textContent = 'Error inesperado al finalizar el pedido.'; errBox.classList.remove('hidden');
-          }
-          return;
-        }
-
-        if (data.ok && data.redirect) {
-          localStorage.removeItem('carritoNegocio');
-          window.location.href = data.redirect;
-        }
-      } catch (err) {
-        if (errBox) {
-          errBox.textContent = 'No se pudo enviar el formulario. Verifica tu conexión.';
-          errBox.classList.remove('hidden');
-        }
-      }
-    });
-  }
-
-  // ✅ Enviar carrito al checkout (AJAX) y abrir modal de resumen + formulario
-  const formCheckout = document.getElementById('formCheckout');
-  if (formCheckout) {
-    formCheckout.addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      if (carrito.length === 0) {
-        alert('Tu carrito está vacío.');
-        return;
-      }
-
-      if (inputHidden) inputHidden.value = JSON.stringify(carrito);
-
-      const fd = new FormData(formCheckout);
-      try {
-        const res = await fetch(formCheckout.action, {
-          method: 'POST',
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          body: fd
-        });
-        const data = await res.json();
-
-        if (!res.ok || !data.ok) {
-          alert((data?.errors?.general && data.errors.general[0]) || 'No se pudo preparar el checkout.');
-          return;
-        }
-
-        checkoutMount.innerHTML = data.html;
-        openCheckoutModal();
-        modalCarrito?.classList.add('hidden');
-      } catch (err) {
-        alert('Error de red preparando el checkout.');
-      }
-    });
-  }
-
-  // 🔄 Cargar carrito al iniciar
-  actualizarCarrito();
 });
-</script>
-
-<script>
-  // Horarios del negocio ya los cargas como window.NEGOCIO_HORARIOS en el script de abajo.
-  // Estos dos quedan listos por si luego implementas horarios/bloqueos específicos por trabajador:
-  window.TRABAJADOR_HORARIOS = window.TRABAJADOR_HORARIOS || {}; // { [trabajador_id]: { [1..7]: [{inicio,fin}] } }
-  window.TRABAJADOR_BLOQUEOS = window.TRABAJADOR_BLOQUEOS || {}; // { [trabajador_id]: ['YYYY-MM-DD', ...] }
-
-  // Mapa de reservas del día por trabajador:
-  // window.RESERVAS['YYYY-MM-DD'][trabajador_id] = [{inicio,fin}, ...]
-  window.RESERVAS = window.RESERVAS || {};
 </script>
 @endpush

@@ -25,7 +25,7 @@
     <aside class="clx-sidebar w-64 bg-[#0f172a] text-white p-5">
         <div class="clx-logo mb-6">
             <h1 class="flex items-center gap-2 text-xl font-semibold">
-                <img src="{{ asset('images/calendarix.png') }}" alt="Calendarix Logo" style="height: 48px; vertical-align: middle;">
+                <img src="{{ asset('images/azul.png') }}" alt="Calendarix Logo" style="height: 48px; vertical-align: middle;">
                 <span>Calendarix</span>
             </h1>
         </div>

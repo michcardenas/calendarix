@@ -159,6 +159,20 @@
     color: var(--admin-primary);
 }
 
+.admin-nav-link.active {
+    background: rgba(99, 102, 241, 0.08);
+    transform: translateX(2px);
+}
+
+.admin-nav-link.active .admin-nav-icon {
+    color: var(--admin-primary);
+}
+
+.admin-nav-link.active .admin-nav-content span {
+    color: var(--admin-primary);
+    font-weight: 600;
+}
+
 .admin-nav-icon {
     color: var(--admin-text-light);
     font-size: 0.875rem;

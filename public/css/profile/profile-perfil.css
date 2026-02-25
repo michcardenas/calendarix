@@ -3,9 +3,9 @@
 /* ===== VARIABLES CSS ===== */
 :root {
     /* 🎨 Colores actualizados */
-    --primary: #455392;              /* Azul profundo elegante */
-    --primary-light: #7E79C9;        /* Lila suave como acento */
-    --primary-dark: #3A477C;         /* Azul oscuro para énfasis */
+    --primary: #5a31d7;              /* Violeta brandbook (primary-500) */
+    --primary-light: #7b5ce0;        /* Violeta claro (primary-400) */
+    --primary-dark: #4a22b8;         /* Violeta oscuro (primary-600) */
     --secondary: #f6f5f7;            /* Fondo claro neutro */
     --background: #FDFBFF;
     --white: #FFFFFF;
