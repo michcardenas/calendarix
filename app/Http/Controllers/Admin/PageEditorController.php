@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SiteContent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PageEditorController extends Controller
 {
@@ -56,19 +57,12 @@ class PageEditorController extends Controller
         // Imagenes de fondo
         $existing = SiteContent::get('home_hero');
         $keptImages = $request->input('hero_existing_images', []);
-        $dir = public_path('images/cms');
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
 
         // Eliminar imagenes que el usuario quito del editor
         $oldImages = $existing['images'] ?? [];
         foreach ($oldImages as $oldImg) {
             if (!in_array($oldImg, $keptImages)) {
-                $oldPath = public_path($oldImg);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
-                }
+                Storage::disk('public')->delete($oldImg);
             }
         }
 
@@ -76,24 +70,22 @@ class PageEditorController extends Controller
         if ($request->hasFile('hero_images')) {
             foreach ($request->file('hero_images') as $file) {
                 $filename = 'hero_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move($dir, $filename);
-                $images[] = 'images/cms/' . $filename;
+                $path = $file->storeAs('cms', $filename, 'public');
+                $images[] = $path;
             }
         }
         $heroData['images'] = array_values($images);
         $heroData['image'] = $images[0] ?? null;
+
+        // Video de fondo
         if ($request->hasFile('hero_video')) {
             // Eliminar video anterior si existe
             if (!empty($existing['video_path'])) {
-                $oldPath = public_path($existing['video_path']);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
-                }
+                Storage::disk('public')->delete($existing['video_path']);
             }
             $video = $request->file('hero_video');
             $videoName = 'hero_video_' . time() . '.' . $video->getClientOriginalExtension();
-            $video->move($dir, $videoName);
-            $heroData['video_path'] = 'images/cms/' . $videoName;
+            $heroData['video_path'] = $video->storeAs('cms', $videoName, 'public');
         } else {
             // Mantener video existente
             $heroData['video_path'] = $existing['video_path'] ?? null;

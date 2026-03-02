@@ -847,13 +847,13 @@
         @if($bgType === 'video' && $videoPath)
             <div class="hero-bg-video">
                 <video autoplay muted loop playsinline>
-                    <source src="{{ asset($videoPath) }}" type="video/{{ pathinfo($videoPath, PATHINFO_EXTENSION) === 'webm' ? 'webm' : 'mp4' }}">
+                    <source src="{{ asset('storage/' . $videoPath) }}" type="video/{{ pathinfo($videoPath, PATHINFO_EXTENSION) === 'webm' ? 'webm' : 'mp4' }}">
                 </video>
             </div>
         @elseif(count($heroImgs) > 0)
             @foreach($heroImgs as $i => $img)
                 <div class="hero-bg-slide {{ $i === 0 ? 'active' : '' }}"
-                     style="background-image:url('{{ asset($img) }}')"></div>
+                     style="background-image:url('{{ asset('storage/' . $img) }}')"></div>
             @endforeach
         @else
             <div class="hero-bg-slide active"

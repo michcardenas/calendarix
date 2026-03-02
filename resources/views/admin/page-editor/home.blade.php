@@ -121,7 +121,7 @@
                 <div class="pe-images-grid" id="heroImagesGrid">
                     @foreach($images as $i => $img)
                         <div class="pe-image-thumb" data-index="{{ $i }}">
-                            <img src="{{ asset($img) }}" alt="Hero {{ $i + 1 }}">
+                            <img src="{{ asset('storage/' . $img) }}" alt="Hero {{ $i + 1 }}">
                             <input type="hidden" name="hero_existing_images[]" value="{{ $img }}">
                             <button type="button" class="pe-thumb-remove" onclick="this.closest('.pe-image-thumb').remove()">
                                 <i class="fas fa-times"></i>
@@ -145,7 +145,7 @@
                 @if(!empty($hero['video_path']))
                     <div class="pe-video-current">
                         <video muted loop playsinline style="width:100%;max-width:400px;border-radius:8px;border:2px solid var(--pe-border);">
-                            <source src="{{ asset($hero['video_path']) }}" type="video/mp4">
+                            <source src="{{ asset('storage/' . $hero['video_path']) }}" type="video/mp4">
                         </video>
                         <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;">
                             <i class="fas fa-check-circle" style="color:var(--pe-success);"></i>
