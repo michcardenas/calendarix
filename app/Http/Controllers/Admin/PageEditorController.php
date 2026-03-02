@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SiteContent;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PageEditorController extends Controller
 {
@@ -39,10 +38,36 @@ class PageEditorController extends Controller
     }
 
     /**
+     * Directorio de uploads CMS dentro de public/.
+     */
+    private function cmsDir(): string
+    {
+        $dir = public_path('uploads/cms');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        return $dir;
+    }
+
+    /**
+     * Eliminar un archivo de uploads/cms si existe.
+     */
+    private function deleteFile(?string $relativePath): void
+    {
+        if (!$relativePath) return;
+        $full = public_path($relativePath);
+        if (file_exists($full)) {
+            @unlink($full);
+        }
+    }
+
+    /**
      * Guardar cambios del Home.
      */
     public function updateHome(Request $request)
     {
+        $dir = $this->cmsDir();
+
         // --- HERO ---
         $heroData = [
             'title'       => $request->input('hero_title'),
@@ -62,7 +87,7 @@ class PageEditorController extends Controller
         $oldImages = $existing['images'] ?? [];
         foreach ($oldImages as $oldImg) {
             if (!in_array($oldImg, $keptImages)) {
-                Storage::disk('public')->delete($oldImg);
+                $this->deleteFile($oldImg);
             }
         }
 
@@ -70,8 +95,8 @@ class PageEditorController extends Controller
         if ($request->hasFile('hero_images')) {
             foreach ($request->file('hero_images') as $file) {
                 $filename = 'hero_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('cms', $filename, 'public');
-                $images[] = $path;
+                $file->move($dir, $filename);
+                $images[] = 'uploads/cms/' . $filename;
             }
         }
         $heroData['images'] = array_values($images);
@@ -81,13 +106,13 @@ class PageEditorController extends Controller
         if ($request->hasFile('hero_video')) {
             // Eliminar video anterior si existe
             if (!empty($existing['video_path'])) {
-                Storage::disk('public')->delete($existing['video_path']);
+                $this->deleteFile($existing['video_path']);
             }
             $video = $request->file('hero_video');
             $videoName = 'hero_video_' . time() . '.' . $video->getClientOriginalExtension();
-            $heroData['video_path'] = $video->storeAs('cms', $videoName, 'public');
+            $video->move($dir, $videoName);
+            $heroData['video_path'] = 'uploads/cms/' . $videoName;
         } else {
-            // Mantener video existente
             $heroData['video_path'] = $existing['video_path'] ?? null;
         }
 
