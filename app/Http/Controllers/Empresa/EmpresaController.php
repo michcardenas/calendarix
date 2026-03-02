@@ -152,11 +152,13 @@ class EmpresaController extends Controller
         $request->validate([
             'negocio_id'     => 'required|exists:negocios,id',
             'nombre'         => 'required|string|max:255',
-            'email'          => 'nullable|email|max:255',
+            'email'          => 'nullable|email|max:255|unique:trabajadores,email,NULL,id,negocio_id,' . $request->negocio_id,
             'telefono'       => 'nullable|string|max:20',
             'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'bio'            => 'nullable|string|max:500',
             'especialidades' => 'nullable|string|max:255',
+        ], [
+            'email.unique' => 'Ya existe un trabajador con este email en tu negocio.',
         ]);
 
         $data = [
@@ -184,11 +186,13 @@ class EmpresaController extends Controller
     {
         $request->validate([
             'nombre'         => 'required|string|max:255',
-            'email'          => 'nullable|email|max:255',
+            'email'          => "nullable|email|max:255|unique:trabajadores,email,{$trabajadorId},id,negocio_id,{$empresaId}",
             'telefono'       => 'nullable|string|max:20',
             'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'bio'            => 'nullable|string|max:500',
             'especialidades' => 'nullable|string|max:255',
+        ], [
+            'email.unique' => 'Ya existe otro trabajador con este email en tu negocio.',
         ]);
 
         $trabajador = Trabajador::where('negocio_id', $empresaId)->findOrFail($trabajadorId);

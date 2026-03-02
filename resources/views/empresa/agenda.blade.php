@@ -16,55 +16,79 @@ $diasSemana = [
 
 @section('content')
 <div class="min-h-screen px-6 py-10" style="background-color: #f6f5f7; color: #3B4269;">
-    <div class="max-w-7xl mx-auto space-y-10">
+    <div class="max-w-7xl mx-auto space-y-8">
 
         {{-- Encabezado --}}
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold" style="color: #5a31d7;">📆 Agenda</h1>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold" style="color: #5a31d7;">Agenda</h1>
+                <p class="text-sm text-gray-400 mt-1">Visualiza tus citas y horarios de trabajo.</p>
+            </div>
             <a href="{{ route('empresa.agenda.configurar', $empresa->id) }}"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-md"
+                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:shadow-lg hover:shadow-[#5a31d7]/20 transition-all"
                 style="background-color: #5a31d7;">
-                Configurar horarios
+                <i class="fas fa-cog"></i> Configurar horarios
             </a>
         </div>
 
         {{-- Horarios Laborales --}}
-        <section>
-            <h2 class="text-lg font-semibold mb-3" style="color: #5a31d7;">🕓 Horario Laboral</h2>
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                <table class="w-full text-sm text-gray-700">
-                    <thead style="background-color: #f6f5f7;" class="text-left text-xs uppercase">
-                        <tr>
-                            <th class="px-4 py-3">Día</th>
-                            <th class="px-4 py-3">Inicio</th>
-                            <th class="px-4 py-3">Fin</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach ($diasSemana as $numero => $nombre)
-                        @php
-                        $inicio = $horarios->firstWhere('dia_semana', $numero)?->hora_inicio;
-                        $fin = $horarios->firstWhere('dia_semana', $numero)?->hora_fin;
-                        @endphp
-                        <tr>
-                            <td class="px-4 py-2">{{ $nombre }}</td>
-                            <td class="px-4 py-2">
-                                {{ $inicio ? \Carbon\Carbon::createFromFormat('H:i:s', $inicio)->format('g:i A') : 'Cerrado' }}
-                            </td>
-                            <td class="px-4 py-2">
-                                {{ $fin ? \Carbon\Carbon::createFromFormat('H:i:s', $fin)->format('g:i A') : 'Cerrado' }}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h2 class="text-base font-semibold text-[#3B4269]">Horario Laboral</h2>
+                <p class="text-xs text-gray-400 mt-0.5">Resumen de los horarios de apertura y cierre.</p>
             </div>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-[#f9f8fc] text-xs uppercase tracking-wide text-[#5a31d7]">
+                        <th class="px-6 py-3 text-left font-semibold">Dia</th>
+                        <th class="px-4 py-3 text-left font-semibold">Inicio</th>
+                        <th class="px-4 py-3 text-left font-semibold">Fin</th>
+                        <th class="px-4 py-3 text-center font-semibold">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($diasSemana as $numero => $nombre)
+                    @php
+                    $inicio = $horarios->firstWhere('dia_semana', $numero)?->hora_inicio;
+                    $fin = $horarios->firstWhere('dia_semana', $numero)?->hora_fin;
+                    $abierto = $inicio && $fin;
+                    @endphp
+                    <tr class="border-b border-gray-50 hover:bg-[#faf9fd] transition-colors {{ !$abierto ? 'opacity-50' : '' }}">
+                        <td class="px-6 py-3">
+                            <span class="font-medium text-[#3B4269]">{{ $nombre }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-[#3B4269]">
+                            {{ $inicio ? \Carbon\Carbon::createFromFormat('H:i:s', $inicio)->format('g:i A') : '—' }}
+                        </td>
+                        <td class="px-4 py-3 text-[#3B4269]">
+                            {{ $fin ? \Carbon\Carbon::createFromFormat('H:i:s', $fin)->format('g:i A') : '—' }}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            @if($abierto)
+                                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                    Abierto
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 bg-gray-50 px-2.5 py-1 rounded-full">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                    Cerrado
+                                </span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </section>
 
         {{-- Calendario --}}
-        <section>
-            <h2 class="text-lg font-semibold mb-3" style="color: #5a31d7;">📅 Calendario</h2>
-            <div id="calendar" class="bg-white rounded-xl shadow-sm p-4"></div>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h2 class="text-base font-semibold text-[#3B4269]">Calendario</h2>
+                <p class="text-xs text-gray-400 mt-0.5">Vista general de tus citas programadas.</p>
+            </div>
+            <div id="calendar" class="p-4"></div>
         </section>
 
     </div>
@@ -79,48 +103,77 @@ $diasSemana = [
     }
 
     .fc {
-        --fc-border-color: transparent;
-        --fc-today-bg-color: #f6f5f7;
+        --fc-border-color: #f0f0f5;
+        --fc-today-bg-color: rgba(90, 49, 215, 0.04);
         --fc-page-bg-color: transparent;
-        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: 'Segoe UI', sans-serif;
     }
 
     .fc .fc-toolbar-title {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 600;
-        color: #5a31d7;
+        color: #3B4269;
     }
 
     .fc .fc-button {
-        background: #5a31d7;
-        border: none;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        padding: 0.35rem 0.7rem;
+        border-radius: 8px;
         font-size: 0.75rem;
         font-weight: 500;
-        color: white;
-        transition: background 0.2s ease;
+        color: #3B4269;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
     }
 
     .fc .fc-button:hover {
-        background: #7b5ce0;
+        background: #5a31d7;
+        border-color: #5a31d7;
+        color: white;
     }
 
-    .fc .fc-daygrid-event {
-        background-color: #e0e7ff;
-        border: none;
-        padding: 2px 6px;
-        font-size: 0.75rem;
-        color: #3730a3;
-        border-radius: 6px;
-        font-weight: 500;
-        margin-top: 4px;
+    .fc .fc-button-active {
+        background: #5a31d7 !important;
+        border-color: #5a31d7 !important;
+        color: white !important;
     }
 
-    .fc .fc-col-header-cell-cushion,
+    .fc .fc-col-header-cell-cushion {
+        color: #9c9cb9;
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
     .fc .fc-daygrid-day-number {
         color: #3B4269;
         font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .fc .fc-day-today .fc-daygrid-day-number {
+        background: #5a31d7;
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2px;
+    }
+
+    .fc .fc-daygrid-event {
+        background-color: #ede9fe;
+        border: none;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        color: #5a31d7;
+        border-radius: 6px;
+        font-weight: 500;
+        margin-top: 4px;
     }
 
     .fc .fc-scrollgrid {

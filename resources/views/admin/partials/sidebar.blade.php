@@ -10,7 +10,7 @@
 <nav class="admin-sidebar-nav">
 
     {{-- Gestión de Contenido --}}
-    <div class="admin-nav-section">
+    <div class="admin-nav-section {{ str_starts_with($menu, 'page-editor') ? 'expanded' : '' }}">
         <div class="admin-nav-category">
             <i class="fas fa-edit admin-nav-category-icon"></i>
             <span class="admin-nav-category-title">Gestión de Contenido</span>
@@ -27,7 +27,8 @@
                 </a>
             </li>
             <li class="admin-nav-item">
-                <a href="#" class="admin-nav-link" data-demo="page-editor">
+                <a href="{{ route('admin.page-editor.index') }}"
+                   class="admin-nav-link {{ $menu === 'page-editor' ? 'active' : '' }}">
                     <i class="fas fa-palette admin-nav-icon"></i>
                     <div class="admin-nav-content">
                         <span>Editor de Páginas</span>
@@ -80,7 +81,7 @@
     </div>
 
     {{-- Planes y Facturación --}}
-    <div class="admin-nav-section {{ str_starts_with($menu, 'plans') ? 'expanded' : '' }}">
+    <div class="admin-nav-section {{ str_starts_with($menu, 'plans') || $menu === 'suscripciones' ? 'expanded' : '' }}">
         <div class="admin-nav-category">
             <i class="fas fa-layer-group admin-nav-category-icon"></i>
             <span class="admin-nav-category-title">Planes y Facturación</span>
@@ -106,6 +107,16 @@
                     <div class="admin-nav-content">
                         <span>Nuevo Plan</span>
                         <small>Agregar plan de suscripción</small>
+                    </div>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ route('admin.suscripciones.index') }}"
+                   class="admin-nav-link {{ $menu === 'suscripciones' ? 'active' : '' }}">
+                    <i class="fas fa-credit-card admin-nav-icon"></i>
+                    <div class="admin-nav-content">
+                        <span>Suscripciones</span>
+                        <small>Ver y gestionar pagos</small>
                     </div>
                 </a>
             </li>
@@ -171,3 +182,14 @@
     </div>
 
 </nav>
+
+{{-- Cerrar Sesión --}}
+<div class="admin-sidebar-footer">
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="admin-logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar Sesión</span>
+        </button>
+    </form>
+</div>

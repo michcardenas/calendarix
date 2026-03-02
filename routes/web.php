@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Admin\SuscripcionAdminController;
+use App\Http\Controllers\Admin\PageEditorController;
 
 // Controladores del negocio/empresa
 use App\Http\Controllers\negocio\NegocioController;
@@ -23,6 +25,7 @@ use App\Http\Controllers\Empresa\EmpresaController;
 use App\Http\Controllers\Empresa\NegocioConfiguracionController;
 use App\Http\Controllers\Empresa\CatalogoController;
 use App\Http\Controllers\Empresa\AgendaController;
+use App\Http\Controllers\SuscripcionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +35,19 @@ use App\Http\Controllers\Empresa\AgendaController;
 
 Route::get('/', function () {
     $plans = \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get();
-    return view('welcome', compact('plans'));
+    $negociosDestacados = \App\Models\Negocio::withCount('resenas')
+        ->withAvg('resenas', 'rating')
+        ->latest()
+        ->take(8)
+        ->get();
+
+    $hero       = \App\Models\SiteContent::get('home_hero');
+    $businesses = \App\Models\SiteContent::get('home_businesses');
+    $pricing    = \App\Models\SiteContent::get('home_pricing');
+    $features   = \App\Models\SiteContent::get('home_features');
+    $cta        = \App\Models\SiteContent::get('home_cta');
+
+    return view('welcome', compact('plans', 'negociosDestacados', 'hero', 'businesses', 'pricing', 'features', 'cta'));
 });
 
 // Login tradicional
@@ -81,6 +96,24 @@ Route::middleware('auth')->group(function () {
     // Endpoint de debug para verificar citas (solo autenticados)
     Route::get('/dashboard-cliente/debug', [DashboardController::class, 'debugCitas'])
         ->name('client.dashboard-debug');
+
+    // Perfil del cliente (actualizar datos desde dashboard)
+    Route::patch('/dashboard-cliente/profile', [DashboardController::class, 'updateProfile'])
+        ->name('client.profile.update');
+
+    // Elegir plan (obligatorio si no tiene suscripción activa)
+    Route::get('/elegir-plan', [DashboardController::class, 'elegirPlan'])
+        ->name('client.elegir-plan');
+    Route::post('/elegir-plan', [DashboardController::class, 'seleccionarPlan'])
+        ->name('client.seleccionar-plan');
+
+    // Suscripción con Bamboo Payment
+    Route::prefix('suscripcion')->name('suscripcion.')->group(function () {
+        Route::post('/iniciar', [SuscripcionController::class, 'iniciarSuscripcion'])->name('iniciar');
+        Route::get('/tokenizar', [SuscripcionController::class, 'mostrarFormularioTokenizacion'])->name('tokenizar');
+        Route::post('/procesar-token', [SuscripcionController::class, 'procesarToken'])->name('procesar-token');
+        Route::post('/cancelar', [SuscripcionController::class, 'cancelar'])->name('cancelar');
+    });
 });
 
     /*
@@ -103,6 +136,15 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('plans', PlanController::class);
     Route::patch('plans/{plan}/toggle', [PlanController::class, 'toggleActive'])->name('plans.toggle');
+
+    // Suscripciones
+    Route::resource('suscripciones', SuscripcionAdminController::class)->only(['index', 'show'])->parameters(['suscripciones' => 'suscripcion']);
+    Route::patch('suscripciones/{suscripcion}/status', [SuscripcionAdminController::class, 'updateStatus'])->name('suscripciones.update-status');
+
+    // Editor de Paginas
+    Route::get('page-editor', [PageEditorController::class, 'index'])->name('page-editor.index');
+    Route::get('page-editor/home', [PageEditorController::class, 'editHome'])->name('page-editor.home');
+    Route::put('page-editor/home', [PageEditorController::class, 'updateHome'])->name('page-editor.home.update');
 });
 
 
@@ -267,6 +309,10 @@ Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('em
 Route::get('/empresa/{id}/agenda/configurar', [AgendaController::class, 'configurar'])->name('empresa.agenda.configurar');
 
 Route::post('/empresa/{id}/agenda/bloqueados', [AgendaController::class, 'guardarBloqueados'])->name('agenda.guardar_bloqueados');
+
+// Explorar negocios afiliados
+Route::get('/negocios', [\App\Http\Controllers\NegocioController::class, 'explorar'])
+    ->name('negocios.explorar');
 
 // URL amigable con slug (sin ID)
 Route::get('/negocios/{slug}', [\App\Http\Controllers\NegocioController::class, 'show'])

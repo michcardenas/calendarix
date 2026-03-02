@@ -2,6 +2,7 @@
 @section('title', 'Editar Usuario')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/admin-uedit.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-suscripciones.css') }}">
 @endpush
 @section('admin-content')
 
@@ -100,7 +101,87 @@
     </div>
 </div>
 
-<!-- Mostrar errores de validación de Laravel -->
+{{-- SECCION DE SUSCRIPCION --}}
+@php
+    $user->load('subscription.plan');
+    $sub = $user->subscription;
+@endphp
+
+@if($sub)
+    <div class="form-card" style="margin-top:1.5rem;">
+        <h2 class="form-title" style="font-size:1.1rem;">
+            <i class="fas fa-credit-card" style="color:#6366f1;"></i>
+            Suscripcion Actual
+        </h2>
+
+        @if(session('success'))
+            <div class="admin-alert admin-alert-success" style="margin-bottom:1rem;">
+                <i class="fas fa-check-circle"></i>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="sub-detail-row">
+            <span class="sub-detail-label">Plan:</span>
+            <span style="font-weight:600;">{{ $sub->plan?->name ?? 'Sin plan' }}</span>
+        </div>
+        <div class="sub-detail-row">
+            <span class="sub-detail-label">Estado:</span>
+            @php
+                $statusClass = match($sub->status) {
+                    'active' => 'confirmed',
+                    'trial' => 'pending',
+                    default => 'cancelled',
+                };
+                $statusLabel = match($sub->status) {
+                    'active' => 'Activa',
+                    'trial' => 'Trial',
+                    'cancelled' => 'Cancelada',
+                    'payment_failed' => 'Pago Fallido',
+                    'expired' => 'Expirada',
+                    default => ucfirst($sub->status),
+                };
+            @endphp
+            <span class="admin-status {{ $statusClass }}">{{ $statusLabel }}</span>
+        </div>
+        <div class="sub-detail-row">
+            <span class="sub-detail-label">Vence:</span>
+            <span>{{ $sub->ends_at ? \Carbon\Carbon::parse($sub->ends_at)->format('d/m/Y') : '-' }}</span>
+        </div>
+
+        <div class="sub-detail-status-change">
+            <h4>Cambiar Estado</h4>
+            <form method="POST" action="{{ route('admin.suscripciones.update-status', $sub) }}" class="sub-status-form">
+                @csrf
+                @method('PATCH')
+                <select name="status" class="sub-select">
+                    @foreach(['active' => 'Activa', 'trial' => 'Trial', 'cancelled' => 'Cancelada', 'expired' => 'Expirada', 'payment_failed' => 'Pago Fallido'] as $st => $label)
+                        <option value="{{ $st }}" {{ $sub->status === $st ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <button type="submit" class="sub-btn-save">Guardar</button>
+            </form>
+        </div>
+
+        <div style="margin-top:1rem;">
+            <a href="{{ route('admin.suscripciones.show', $sub) }}" style="color:#6366f1;font-size:0.85rem;text-decoration:none;">
+                <i class="fas fa-eye"></i> Ver detalle completo
+            </a>
+        </div>
+    </div>
+@else
+    <div class="form-card" style="margin-top:1.5rem;">
+        <h2 class="form-title" style="font-size:1.1rem;">
+            <i class="fas fa-credit-card" style="color:#9ca3af;"></i>
+            Suscripcion
+        </h2>
+        <p style="color:#6b7280;font-size:0.9rem;padding:0.5rem 0;">Este usuario no tiene una suscripcion activa.</p>
+    </div>
+@endif
+
+</div>
+
+<!-- Mostrar errores de validacion de Laravel -->
 @if ($errors->any())
     <div class="validation-errors" style="display: none;">
         @foreach ($errors->all() as $error)

@@ -9,6 +9,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
+    // 📱 SIDEBAR MOBILE TOGGLE
+    initMobileSidebar();
+
     // 🌳 FUNCIONALIDAD DEL ÁRBOL DE NAVEGACIÓN
     initSidebarNavigation();
     
@@ -18,6 +21,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // 🔢 ANIMACIONES DE CONTEO
     setTimeout(animateNumbers, 1000);
     
+    // 📱 MOBILE SIDEBAR
+    function initMobileSidebar() {
+        var hamburger = document.getElementById('adminHamburger');
+        var sidebar = document.getElementById('adminSidebar');
+        var overlay = document.getElementById('adminOverlay');
+
+        if (!hamburger || !sidebar || !overlay) return;
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+            overlay.style.display = 'block';
+            hamburger.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            hamburger.classList.remove('active');
+            document.body.style.overflow = '';
+            overlay.style.opacity = '0';
+            setTimeout(function() {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                overlay.style.opacity = '';
+            }, 300);
+        }
+
+        hamburger.addEventListener('click', function() {
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+
+        overlay.addEventListener('click', closeSidebar);
+
+        // Close on nav link click (mobile)
+        sidebar.querySelectorAll('a.admin-nav-link:not([data-demo])').forEach(function(link) {
+            if (link.getAttribute('href') && link.getAttribute('href') !== '#') {
+                link.addEventListener('click', function() {
+                    closeSidebar();
+                });
+            }
+        });
+    }
+
     // 🎯 FUNCIONES DEL SIDEBAR
     function initSidebarNavigation() {
         // Expandir/colapsar secciones

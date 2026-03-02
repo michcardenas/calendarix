@@ -27,6 +27,8 @@ class NegocioConfiguracionController extends Controller
             // Operativos
             'confneg_equipo' => 'nullable|string|max:255',
             'confneg_direccion' => 'nullable|string|max:255',
+            'confneg_latitud' => 'nullable|numeric|between:-90,90',
+            'confneg_longitud' => 'nullable|numeric|between:-180,180',
             'confneg_virtual' => 'nullable|in:1',
             'confneg_direccion_confirmada' => 'nullable|in:1',
 
@@ -60,6 +62,8 @@ class NegocioConfiguracionController extends Controller
         // Estructura del negocio
         $negocio->neg_equipo = $request->confneg_equipo;
         $negocio->neg_direccion = $request->confneg_direccion;
+        $negocio->neg_latitud = $request->confneg_latitud;
+        $negocio->neg_longitud = $request->confneg_longitud;
         $negocio->neg_virtual = $request->has('confneg_virtual');
         $negocio->neg_direccion_confirmada = $request->has('confneg_direccion_confirmada');
 

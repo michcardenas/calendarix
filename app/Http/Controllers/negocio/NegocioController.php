@@ -91,11 +91,18 @@ class NegocioController extends Controller
 
     public function guardarCategorias(Request $request)
     {
-        $request->validate([
-            'neg_categorias' => 'required|array|min:1|max:4',
-        ]);
+        $categorias = $request->input('neg_categorias', []);
+        $otro = trim($request->input('neg_categoria_otro', ''));
 
-        session(['negocio_categorias' => $request->neg_categorias]);
+        if ($otro !== '') {
+            $categorias[] = $otro;
+        }
+
+        if (empty($categorias)) {
+            return back()->withInput()->withErrors(['neg_categorias' => 'Debes seleccionar al menos una categoría.']);
+        }
+
+        session(['negocio_categorias' => $categorias]);
 
         return redirect()->route('negocio.equipo');
     }
@@ -126,11 +133,15 @@ class NegocioController extends Controller
         $request->validate([
             'neg_direccion' => 'nullable|string|max:255',
             'neg_virtual'   => 'nullable|in:1',
+            'neg_latitud'   => 'nullable|numeric|between:-90,90',
+            'neg_longitud'  => 'nullable|numeric|between:-180,180',
         ]);
 
         session([
             'negocio_direccion' => $request->neg_direccion,
             'negocio_virtual'   => $request->neg_virtual ? true : false,
+            'negocio_latitud'   => $request->neg_latitud,
+            'negocio_longitud'  => $request->neg_longitud,
         ]);
 
         return redirect()->route('negocio.verificacion');
@@ -141,7 +152,12 @@ class NegocioController extends Controller
 
     public function verificarDireccion()
     {
-        return view('negocio.verificar-direccion');
+        return view('negocio.verificar-direccion', [
+            'direccion' => session('negocio_direccion'),
+            'latitud'   => session('negocio_latitud'),
+            'longitud'  => session('negocio_longitud'),
+            'esVirtual' => session('negocio_virtual'),
+        ]);
     }
 
     public function guardarVerificacion(Request $request)
@@ -163,19 +179,23 @@ class NegocioController extends Controller
         if ($direccion !== null || $esVirtual !== null) {
             $empresa->neg_direccion = $direccion;
             $empresa->neg_virtual   = $esVirtual ? 1 : 0;
+            $empresa->neg_latitud   = $request->input('neg_latitud', session('negocio_latitud'));
+            $empresa->neg_longitud  = $request->input('neg_longitud', session('negocio_longitud'));
             $empresa->save();
 
-            Log::debug('✅ Negocio actualizado desde sesión', [
+            Log::debug('Negocio actualizado desde sesion', [
                 'id' => $empresa->id,
                 'neg_direccion' => $empresa->neg_direccion,
                 'neg_virtual' => $empresa->neg_virtual,
+                'neg_latitud' => $empresa->neg_latitud,
+                'neg_longitud' => $empresa->neg_longitud,
             ]);
         }
 
         // Limpieza de sesión
-        session()->forget(['negocio_direccion', 'negocio_virtual', 'negocio_id']);
+        session()->forget(['negocio_direccion', 'negocio_virtual', 'negocio_latitud', 'negocio_longitud', 'negocio_id']);
 
-        return redirect()->route('empresa.dashboard', ['id' => $empresa->id]);
+        return redirect()->route('empresa.configuracion.negocio', ['id' => $empresa->id]);
     }
 
     public function index()

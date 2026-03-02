@@ -44,10 +44,18 @@
         width: 100%;
         overflow: hidden;
         background: #e5e7eb;
-        height: 200px;
+        height: 220px;
     }
-    @media (min-width: 640px) { .cover-wrap { height: 270px; } }
+    @media (min-width: 640px) { .cover-wrap { height: 280px; } }
     @media (min-width: 1024px) { .cover-wrap { height: 340px; } }
+    .cover-pattern {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+        background-size: 20px 20px;
+        z-index: 1;
+        pointer-events: none;
+    }
 
     /* ===== INFO BAR ===== */
     .infobar-row {
@@ -227,22 +235,44 @@
     .lightbox.open { display: flex; }
 
     /* ===== SERVICIOS ===== */
-    .servicio-row {
+    .servicio-card {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid #f3f4f6;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid #f0ecf8;
+        border-radius: 12px;
         cursor: pointer;
-        border-radius: 8px;
-        transition: background 0.15s;
-        margin: 0 -4px;
-        padding-left: 4px;
-        padding-right: 4px;
+        transition: all 0.2s ease;
+        background: #fff;
     }
-    .servicio-row:last-child { border-bottom: none; }
-    .servicio-row:hover { background: #faf9ff; }
+    .servicio-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 16px rgba(90,49,215,0.1);
+        transform: translateY(-1px);
+    }
+    .servicio-img {
+        width: 64px; height: 64px; min-width: 64px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .servicio-img img {
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+    }
+    .servicio-img-placeholder {
+        width: 64px; height: 64px; min-width: 64px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #f0ecfb, #e8e3f7);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .servicio-img-placeholder i {
+        color: var(--primary);
+        font-size: 1.2rem;
+        opacity: 0.6;
+    }
 
     /* ===== RESEÑAS ===== */
     .resena-item { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
@@ -281,6 +311,65 @@
         flex-shrink: 0;
     }
     .contacto-icon i { color: var(--primary); font-size: 0.75rem; }
+
+    /* ===== MAPA ===== */
+    .mapa-container {
+        position: relative;
+        border-radius: 14px;
+        overflow: hidden;
+        height: 200px;
+        border: 1px solid #ece9f8;
+    }
+    .mapa-container #mapaUbicacion {
+        width: 100%; height: 100%;
+        z-index: 1;
+    }
+    .mapa-direccion-overlay {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        z-index: 2;
+        background: linear-gradient(to top, rgba(255,255,255,0.97) 60%, transparent 100%);
+        padding: 28px 14px 12px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .mapa-direccion-text {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--gray-800);
+        line-height: 1.35;
+        flex: 1;
+        min-width: 0;
+    }
+    .mapa-direccion-text i {
+        color: var(--primary);
+        margin-right: 5px;
+        font-size: 0.72rem;
+    }
+    .mapa-btn-ir {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 8px;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(90,49,215,0.25);
+    }
+    .mapa-btn-ir:hover {
+        background: var(--primary-light);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(90,49,215,0.35);
+        color: #fff;
+    }
 
     /* ===== STICKY MÓVIL ===== */
     .sticky-bar {
@@ -328,6 +417,32 @@
         font-size: 0.7rem; font-weight: 600;
         padding: 3px 10px; border-radius: 999px;
     }
+    .badge-open {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: #ecfdf5;
+        color: #059669;
+        font-size: 0.7rem; font-weight: 700;
+        padding: 3px 10px; border-radius: 999px;
+        border: 1px solid #a7f3d0;
+    }
+    .badge-open .pulse-dot {
+        width: 6px; height: 6px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.3); }
+    }
+    .badge-closed {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: #fef2f2;
+        color: #dc2626;
+        font-size: 0.7rem; font-weight: 700;
+        padding: 3px 10px; border-radius: 999px;
+        border: 1px solid #fecaca;
+    }
 
     /* ===== PRECIO ===== */
     .precio-tag {
@@ -354,6 +469,50 @@
     }
 </style>
 
+{{-- Leaflet CSS --}}
+@if($negocio->neg_latitud && $negocio->neg_longitud)
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    /* Custom marker */
+    .marker-pin {
+        width: 36px; height: 36px;
+        border-radius: 50% 50% 50% 0;
+        background: var(--primary);
+        position: absolute;
+        transform: rotate(-45deg);
+        left: 50%; top: 50%;
+        margin: -36px 0 0 -18px;
+        box-shadow: 0 4px 12px rgba(90,49,215,0.4);
+    }
+    .marker-pin::after {
+        content: '';
+        width: 20px; height: 20px;
+        margin: 8px 0 0 8px;
+        background: #fff;
+        position: absolute;
+        border-radius: 50%;
+    }
+    .marker-pin-icon {
+        position: absolute;
+        width: 36px;
+        font-size: 14px;
+        left: 0; top: 3px;
+        text-align: center;
+        color: var(--primary);
+        z-index: 1;
+    }
+    .leaflet-control-zoom a {
+        border-radius: 8px !important;
+        border: none !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+        color: var(--gray-800) !important;
+        font-weight: 700 !important;
+    }
+    .leaflet-control-zoom { border: none !important; border-radius: 10px !important; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important; }
+    .leaflet-control-attribution { font-size: 9px !important; opacity: 0.5; }
+</style>
+@endif
+
 @include('empresa.partials.modal-agendar', [
     'negocio'      => $negocio,
     'servicios'    => $negocio->servicios,
@@ -374,7 +533,7 @@
 {{-- ===== PORTADA ===== --}}
 <div class="cover-wrap">
     <div id="portadaFallback"
-         style="position:absolute;inset:0;background:linear-gradient(135deg,#5a31d7 0%,#7b5ce0 50%,#32ccbc 100%);{{ $imgPortada ? 'display:none;' : '' }}">
+         style="position:absolute;inset:0;background:linear-gradient(135deg,#4a22b8 0%,#5a31d7 30%,#7b5ce0 60%,#32ccbc 100%);{{ $imgPortada ? 'display:none;' : '' }}">
     </div>
     @if($imgPortada)
         <img src="{{ $imgPortada }}"
@@ -382,7 +541,14 @@
              alt="Portada"
              onerror="this.style.display='none';document.getElementById('portadaFallback').style.display='block';">
     @endif
-    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.1) 50%,transparent 100%);"></div>
+    <div class="cover-pattern"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.15) 40%,transparent 70%);"></div>
+    {{-- Nombre sobre portada para mobile --}}
+    <div style="position:absolute;bottom:16px;left:1rem;right:1rem;z-index:2;display:none;" id="coverNameMobile">
+        <h1 style="font-size:1.3rem;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.4);margin:0;">
+            {{ $negocio->neg_nombre_comercial ?? $negocio->neg_nombre }}
+        </h1>
+    </div>
 </div>
 
 {{-- ===== INFO BAR ===== --}}
@@ -402,6 +568,22 @@
                 </h1>
 
                 <div class="infobar-tags">
+                    @php
+                        $hoyDia = now()->dayOfWeekIso;
+                        $horarioHoy = $negocio->horarios->where('dia_semana', $hoyDia)->where('activo', 1)->first();
+                        $abierto = false;
+                        if ($horarioHoy && $horarioHoy->hora_inicio && $horarioHoy->hora_fin) {
+                            $ahora = now()->format('H:i:s');
+                            $abierto = $ahora >= $horarioHoy->hora_inicio && $ahora <= $horarioHoy->hora_fin;
+                        }
+                    @endphp
+                    @if($horarioHoy)
+                        @if($abierto)
+                            <span class="badge-open"><span class="pulse-dot"></span> Abierto ahora</span>
+                        @else
+                            <span class="badge-closed"><i class="fas fa-clock" style="font-size:0.55rem;"></i> Cerrado</span>
+                        @endif
+                    @endif
                     @if(is_array($negocio->neg_categorias))
                         @foreach($negocio->neg_categorias as $cat)
                             <span class="badge-cat">{{ $cat }}</span>
@@ -449,10 +631,11 @@
 
 {{-- ===== EQUIPO ===== --}}
 @if($trabajadores->count())
-<div style="background:#faf9ff;border-bottom:1px solid #ece9f8;">
-    <div style="max-width:1152px;margin:0 auto;padding:14px 1rem 16px;">
+<div style="background:linear-gradient(180deg,#faf9ff 0%,#f9fafb 100%);border-bottom:1px solid #ece9f8;">
+    <div style="max-width:1152px;margin:0 auto;padding:16px 1rem 18px;">
         <p style="font-size:0.68rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 12px 0;">
             <i class="fas fa-users" style="color:var(--primary);margin-right:5px;"></i>Nuestro equipo
+            <span style="font-weight:600;color:#c4b5fd;margin-left:6px;">{{ $trabajadores->count() }} profesionales</span>
         </p>
         <div class="team-scroll scrollbar-hide">
             @foreach($trabajadores as $trab)
@@ -481,13 +664,16 @@
         <div class="col-left">
 
             {{-- Calendario --}}
-            <div class="perfil-card">
+            <div class="perfil-card fade-up">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-                    <h2 class="card-title" style="margin:0;">
-                        <i class="fas fa-calendar-alt"></i>Reserva tu cita
-                    </h2>
-                    <span style="font-size:0.72rem;color:var(--gray-400);background:#f8f6ff;padding:4px 10px;border-radius:20px;">
-                        <i class="fas fa-hand-pointer" style="color:var(--primary);margin-right:3px;font-size:0.65rem;"></i>Seleccioná un día disponible
+                    <div>
+                        <h2 class="card-title" style="margin:0 0 4px 0;">
+                            <i class="fas fa-calendar-alt"></i>Reserva tu cita
+                        </h2>
+                        <p style="font-size:0.75rem;color:var(--gray-400);margin:0;">Selecciona un dia disponible en el calendario</p>
+                    </div>
+                    <span style="font-size:0.72rem;color:var(--primary);background:#f0ecfb;padding:5px 12px;border-radius:20px;font-weight:600;">
+                        <i class="fas fa-hand-pointer" style="margin-right:4px;font-size:0.65rem;"></i>Toca un dia
                     </span>
                 </div>
                 <div id="calendarioCitas" style="border-radius:10px;overflow:hidden;"></div>
@@ -498,7 +684,7 @@
 
             {{-- Reseñas --}}
             @if($resenas->count())
-            <div class="perfil-card">
+            <div class="perfil-card fade-up">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
                     <h2 class="card-title" style="margin:0;">
                         <i class="fas fa-star"></i>Reseñas
@@ -545,7 +731,7 @@
 
             {{-- Galería --}}
             @if($negocio->fotos->count())
-            <div class="perfil-card">
+            <div class="perfil-card fade-up">
                 <h2 class="card-title">
                     <i class="fas fa-images"></i>Galería
                     <span style="font-size:0.72rem;font-weight:500;color:var(--gray-400);margin-left:auto;">{{ $negocio->fotos->count() }} fotos</span>
@@ -572,38 +758,51 @@
 
             {{-- Servicios --}}
             @if($negocio->servicios->count())
-            <div class="perfil-card perfil-card-hover">
+            <div class="perfil-card perfil-card-hover fade-up">
                 <h2 class="card-title"><i class="fas fa-concierge-bell"></i>Servicios</h2>
+                <div style="display:flex;flex-direction:column;gap:10px;">
                 @foreach($negocio->servicios as $servicio)
-                    <div class="servicio-row" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
+                    <div class="servicio-card" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
+                        @if($servicio->imagen)
+                            <div class="servicio-img">
+                                <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
+                            </div>
+                        @else
+                            <div class="servicio-img-placeholder">
+                                <i class="fas fa-concierge-bell"></i>
+                            </div>
+                        @endif
                         <div style="flex:1;min-width:0;">
-                            <p style="font-weight:600;color:var(--gray-800);font-size:0.85rem;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $servicio->nombre }}</p>
+                            <p style="font-weight:700;color:var(--gray-800);font-size:0.85rem;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $servicio->nombre }}</p>
                             @if($servicio->duracion)
-                                <p style="font-size:0.72rem;color:var(--gray-400);margin:2px 0 0 0;">
-                                    <i class="far fa-clock" style="margin-right:3px;"></i>{{ $servicio->duracion }}
+                                <p style="font-size:0.72rem;color:var(--gray-400);margin:3px 0 0 0;">
+                                    <i class="far fa-clock" style="margin-right:3px;"></i>{{ $servicio->duracion }} min
                                 </p>
                             @endif
-                        </div>
-                        <div style="text-align:right;flex-shrink:0;">
-                            <span class="precio-tag">${{ number_format($servicio->precio, 0, ',', '.') }}</span>
-                            <p style="font-size:0.7rem;font-weight:600;color:var(--accent);margin:3px 0 0 0;">Reservar →</p>
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+                                <span class="precio-tag">${{ number_format($servicio->precio, 0, ',', '.') }}</span>
+                                <span style="font-size:0.68rem;font-weight:700;color:var(--accent);"><i class="fas fa-calendar-plus" style="margin-right:3px;font-size:0.6rem;"></i>Reservar</span>
+                            </div>
                         </div>
                     </div>
                 @endforeach
+                </div>
             </div>
             @endif
 
             {{-- Horarios --}}
             @if($negocio->horarios->count())
-            <div class="perfil-card perfil-card-hover">
+            <div class="perfil-card perfil-card-hover fade-up">
                 <h2 class="card-title"><i class="far fa-clock"></i>Horarios</h2>
                 @foreach($negocio->horarios as $h)
-                    <div class="horario-row" style="{{ $h->activo ? '' : 'opacity:0.38;' }}">
-                        <span style="font-weight:600;color:var(--gray-800);font-size:0.82rem;text-transform:capitalize;">
+                    @php $esHoy = $h->dia_semana == now()->dayOfWeekIso; @endphp
+                    <div class="horario-row" style="{{ $h->activo ? '' : 'opacity:0.38;' }}{{ $esHoy ? 'background:#f8f6ff;border-radius:8px;padding:6px 8px;margin:0 -8px;' : '' }}">
+                        <span style="font-weight:{{ $esHoy ? '700' : '600' }};color:{{ $esHoy ? 'var(--primary)' : 'var(--gray-800)' }};font-size:0.82rem;text-transform:capitalize;display:flex;align-items:center;gap:6px;">
+                            @if($esHoy)<i class="fas fa-circle" style="font-size:5px;color:var(--primary);"></i>@endif
                             {{ \Carbon\Carbon::create()->startOfWeek()->addDays($h->dia_semana - 1)->locale('es')->isoFormat('dddd') }}
                         </span>
                         @if($h->activo && $h->hora_inicio && $h->hora_fin)
-                            <span style="font-size:0.8rem;color:var(--gray-600);font-weight:500;">
+                            <span style="font-size:0.8rem;color:{{ $esHoy ? 'var(--primary)' : 'var(--gray-600)' }};font-weight:{{ $esHoy ? '700' : '500' }};">
                                 {{ substr($h->hora_inicio,0,5) }} – {{ substr($h->hora_fin,0,5) }}
                             </span>
                         @else
@@ -615,7 +814,7 @@
             @endif
 
             {{-- Contacto --}}
-            <div class="perfil-card perfil-card-hover">
+            <div class="perfil-card perfil-card-hover fade-up">
                 <h2 class="card-title"><i class="fas fa-address-card"></i>Contacto</h2>
                 <div style="display:flex;flex-direction:column;gap:6px;">
                     @if($negocio->neg_telefono)
@@ -643,6 +842,16 @@
                         </div>
                     @endif
                 </div>
+                @if($negocio->neg_telefono)
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $negocio->neg_telefono) }}"
+                   target="_blank"
+                   style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;padding:10px;background:#25D366;color:#fff;font-size:0.82rem;font-weight:700;border-radius:10px;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(37,211,102,0.25);"
+                   onmouseover="this.style.background='#20bd5a';this.style.transform='translateY(-1px)'"
+                   onmouseout="this.style.background='#25D366';this.style.transform='none'">
+                    <i class="fab fa-whatsapp" style="font-size:1.1rem;"></i> Escribir por WhatsApp
+                </a>
+                @endif
+
                 @if($negocio->neg_facebook || $negocio->neg_instagram || $negocio->neg_sitio_web)
                 <div style="display:flex;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6;">
                     @if($negocio->neg_facebook)
@@ -672,6 +881,28 @@
                 </div>
                 @endif
             </div>
+
+            {{-- Ubicacion / Mapa --}}
+            @if($negocio->neg_latitud && $negocio->neg_longitud)
+            <div class="perfil-card fade-up" style="padding:0;overflow:hidden;">
+                <div style="padding:1.25rem 1.25rem 10px;">
+                    <h2 class="card-title" style="margin-bottom:10px;"><i class="fas fa-map-marker-alt"></i>Ubicacion</h2>
+                </div>
+                <div class="mapa-container">
+                    <div id="mapaUbicacion"></div>
+                    <div class="mapa-direccion-overlay">
+                        <div class="mapa-direccion-text">
+                            <i class="fas fa-location-dot"></i>
+                            {{ $negocio->neg_direccion ?? 'Ver en el mapa' }}
+                        </div>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ $negocio->neg_latitud }},{{ $negocio->neg_longitud }}"
+                           target="_blank" class="mapa-btn-ir">
+                            <i class="fas fa-directions"></i> Como llegar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
 
         </div>
     </div>
@@ -812,4 +1043,52 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
+
+@if($negocio->neg_latitud && $negocio->neg_longitud)
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mapaEl = document.getElementById('mapaUbicacion');
+    if (!mapaEl) return;
+
+    const lat = {{ $negocio->neg_latitud }};
+    const lng = {{ $negocio->neg_longitud }};
+
+    const map = L.map('mapaUbicacion', {
+        center: [lat, lng],
+        zoom: 16,
+        zoomControl: true,
+        scrollWheelZoom: false,
+        dragging: true,
+        attributionControl: true,
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19,
+    }).addTo(map);
+
+    // Custom purple marker
+    const markerIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div class="marker-pin"></div><i class="fas fa-store marker-pin-icon"></i>',
+        iconSize: [36, 46],
+        iconAnchor: [18, 46],
+        popupAnchor: [0, -40],
+    });
+
+    const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map);
+    marker.bindPopup(
+        '<div style="text-align:center;padding:4px 2px;">' +
+        '<strong style="color:#5a31d7;font-size:0.85rem;">{{ addslashes($negocio->neg_nombre_comercial ?? $negocio->neg_nombre) }}</strong>' +
+        @if($negocio->neg_direccion)
+        '<br><span style="font-size:0.75rem;color:#6b7280;">{{ addslashes($negocio->neg_direccion) }}</span>' +
+        @endif
+        '</div>',
+        { closeButton: false, className: 'custom-popup' }
+    );
+});
+</script>
+@endif
 @endpush

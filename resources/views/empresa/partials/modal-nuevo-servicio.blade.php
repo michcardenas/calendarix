@@ -1,70 +1,168 @@
 <div class="modal fade" id="modalNuevoServicio" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form method="POST" action="{{ route('empresa.catalogo.servicios.guardar', $negocio->id) }}" class="modal-content" style="background-color: #f6f5f7;">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form method="POST" action="{{ route('empresa.catalogo.servicios.guardar', $negocio->id) }}" enctype="multipart/form-data" class="modal-content border-0 rounded-2xl overflow-hidden shadow-lg">
             @csrf
-            <div class="modal-header" style="background-color: #5a31d7;">
-                <h5 class="modal-title text-white font-bold">Añadir nuevo servicio</h5>
+
+            {{-- Header --}}
+            <div class="modal-header border-0 px-6 py-4" style="background: linear-gradient(135deg, #5a31d7, #7b5ce0);">
+                <div>
+                    <h5 class="modal-title text-white font-bold text-lg">Nuevo servicio</h5>
+                    <p class="text-white/70 text-xs mt-0.5">Completa los datos del servicio que ofreces.</p>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body grid grid-cols-1 md:grid-cols-2 gap-4 text-[#374151]">
+            {{-- Body --}}
+            <div class="modal-body px-6 py-5 space-y-5" style="background-color: #f9f8fc;">
+
+                {{-- Nombre --}}
                 <div>
-                    <label class="text-sm font-medium">Nombre del servicio</label>
-                    <input type="text" name="nombre" class="form-control border-[#a38ee9]" required>
+                    <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Nombre del servicio</label>
+                    <input type="text" name="nombre" required placeholder="Ej: Corte de cabello"
+                        class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-[#3B4269] focus:ring-[#5a31d7] focus:border-[#5a31d7] transition">
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Precio --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Precio (UYU)</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-sm font-semibold text-[#5a31d7]">$</span>
+                            <input type="text" id="precio_display" required inputmode="numeric" placeholder="0"
+                                class="w-full rounded-r-lg border border-gray-200 px-4 py-2.5 text-sm text-[#3B4269] focus:ring-[#5a31d7] focus:border-[#5a31d7] transition">
+                            <input type="hidden" name="precio" id="precio_valor">
+                        </div>
+                    </div>
+
+                    {{-- Duracion --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Duracion (minutos)</label>
+                        <div class="relative">
+                            <input type="number" name="duracion" min="5" step="5" inputmode="numeric" placeholder="30"
+                                class="w-full rounded-lg border border-gray-200 px-4 py-2.5 pr-16 text-sm text-[#3B4269] focus:ring-[#5a31d7] focus:border-[#5a31d7] transition">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">min</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Imagen --}}
                 <div>
-                    <label class="text-sm font-medium">Precio (COP)</label>
-                    <input type="text" name="precio" class="form-control border-[#a38ee9]" required inputmode="numeric">
+                    <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Imagen <span class="font-normal text-gray-400">(opcional)</span></label>
+                    <label id="imagen-dropzone" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-[#5a31d7] hover:bg-[#5a31d7]/5 transition-all">
+                        <div id="imagen-placeholder" class="flex flex-col items-center">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i>
+                            <span class="text-xs text-gray-400">Haz clic para subir una imagen</span>
+                            <span class="text-xs text-gray-300 mt-0.5">JPG, PNG (max 2MB)</span>
+                        </div>
+                        <img id="imagen-preview" class="hidden h-28 rounded-lg object-cover" alt="Preview">
+                        <input type="file" name="imagen" accept="image/*" class="hidden" onchange="previewImagen(this)">
+                    </label>
                 </div>
 
-                <div class="md:col-span-2">
-                    <label class="text-sm font-medium">Duración estimada</label>
-                    <input type="text" name="duracion" class="form-control border-[#a38ee9]" placeholder="Ej: 30 minutos">
+                {{-- Descripcion --}}
+                <div>
+                    <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Descripcion <span class="font-normal text-gray-400">(opcional)</span></label>
+                    <textarea name="descripcion" rows="2" placeholder="Breve descripcion del servicio..."
+                        class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-[#3B4269] focus:ring-[#5a31d7] focus:border-[#5a31d7] transition resize-none"></textarea>
                 </div>
 
-                <div class="md:col-span-2">
-                    <label class="text-sm font-medium">Descripción</label>
-                    <textarea name="descripcion" class="form-control border-[#a38ee9]" rows="2"></textarea>
-                </div>
+                {{-- Categoria --}}
+                <div>
+                    <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Categoria</label>
 
-                <div class="md:col-span-2">
-                    <label class="text-sm font-medium">Selecciona una categoría</label>
-                    <select id="categoria_select" class="form-control border-[#a38ee9]" onchange="toggleInputCategoriaServicio(this)">
-                        <option value="">-- Escoge una existente --</option>
+                    @if(count($categoriasUsuario) > 0)
+                    <div class="flex flex-wrap gap-2 mb-3" id="categorias-chips">
                         @foreach($categoriasUsuario as $cat)
-                            <option value="{{ $cat }}">{{ $cat }}</option>
+                            <button type="button"
+                                class="cat-chip px-3 py-1.5 rounded-full text-xs font-medium border border-gray-200 bg-white text-[#3B4269] hover:border-[#5a31d7] hover:text-[#5a31d7] transition-all cursor-pointer"
+                                onclick="seleccionarCategoria(this, '{{ $cat }}')">
+                                {{ $cat }}
+                            </button>
                         @endforeach
-                        <option value="otra">Otra (escribir nueva)</option>
-                    </select>
+                        <button type="button"
+                            class="cat-chip px-3 py-1.5 rounded-full text-xs font-medium border border-dashed border-gray-300 bg-white text-gray-400 hover:border-[#5a31d7] hover:text-[#5a31d7] transition-all cursor-pointer"
+                            onclick="mostrarNuevaCategoria()">
+                            <i class="fas fa-plus mr-1"></i> Nueva
+                        </button>
+                    </div>
+                    @endif
 
-                    <input type="text" id="categoria_manual" class="form-control mt-2 hidden border-[#a38ee9]" placeholder="Escribe nueva categoría">
+                    <input type="text" id="categoria_manual"
+                        class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-[#3B4269] focus:ring-[#5a31d7] focus:border-[#5a31d7] transition {{ count($categoriasUsuario) > 0 ? 'hidden' : '' }}"
+                        placeholder="Escribe el nombre de la categoria"
+                        oninput="document.getElementById('categoria_final').value = this.value">
+
+                    <input type="hidden" name="categoria" id="categoria_final">
                 </div>
-
-                <input type="hidden" name="categoria" id="categoria_final">
             </div>
 
-            <div class="modal-footer">
-                <button type="submit" class="px-4 py-2 rounded text-white" style="background-color: #5a31d7;" onmouseover="this.style.backgroundColor='#4a22b8'" onmouseout="this.style.backgroundColor='#5a31d7'">Guardar servicio</button>
+            {{-- Footer --}}
+            <div class="modal-footer border-0 px-6 py-4 bg-white flex gap-3">
+                <button type="button" data-bs-dismiss="modal"
+                    class="px-5 py-2.5 rounded-xl text-sm font-medium text-[#3B4269] bg-gray-100 hover:bg-gray-200 transition">
+                    Cancelar
+                </button>
+                <button type="submit"
+                    class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#5a31d7] hover:bg-[#7b5ce0] hover:shadow-lg hover:shadow-[#5a31d7]/20 transition-all">
+                    <i class="fas fa-save mr-1"></i> Guardar servicio
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-function toggleInputCategoriaServicio(select) {
-    const manualInput = document.getElementById('categoria_manual');
-    const hiddenField = document.getElementById('categoria_final');
+function seleccionarCategoria(btn, valor) {
+    // Deseleccionar todos
+    document.querySelectorAll('.cat-chip').forEach(c => {
+        c.classList.remove('bg-[#5a31d7]', 'text-white', 'border-[#5a31d7]');
+        c.classList.add('bg-white', 'text-[#3B4269]', 'border-gray-200');
+    });
 
-    if (select.value === 'otra') {
-        manualInput.classList.remove('hidden');
-        hiddenField.value = '';
-        manualInput.addEventListener('input', () => {
-            hiddenField.value = manualInput.value;
-        });
-    } else {
-        manualInput.classList.add('hidden');
-        hiddenField.value = select.value;
+    // Seleccionar este
+    btn.classList.remove('bg-white', 'text-[#3B4269]', 'border-gray-200');
+    btn.classList.add('bg-[#5a31d7]', 'text-white', 'border-[#5a31d7]');
+
+    document.getElementById('categoria_final').value = valor;
+    document.getElementById('categoria_manual').classList.add('hidden');
+    document.getElementById('categoria_manual').value = '';
+}
+
+function mostrarNuevaCategoria() {
+    document.querySelectorAll('.cat-chip').forEach(c => {
+        c.classList.remove('bg-[#5a31d7]', 'text-white', 'border-[#5a31d7]');
+        c.classList.add('bg-white', 'text-[#3B4269]', 'border-gray-200');
+    });
+
+    const manual = document.getElementById('categoria_manual');
+    manual.classList.remove('hidden');
+    manual.focus();
+    document.getElementById('categoria_final').value = '';
+}
+
+function previewImagen(input) {
+    const preview = document.getElementById('imagen-preview');
+    const placeholder = document.getElementById('imagen-placeholder');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
     }
 }
+
+// Separador de miles automático
+document.addEventListener('DOMContentLoaded', function() {
+    const display = document.getElementById('precio_display');
+    const hidden = document.getElementById('precio_valor');
+
+    display.addEventListener('input', function() {
+        let raw = this.value.replace(/\D/g, '');
+        hidden.value = raw;
+        this.value = raw ? Number(raw).toLocaleString('es-UY') : '';
+    });
+});
 </script>

@@ -10,10 +10,20 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     // Mostrar listado de usuarios
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->paginate(10);
-        return view('admin.users.index', compact('users') + ['activeMenu' => 'users']);
+        $query = User::with(['roles', 'subscription.plan']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+        return view('admin.users.index', compact('users') + ['activeMenu' => 'users', 'search' => $request->search ?? '']);
     }
 
     // Mostrar formulario para crear un nuevo usuario

@@ -42,9 +42,6 @@ class RegisteredUserController extends Controller
         // ✅ Asignar rol por defecto (por nombre)
         $user->assignRole('Cliente');
 
-        // O si prefieres por ID (ej. ID 2)
-        // $user->assignRole(Role::findById(2));
-
         event(new Registered($user));
 
         // 📧 Enviar email de bienvenida

@@ -90,13 +90,23 @@
 
                         <div class="space-y-3">
                             @foreach($servicios as $servicio)
-                                <div class="flex justify-between items-center bg-white p-4 rounded-lg border-l-4 border-[#5a31d7] shadow-sm hover:shadow-md transition">
-                                    <div>
+                                <div class="flex items-center gap-4 bg-white p-4 rounded-lg border-l-4 border-[#5a31d7] shadow-sm hover:shadow-md transition">
+                                    {{-- Imagen --}}
+                                    @if($servicio->imagen)
+                                        <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}"
+                                            class="w-14 h-14 rounded-lg object-cover flex-shrink-0">
+                                    @else
+                                        <div class="w-14 h-14 rounded-lg bg-[#f0ecfb] flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-concierge-bell text-[#5a31d7] text-lg"></i>
+                                        </div>
+                                    @endif
+
+                                    <div class="flex-1 min-w-0">
                                         <h4 class="font-semibold text-gray-800">{{ $servicio->nombre }}</h4>
-                                        <p class="text-sm text-gray-500">{{ $servicio->duracion ?? '15 min' }}</p>
+                                        <p class="text-sm text-gray-500">{{ $servicio->duracion ?? '15' }} min</p>
                                     </div>
-                                    <div class="text-right space-y-1">
-                                        <div class="font-semibold text-gray-800">{{ number_format($servicio->precio, 0, ',', '.') }} COP</div>
+                                    <div class="text-right space-y-1 flex-shrink-0">
+                                        <div class="font-semibold text-gray-800">$ {{ number_format($servicio->precio, 0, ',', '.') }}</div>
 
                                         {{-- Dropdown de acciones --}}
                                         <div class="relative inline-block text-left" x-data="{ open: false }">

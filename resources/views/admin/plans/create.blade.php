@@ -74,7 +74,8 @@
                     <div class="plan-form-group">
                         <label class="plan-form-label">Moneda <span class="required">*</span></label>
                         <select name="currency" class="plan-form-control" required>
-                            <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
+                            <option value="UYU" {{ old('currency', 'UYU') === 'UYU' ? 'selected' : '' }}>UYU</option>
+                            <option value="USD" {{ old('currency') === 'USD' ? 'selected' : '' }}>USD</option>
                             <option value="CLP" {{ old('currency') === 'CLP' ? 'selected' : '' }}>CLP</option>
                             <option value="ARS" {{ old('currency') === 'ARS' ? 'selected' : '' }}>ARS</option>
                             <option value="COP" {{ old('currency') === 'COP' ? 'selected' : '' }}>COP</option>

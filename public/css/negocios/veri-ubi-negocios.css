@@ -400,17 +400,6 @@ form {
         margin-bottom: var(--space-xl);
     }
     
-    /* Ajustar mapa para móviles */
-    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] {
-        max-width: 100% !important;
-        height: 250px !important;
-        margin-bottom: var(--space-lg) !important;
-    }
-    
-    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] p[style*="color: #777"] {
-        font-size: 16px !important;
-    }
-    
     button[type="submit"] {
         padding: var(--space-lg) var(--space-xl);
         font-size: 16px;
@@ -420,26 +409,98 @@ form {
 
 @media (max-width: 480px) {
     .container { padding: var(--space-md); }
-    
-    .form-wrapper { 
-        padding: var(--space-lg) var(--space-md); 
+
+    .form-wrapper {
+        padding: var(--space-lg) var(--space-md);
         max-width: 95%;
     }
-    
+
     h1 { font-size: 20px; }
-    
-    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] {
-        height: 200px !important;
-    }
-    
-    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"] p[style*="color: #777"] {
-        font-size: 14px !important;
-    }
-    
+
     button[type="submit"] {
         padding: var(--space-md) var(--space-lg);
         font-size: 14px;
         min-width: 200px;
+    }
+}
+
+/* ===== MAPA GOOGLE MAPS ===== */
+.map-container {
+    width: 100%;
+    height: 350px;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    margin-bottom: var(--space-sm);
+}
+
+.map-container:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.map-hint {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+}
+
+.direccion-preview {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: rgba(74, 94, 170, 0.06);
+    border: 1px solid rgba(74, 94, 170, 0.15);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-xl);
+    font-size: 15px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.direccion-preview-icon {
+    color: var(--primary);
+    flex-shrink: 0;
+    display: flex;
+}
+
+.virtual-notice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: rgba(74, 170, 94, 0.08);
+    border: 1px solid rgba(74, 170, 94, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-xl);
+    font-size: 15px;
+    color: #2d6a3f;
+    font-weight: 500;
+}
+
+.virtual-notice svg {
+    color: #2d6a3f;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .map-container {
+        height: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .map-container {
+        height: 220px;
+    }
+
+    .direccion-preview {
+        font-size: 13px;
+        padding: var(--space-md);
     }
 }
 
@@ -450,16 +511,11 @@ form {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    
+
     .particle {
         animation: none;
         opacity: 0.1;
     }
-    
-    div[style*="width: 100%"][style*="max-width: 600px"][style*="height: 300px"]::before {
-        animation: none;
-    }
-    
 }
 
 /* ===== EFECTOS PARA FOCUS ===== */

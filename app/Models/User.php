@@ -20,6 +20,8 @@ class User extends Authenticatable
         'pais',
         'ciudad',
         'foto',
+        'bamboo_customer_id',
+        'bamboo_unique_id',
     ];
 
     protected $hidden = [
@@ -40,6 +42,34 @@ class User extends Authenticatable
     public function negocios()
     {
         return $this->hasMany(Negocio::class);
+    }
+
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class)
+            ->whereIn('status', ['active', 'trial'])
+            ->latest();
+    }
+
+    public function getActivePlanAttribute()
+    {
+        $sub = $this->subscription;
+        return $sub?->plan;
+    }
+
+    /**
+     * Create a 15-day free trial subscription for this user.
+     */
+    public function createTrialSubscription(): Subscription
+    {
+        return Subscription::create([
+            'user_id'   => $this->id,
+            'plan_id'   => null,
+            'status'    => 'active',
+            'is_trial'  => true,
+            'starts_at' => now()->toDateString(),
+            'ends_at'   => now()->addDays(15)->toDateString(),
+        ]);
     }
 
 }

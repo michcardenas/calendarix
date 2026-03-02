@@ -26,22 +26,32 @@ class GaleriaController extends Controller
     public function store(Request $request, $empresaId)
     {
         $request->validate([
-            'foto' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'fotos'   => 'required|array|min:1',
+            'fotos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $empresa = Negocio::findOrFail($empresaId);
-
+        $actuales = FotoEmpresa::where('negocio_id', $empresa->id)->count();
         $maxOrden = FotoEmpresa::where('negocio_id', $empresa->id)->max('orden') ?? 0;
+        $subidas = 0;
 
-        $path = $request->file('foto')->store("galerias/{$empresa->id}", 'public');
+        foreach ($request->file('fotos') as $foto) {
+            if ($actuales + $subidas >= 12) break;
 
-        FotoEmpresa::create([
-            'negocio_id' => $empresa->id,
-            'ruta'       => $path,
-            'orden'      => $maxOrden + 1,
-        ]);
+            $path = $foto->store("galerias/{$empresa->id}", 'public');
+            $maxOrden++;
 
-        return redirect()->back()->with('success', 'Foto subida correctamente.');
+            FotoEmpresa::create([
+                'negocio_id' => $empresa->id,
+                'ruta'       => $path,
+                'orden'      => $maxOrden,
+            ]);
+
+            $subidas++;
+        }
+
+        $msg = $subidas === 1 ? 'Foto subida correctamente.' : "$subidas fotos subidas correctamente.";
+        return redirect()->back()->with('success', $msg);
     }
 
     public function destroy($empresaId, $fotoId)

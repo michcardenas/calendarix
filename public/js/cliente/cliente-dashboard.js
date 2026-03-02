@@ -166,6 +166,19 @@ function clxUpdateStats() {
  * ===============================================
  */
 
+function clxNavigateTo(page) {
+    // Hide all sections
+    document.querySelectorAll('[data-clx-section]').forEach(function(section) {
+        section.style.display = 'none';
+    });
+
+    // Show the target section
+    var target = document.querySelector('[data-clx-section="' + page + '"]');
+    if (target) {
+        target.style.display = '';
+    }
+}
+
 function clxSetupEventListeners() {
     // Navegación del sidebar
     // Navegación del sidebar

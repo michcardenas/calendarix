@@ -35,11 +35,22 @@
         </div>
 
         <div class="clx-user-info">
-            <div class="clx-user-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-            </div>
+            @if(auth()->user()->foto)
+                <img src="{{ asset(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" style="width:60px;height:60px;min-width:60px;min-height:60px;max-width:60px;max-height:60px;border-radius:50%;object-fit:cover;border:2px solid rgba(90,49,215,0.15);background:#fff;flex-shrink:0;">
+            @else
+                <div class="clx-user-avatar">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                </div>
+            @endif
             <div class="clx-user-name">{{ auth()->user()->name }}</div>
             <div class="clx-user-email">{{ auth()->user()->email }}</div>
+            @if($plan ?? false)
+                <div style="margin-top:6px;">
+                    <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;background:linear-gradient(135deg,#5a31d7,#7b5ce0);color:#fff;">
+                        <i class="fas fa-gem" style="font-size:0.55rem;"></i> {{ $plan->name }}
+                    </span>
+                </div>
+            @endif
         </div>
 
         <nav>
@@ -48,18 +59,6 @@
                     <a href="#" class="clx-nav-link active" data-clx-page="dashboard">
                         <i class="fas fa-home clx-nav-icon"></i>
                         Dashboard
-                    </a>
-                </li>
-                <li class="clx-nav-item">
-                    <a href="#" class="clx-nav-link" data-clx-page="appointments">
-                        <i class="fas fa-calendar-check clx-nav-icon"></i>
-                        Mis Citas
-                    </a>
-                </li>
-                <li class="clx-nav-item">
-                    <a href="#" class="clx-nav-link" data-clx-page="businesses">
-                        <i class="fas fa-store clx-nav-icon"></i>
-                        Negocios
                     </a>
                 </li>
                 <li class="clx-nav-item">
@@ -81,28 +80,27 @@
                     </a>
                 </li>
                 <li class="clx-nav-item">
-                    <a href="#" class="clx-nav-link" data-clx-toggle="empresa-submenu">
-                        <i class="fas fa-briefcase clx-nav-icon"></i>
-                        Mi Empresa <i class="fas fa-chevron-down float-end"></i>
-                    </a>
+                    @if($misEmpresas->isEmpty())
+                        <a href="{{ route('negocio.create') }}" class="clx-nav-link">
+                            <i class="fas fa-briefcase clx-nav-icon"></i>
+                            Mi Empresa
+                        </a>
+                    @else
+                        <a href="#" class="clx-nav-link" data-clx-toggle="empresa-submenu">
+                            <i class="fas fa-briefcase clx-nav-icon"></i>
+                            Mi Empresa <i class="fas fa-chevron-down float-end"></i>
+                        </a>
 
-                    <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
-                        @forelse ($misEmpresas as $empresa)
-                        <li>
-                            <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
-                                {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
-                            </a>
-                        </li>
-                        @empty
-                        <li><span class="text-sm text-gray-400">Sin empresas aún</span></li>
-                        @endforelse
-                    </ul>
-                </li>
-                <li class="clx-nav-item">
-                    <a href="#" class="clx-nav-link" data-clx-page="notifications">
-                        <i class="fas fa-bell clx-nav-icon"></i>
-                        Notificaciones
-                    </a>
+                        <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
+                            @foreach ($misEmpresas as $empresa)
+                            <li>
+                                <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
+                                    {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
+                                </a>
+                            </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </li>
             </ul>
         </nav>
@@ -110,6 +108,10 @@
 
     <!-- Contenido principal -->
     <main class="clx-main">
+
+        {{-- ===== SECCION: DASHBOARD ===== --}}
+        <div data-clx-section="dashboard">
+
         <!-- Header de bienvenida -->
         <header class="clx-header">
             <div class="clx-welcome">
@@ -122,14 +124,10 @@
                     </p>
                 </div>
                 <div class="clx-quick-actions">
-                    <button class="clx-btn clx-btn-primary" id="clx-btn-book">
+                    <a href="{{ route('negocios.explorar') }}" class="clx-btn clx-btn-primary">
                         <i class="fas fa-plus"></i>
                         Agendar Cita
-                    </button>
-                    <button class="clx-btn clx-btn-secondary" id="clx-btn-search">
-                        <i class="fas fa-search"></i>
-                        Buscar Servicios
-                    </button>
+                    </a>
                 </div>
                 <div class="text-center mt-6">
                     <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary">
@@ -290,6 +288,348 @@
         </section>
         @endif
 
+        </div>{{-- /data-clx-section="dashboard" --}}
+
+        {{-- ===== SECCION: MI PERFIL ===== --}}
+        <div data-clx-section="profile" style="display:none;">
+
+            <style>
+                .profile-section { max-width: 720px; }
+                .profile-card {
+                    background: #fff;
+                    border: 1px solid #ece9f8;
+                    border-radius: 18px;
+                    padding: 1.75rem;
+                    box-shadow: 0 1px 4px rgba(90,49,215,0.06);
+                    margin-bottom: 1.25rem;
+                }
+                .profile-card-title {
+                    font-size: 1.1rem;
+                    font-weight: 800;
+                    color: #5a31d7;
+                    margin: 0 0 1.25rem 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .plan-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 5px 14px;
+                    border-radius: 20px;
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                }
+                .plan-badge-free {
+                    background: #f0ecfb;
+                    color: #5a31d7;
+                }
+                .plan-badge-pro {
+                    background: linear-gradient(135deg, #5a31d7, #7b5ce0);
+                    color: #fff;
+                }
+                .plan-features {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    margin-top: 12px;
+                }
+                .plan-feature {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    color: #6b7280;
+                    background: #f9fafb;
+                    padding: 4px 10px;
+                    border-radius: 8px;
+                    border: 1px solid #f3f4f6;
+                }
+                .plan-feature i { font-size: 0.65rem; }
+                .plan-feature-on i { color: #10b981; }
+                .plan-feature-off i { color: #d1d5db; }
+
+                .profile-avatar-wrapper {
+                    display: flex;
+                    align-items: center;
+                    gap: 1.25rem;
+                    margin-bottom: 1.5rem;
+                }
+                .profile-avatar-img {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 3px solid #ece9f8;
+                }
+                .profile-avatar-placeholder {
+                    width: 80px;
+                    height: 80px;
+                    min-width: 80px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #5a31d7, #7b5ce0);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-weight: 800;
+                    font-size: 1.6rem;
+                }
+                .profile-avatar-info h3 {
+                    font-size: 1.15rem;
+                    font-weight: 700;
+                    color: #1f2937;
+                    margin: 0 0 2px 0;
+                }
+                .profile-avatar-info p {
+                    font-size: 0.82rem;
+                    color: #9ca3af;
+                    margin: 0;
+                }
+
+                .profile-form-group {
+                    margin-bottom: 1rem;
+                }
+                .profile-form-group label {
+                    display: block;
+                    font-size: 0.82rem;
+                    font-weight: 700;
+                    color: #374151;
+                    margin-bottom: 5px;
+                }
+                .profile-form-group input[type="text"],
+                .profile-form-group input[type="email"],
+                .profile-form-group input[type="tel"] {
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 10px;
+                    font-size: 0.88rem;
+                    color: #374151;
+                    font-family: inherit;
+                    outline: none;
+                    transition: all 0.2s;
+                    background: #fff;
+                }
+                .profile-form-group input:focus {
+                    border-color: #5a31d7;
+                    box-shadow: 0 0 0 3px rgba(90,49,215,0.1);
+                }
+                .profile-form-row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1rem;
+                }
+                @media (max-width: 600px) {
+                    .profile-form-row { grid-template-columns: 1fr; }
+                }
+                .profile-btn-save {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 24px;
+                    font-size: 0.88rem;
+                    font-weight: 700;
+                    color: #fff;
+                    background: #5a31d7;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 2px 8px rgba(90,49,215,0.25);
+                }
+                .profile-btn-save:hover {
+                    background: #7b5ce0;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(90,49,215,0.35);
+                }
+                .profile-alert {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 16px;
+                    border-radius: 12px;
+                    font-size: 0.82rem;
+                    margin-bottom: 1rem;
+                }
+                .profile-alert-success {
+                    background: #ecfdf5;
+                    border: 1px solid #a7f3d0;
+                    color: #065f46;
+                }
+                .profile-alert-error {
+                    background: #fef2f2;
+                    border: 1px solid #fecaca;
+                    color: #991b1b;
+                }
+            </style>
+
+            <div class="profile-section">
+
+                {{-- Header --}}
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+                    <div>
+                        <h1 style="font-size:1.5rem;font-weight:800;color:#5a31d7;margin:0;">
+                            <i class="fas fa-user-cog" style="margin-right:8px;opacity:0.7;"></i>Mi Perfil
+                        </h1>
+                        <p style="font-size:0.82rem;color:#9ca3af;margin:4px 0 0 0;">Administra tu informacion personal y plan.</p>
+                    </div>
+                </div>
+
+                {{-- Alerta exito --}}
+                @if(session('profile_success'))
+                    <div class="profile-alert profile-alert-success">
+                        <i class="fas fa-check-circle"></i> {{ session('profile_success') }}
+                    </div>
+                @endif
+
+                {{-- Errores de validacion --}}
+                @if($errors->any())
+                    <div class="profile-alert profile-alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
+                {{-- Plan card --}}
+                <div class="profile-card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                        <div>
+                            <div class="profile-card-title" style="margin-bottom:8px;">
+                                <i class="fas fa-crown"></i> Tu Plan
+                            </div>
+
+                            @if($plan ?? false)
+                                {{-- PLAN PAGO --}}
+                                <span class="plan-badge plan-badge-pro">
+                                    <i class="fas fa-gem"></i> {{ $plan->name }}
+                                </span>
+                                @if($subscription)
+                                    <span style="font-size:0.72rem;color:#9ca3af;margin-left:8px;">
+                                        Desde {{ $subscription->starts_at->format('d/m/Y') }}
+                                        @if($subscription->ends_at)
+                                            — Hasta {{ $subscription->ends_at->format('d/m/Y') }}
+                                        @endif
+                                    </span>
+                                @endif
+                            @else
+                                {{-- SIN PLAN --}}
+                                <span class="plan-badge plan-badge-free">
+                                    <i class="fas fa-tag"></i> Sin plan activo
+                                </span>
+                                <span style="font-size:0.72rem;color:#9ca3af;margin-left:8px;">
+                                    Elegi un plan para acceder a todas las funciones
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($plan ?? false)
+                        <div class="plan-features">
+                            <span class="plan-feature {{ $plan->crm_ia_enabled ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                <i class="fas {{ $plan->crm_ia_enabled ? 'fa-check-circle' : 'fa-times-circle' }}"></i> CRM & IA
+                            </span>
+                            <span class="plan-feature {{ $plan->multi_branch_enabled ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                <i class="fas {{ $plan->multi_branch_enabled ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Multi-sucursal
+                            </span>
+                            <span class="plan-feature {{ $plan->whatsapp_reminders ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                <i class="fas {{ $plan->whatsapp_reminders ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Recordatorios WhatsApp
+                            </span>
+                            <span class="plan-feature {{ $plan->email_reminders ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                <i class="fas {{ $plan->email_reminders ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Recordatorios Email
+                            </span>
+                            @if($plan->max_professionals)
+                                <span class="plan-feature plan-feature-on">
+                                    <i class="fas fa-users"></i> {{ $plan->max_professionals }} profesionales
+                                </span>
+                            @endif
+                        </div>
+                    @else
+                        <div class="plan-features">
+                            <span class="plan-feature plan-feature-on"><i class="fas fa-check-circle"></i> Agendar citas</span>
+                            <span class="plan-feature plan-feature-on"><i class="fas fa-check-circle"></i> Perfil de negocio</span>
+                            <span class="plan-feature plan-feature-on"><i class="fas fa-check-circle"></i> Calendario</span>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Profile form --}}
+                <div class="profile-card">
+                    <div class="profile-card-title">
+                        <i class="fas fa-id-card"></i> Informacion Personal
+                    </div>
+
+                    <form action="{{ route('client.profile.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PATCH')
+
+                        {{-- Avatar --}}
+                        <div class="profile-avatar-wrapper">
+                            @if(auth()->user()->foto)
+                                <img src="{{ asset(auth()->user()->foto) }}" alt="Foto" class="profile-avatar-img" id="profileAvatarPreview">
+                            @else
+                                <div class="profile-avatar-placeholder" id="profileAvatarPlaceholder">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                                </div>
+                                <img src="" alt="Foto" class="profile-avatar-img" id="profileAvatarPreview" style="display:none;">
+                            @endif
+                            <div class="profile-avatar-info">
+                                <h3>{{ auth()->user()->name }}</h3>
+                                <p>{{ auth()->user()->email }}</p>
+                                <label style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 12px;font-size:0.75rem;font-weight:600;color:#5a31d7;background:#f0ecfb;border-radius:8px;cursor:pointer;">
+                                    <i class="fas fa-camera" style="font-size:0.65rem;"></i> Cambiar foto
+                                    <input type="file" name="foto" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)">
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Fields --}}
+                        <div class="profile-form-row">
+                            <div class="profile-form-group">
+                                <label for="profile-name">Nombre completo</label>
+                                <input type="text" id="profile-name" name="name" value="{{ old('name', auth()->user()->name) }}" required>
+                            </div>
+                            <div class="profile-form-group">
+                                <label for="profile-email">Correo electronico</label>
+                                <input type="email" id="profile-email" name="email" value="{{ old('email', auth()->user()->email) }}" required>
+                            </div>
+                        </div>
+
+                        <div class="profile-form-row">
+                            <div class="profile-form-group">
+                                <label for="profile-dni">Documento (CI / DNI)</label>
+                                <input type="text" id="profile-dni" name="dni" value="{{ old('dni', auth()->user()->dni) }}" placeholder="Ej: 12345678">
+                            </div>
+                            <div class="profile-form-group">
+                                <label for="profile-celular">Celular</label>
+                                <input type="tel" id="profile-celular" name="celular" value="{{ old('celular', auth()->user()->celular) }}" placeholder="Ej: 099 123 456">
+                            </div>
+                        </div>
+
+                        <div class="profile-form-row">
+                            <div class="profile-form-group">
+                                <label for="profile-pais">Pais</label>
+                                <input type="text" id="profile-pais" name="pais" value="{{ old('pais', auth()->user()->pais) }}" placeholder="Ej: Uruguay">
+                            </div>
+                            <div class="profile-form-group">
+                                <label for="profile-ciudad">Ciudad</label>
+                                <input type="text" id="profile-ciudad" name="ciudad" value="{{ old('ciudad', auth()->user()->ciudad) }}" placeholder="Ej: Montevideo">
+                            </div>
+                        </div>
+
+                        <div style="margin-top:0.5rem;">
+                            <button type="submit" class="profile-btn-save">
+                                <i class="fas fa-save"></i> Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>{{-- /data-clx-section="profile" --}}
+
     </main>
 </div>
 
@@ -320,6 +660,44 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+});
+</script>
+
+{{-- Photo preview + auto-navigate to profile on success --}}
+<script>
+function previewProfilePhoto(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.getElementById('profileAvatarPreview');
+            var placeholder = document.getElementById('profileAvatarPlaceholder');
+            if (preview) {
+                preview.src = e.target.result;
+                preview.style.display = '';
+            }
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// If redirected back with profile_success, auto-navigate to profile section
+document.addEventListener('DOMContentLoaded', function() {
+    @if(session('profile_success'))
+        setTimeout(function() {
+            var profileLink = document.querySelector('[data-clx-page="profile"]');
+            if (profileLink) profileLink.click();
+        }, 100);
+    @endif
+
+    @if($errors->any())
+        setTimeout(function() {
+            var profileLink = document.querySelector('[data-clx-page="profile"]');
+            if (profileLink) profileLink.click();
+        }, 100);
+    @endif
 });
 </script>
 

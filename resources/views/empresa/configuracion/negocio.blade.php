@@ -12,12 +12,18 @@
         position: relative;
         overflow: hidden;
     }
-    .negocio-cover-wrapper img.negocio-cover-img,
-    .negocio-cover-fallback {
+    .negocio-cover-wrapper img.negocio-cover-img {
         width: 100%;
         height: 280px;
         object-fit: cover;
         display: block;
+    }
+    .negocio-cover-fallback {
+        width: 100%;
+        height: 280px;
+    }
+    .negocio-cover-fallback.is-hidden {
+        display: none;
     }
     .negocio-cover-overlay {
         position: absolute;
@@ -390,7 +396,7 @@
 
 {{-- ============================== PORTADA ============================== --}}
 <div class="negocio-cover-wrapper">
-    <div id="coverFallback" class="negocio-cover-fallback {{ $imgPortada ? 'hidden' : '' }}"
+    <div id="coverFallback" class="negocio-cover-fallback {{ $imgPortada ? 'is-hidden' : '' }}"
          style="background: linear-gradient(135deg, #5a31d7 0%, #32ccbc 100%);">
     </div>
 
@@ -399,7 +405,7 @@
              id="coverImage"
              class="negocio-cover-img"
              alt="Portada del negocio"
-             onerror="this.style.display='none'; document.getElementById('coverFallback').classList.remove('hidden');">
+             onerror="this.style.display='none'; document.getElementById('coverFallback').classList.remove('is-hidden');">
     @endif
 
     <div class="negocio-cover-overlay"></div>
@@ -532,23 +538,23 @@
                 </div>
 
                 <div>
-                    <label class="field-label">Equipo de trabajo</label>
-                    <input type="text" name="confneg_equipo" value="{{ $empresa->neg_equipo }}" class="field-input">
-                </div>
-
-                <div>
-                    <label class="field-label">Dirección</label>
-                    <input type="text" name="confneg_direccion" value="{{ $empresa->neg_direccion }}" class="field-input">
+                    <label class="field-label">Direccion</label>
+                    <input type="text" name="confneg_direccion" id="confneg_direccion" value="{{ $empresa->neg_direccion }}" class="field-input" placeholder="Busca tu direccion...">
+                    <input type="hidden" name="confneg_latitud" id="confneg_latitud" value="{{ $empresa->neg_latitud }}">
+                    <input type="hidden" name="confneg_longitud" id="confneg_longitud" value="{{ $empresa->neg_longitud }}">
+                    <input type="hidden" name="confneg_equipo" value="{{ $empresa->neg_equipo }}">
+                    <div id="config-map" style="width:100%; height:250px; border-radius:8px; border:1px solid #d1d5db; margin-top:8px; display:none;"></div>
+                    <p id="config-map-hint" style="font-size:0.75rem; color:#9ca3af; margin-top:4px; display:none;">Arrastra el marcador para ajustar la ubicacion</p>
                 </div>
 
                 <div class="checkbox-row">
                     <label class="checkbox-label">
-                        <input type="checkbox" name="confneg_virtual" value="1" {{ $empresa->neg_virtual ? 'checked' : '' }}>
+                        <input type="checkbox" name="confneg_virtual" id="confneg_virtual" value="1" {{ $empresa->neg_virtual ? 'checked' : '' }}>
                         Negocio virtual
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" name="confneg_direccion_confirmada" value="1" {{ $empresa->neg_direccion_confirmada ? 'checked' : '' }}>
-                        Dirección confirmada
+                        Direccion confirmada
                     </label>
                 </div>
             </div>
@@ -660,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 img.src = ev.target.result;
                 img.style.display = 'block';
-                if (fallback) fallback.classList.add('hidden');
+                if (fallback) fallback.classList.add('is-hidden');
 
                 // Update card preview
                 var previewArea = document.getElementById('cover-preview-area');
@@ -715,5 +721,129 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ============ Google Maps for address ============
+window.initConfigMap = function() {
+    var lat = {{ $empresa->neg_latitud ?? -34.9011 }};
+    var lng = {{ $empresa->neg_longitud ?? -56.1645 }};
+    var hasCoords = {{ ($empresa->neg_latitud && $empresa->neg_longitud) ? 'true' : 'false' }};
+
+    var mapDiv = document.getElementById('config-map');
+    var mapHint = document.getElementById('config-map-hint');
+    var input = document.getElementById('confneg_direccion');
+    var virtualCb = document.getElementById('confneg_virtual');
+
+    // Show map if not virtual
+    function toggleMapVisibility() {
+        if (virtualCb && virtualCb.checked) {
+            mapDiv.style.display = 'none';
+            mapHint.style.display = 'none';
+        } else {
+            mapDiv.style.display = 'block';
+            mapHint.style.display = 'block';
+            if (window._configMap) {
+                google.maps.event.trigger(window._configMap, 'resize');
+            }
+        }
+    }
+
+    if (virtualCb) {
+        virtualCb.addEventListener('change', toggleMapVisibility);
+    }
+    toggleMapVisibility();
+
+    var map = new google.maps.Map(mapDiv, {
+        center: { lat: lat, lng: lng },
+        zoom: hasCoords ? 17 : 13,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        styles: [
+            { featureType: 'poi', stylers: [{ visibility: 'simplified' }] },
+            { featureType: 'transit', stylers: [{ visibility: 'off' }] }
+        ]
+    });
+    window._configMap = map;
+
+    var marker = new google.maps.Marker({
+        position: { lat: lat, lng: lng },
+        map: map,
+        draggable: true,
+        title: 'Ubicacion del negocio'
+    });
+
+    var geocoder = new google.maps.Geocoder();
+
+    try {
+        var autocomplete = new google.maps.places.Autocomplete(input, {
+            fields: ['geometry', 'formatted_address', 'name']
+        });
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            if (!place.geometry || !place.geometry.location) {
+                geocodeAddr(input.value);
+                return;
+            }
+            var loc = place.geometry.location;
+            map.setCenter(loc);
+            map.setZoom(17);
+            marker.setPosition(loc);
+            setCoords(loc.lat(), loc.lng());
+            if (place.formatted_address) input.value = place.formatted_address;
+        });
+    } catch(e) {
+        console.error('Places API error:', e);
+    }
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            geocodeAddr(input.value);
+        }
+    });
+
+    function geocodeAddr(address) {
+        if (!address || address.trim() === '') return;
+        geocoder.geocode({ address: address }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+                var loc = results[0].geometry.location;
+                map.setCenter(loc);
+                map.setZoom(17);
+                marker.setPosition(loc);
+                setCoords(loc.lat(), loc.lng());
+                input.value = results[0].formatted_address;
+            }
+        });
+    }
+
+    marker.addListener('dragend', function() {
+        var pos = marker.getPosition();
+        setCoords(pos.lat(), pos.lng());
+        geocoder.geocode({ location: pos }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+                input.value = results[0].formatted_address;
+            }
+        });
+    });
+
+    map.addListener('click', function(e) {
+        marker.setPosition(e.latLng);
+        setCoords(e.latLng.lat(), e.latLng.lng());
+        geocoder.geocode({ location: e.latLng }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+                input.value = results[0].formatted_address;
+            }
+        });
+    });
+
+    function setCoords(lt, ln) {
+        document.getElementById('confneg_latitud').value = lt;
+        document.getElementById('confneg_longitud').value = ln;
+    }
+};
 </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtfFmZQIfa0vxx07f3fNzHsN7tcxcerxM&libraries=places&callback=initConfigMap" async defer></script>
 @endpush

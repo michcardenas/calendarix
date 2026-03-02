@@ -3,102 +3,363 @@
 @section('title', 'Reseñas - ' . $empresa->neg_nombre_comercial)
 
 @section('content')
-<div class="max-w-5xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold" style="color: #5a31d7;">Reseñas</h1>
+<style>
+    .resenas-page { max-width: 800px; }
+
+    /* Summary card */
+    .summary-card {
+        background: #fff;
+        border: 1px solid #ece9f8;
+        border-radius: 18px;
+        padding: 1.75rem;
+        box-shadow: 0 1px 4px rgba(90,49,215,0.06);
+    }
+    .summary-left {
+        text-align: center;
+        min-width: 120px;
+        padding-right: 1.75rem;
+        border-right: 1px solid #f0ecf8;
+    }
+    .summary-score {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #5a31d7;
+        line-height: 1;
+        letter-spacing: -0.03em;
+    }
+    .summary-stars { display: flex; gap: 3px; justify-content: center; margin-top: 8px; }
+    .summary-stars i { font-size: 0.85rem; }
+    .summary-count {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #9ca3af;
+        margin-top: 6px;
+    }
+    .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 3px 0;
+    }
+    .bar-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #374151;
+        min-width: 14px;
+        text-align: right;
+    }
+    .bar-star { color: #f59e0b; font-size: 0.65rem; }
+    .bar-track {
+        flex: 1;
+        height: 8px;
+        background: #f3f4f6;
+        border-radius: 99px;
+        overflow: hidden;
+    }
+    .bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(135deg, #5a31d7, #7b5ce0);
+        transition: width 0.6s ease;
+    }
+    .bar-count {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #9ca3af;
+        min-width: 24px;
+        text-align: right;
+    }
+
+    /* Pendiente badge */
+    .badge-sin-respuesta {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: #fff1f5;
+        color: #be185d;
+    }
+
+    /* Resena card */
+    .resena-card {
+        background: #fff;
+        border: 1px solid #f0ecf8;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        transition: all 0.2s;
+    }
+    .resena-card:hover {
+        border-color: #e0d8f5;
+        box-shadow: 0 4px 16px rgba(90,49,215,0.06);
+    }
+    .resena-card-pendiente {
+        border-left: 3px solid #f472b6;
+    }
+    .resena-avatar {
+        width: 40px; height: 40px; min-width: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #5a31d7, #7b5ce0);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.82rem;
+        flex-shrink: 0;
+    }
+    .resena-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .resena-name {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 0.9rem;
+    }
+    .resena-date {
+        font-size: 0.72rem;
+        color: #9ca3af;
+    }
+    .resena-service {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #5a31d7;
+        background: #f0ecfb;
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-top: 2px;
+    }
+    .resena-stars {
+        display: flex;
+        gap: 2px;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+    .resena-stars i { font-size: 0.72rem; }
+    .resena-comment {
+        font-size: 0.88rem;
+        color: #4b5563;
+        line-height: 1.6;
+        margin: 12px 0 0 52px;
+    }
+
+    /* Respuesta */
+    .respuesta-box {
+        margin: 14px 0 0 52px;
+        background: linear-gradient(135deg, #faf9ff, #f5f3ff);
+        border-left: 3px solid #5a31d7;
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+    }
+    .respuesta-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    .respuesta-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #5a31d7;
+    }
+    .respuesta-date {
+        font-size: 0.68rem;
+        color: #9ca3af;
+    }
+    .respuesta-text {
+        font-size: 0.82rem;
+        color: #4b5563;
+        line-height: 1.55;
+    }
+
+    /* Boton responder */
+    .btn-responder {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #5a31d7;
+        background: #f0ecfb;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin: 12px 0 0 52px;
+    }
+    .btn-responder:hover {
+        background: #5a31d7;
+        color: #fff;
+    }
+
+    /* Form respuesta */
+    .form-respuesta {
+        margin: 10px 0 0 52px;
+        padding: 14px;
+        background: #faf9ff;
+        border-radius: 12px;
+        border: 1px solid #ece9f8;
+    }
+    .form-respuesta textarea {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 0.82rem;
+        color: #374151;
+        resize: none;
+        outline: none;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+    .form-respuesta textarea:focus {
+        border-color: #5a31d7;
+        box-shadow: 0 0 0 3px rgba(90,49,215,0.1);
+    }
+</style>
+
+<div class="resenas-page">
+
+    {{-- Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+        <div>
+            <h1 style="font-size:1.5rem;font-weight:800;color:#5a31d7;margin:0;">
+                <i class="fas fa-star" style="margin-right:8px;opacity:0.7;"></i>Resenas
+            </h1>
+            <p style="font-size:0.82rem;color:#9ca3af;margin:4px 0 0 0;">Ve lo que opinan tus clientes.</p>
+        </div>
+        @php $sinResponder = $resenas->whereNull('respuesta_negocio')->count(); @endphp
+        @if($sinResponder > 0)
+            <span class="badge-sin-respuesta">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ $sinResponder }} sin responder
+            </span>
+        @endif
     </div>
 
+    {{-- Alerta --}}
     @if(session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4">
-            {{ session('success') }}
+        <div style="display:flex;align-items:center;gap:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:12px 16px;border-radius:12px;margin-bottom:1rem;font-size:0.82rem;">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
         </div>
     @endif
 
-    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
-        <div class="flex items-center gap-6">
-            <div class="text-center">
-                <div class="text-4xl font-bold" style="color: #5a31d7;">
-                    {{ $promedioRating ?? '—' }}
-                </div>
-                <div class="flex items-center justify-center mt-1">
+    {{-- Resumen --}}
+    <div class="summary-card" style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:0;">
+            <div class="summary-left">
+                <div class="summary-score">{{ $promedioRating ?? '—' }}</div>
+                <div class="summary-stars">
                     @for($i = 1; $i <= 5; $i++)
-                        <i class="fas fa-star {{ $promedioRating && $i <= round($promedioRating) ? 'text-yellow-400' : 'text-gray-200' }}" style="font-size: 0.875rem;"></i>
+                        <i class="fas fa-star" style="color:{{ $promedioRating && $i <= round($promedioRating) ? '#f59e0b' : '#e5e7eb' }};"></i>
                     @endfor
                 </div>
-                <div class="text-sm text-gray-500 mt-1">{{ $resenas->count() }} {{ $resenas->count() === 1 ? 'reseña' : 'reseñas' }}</div>
+                <div class="summary-count">{{ $resenas->count() }} {{ $resenas->count() === 1 ? 'resena' : 'resenas' }}</div>
             </div>
 
-            <div class="flex-1">
+            <div style="flex:1;padding-left:1.75rem;">
                 @for($star = 5; $star >= 1; $star--)
                     @php $count = $resenas->where('rating', $star)->count(); @endphp
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="text-sm text-gray-600 w-6 text-right">{{ $star }}</span>
-                        <i class="fas fa-star text-yellow-400" style="font-size: 0.7rem;"></i>
-                        <div class="flex-1 bg-gray-100 rounded-full h-2">
-                            <div class="h-2 rounded-full" style="background-color: #5a31d7; width: {{ $resenas->count() ? ($count / $resenas->count() * 100) : 0 }}%;"></div>
+                    <div class="bar-row">
+                        <span class="bar-label">{{ $star }}</span>
+                        <i class="fas fa-star bar-star"></i>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:{{ $resenas->count() ? ($count / $resenas->count() * 100) : 0 }}%;"></div>
                         </div>
-                        <span class="text-sm text-gray-500 w-8">{{ $count }}</span>
+                        <span class="bar-count">{{ $count }}</span>
                     </div>
                 @endfor
             </div>
         </div>
     </div>
 
+    {{-- Lista de resenas --}}
     @if($resenas->count())
-        <div class="space-y-4">
+        <div style="display:flex;flex-direction:column;gap:12px;">
             @foreach($resenas as $resena)
-                <div class="bg-white rounded-xl shadow-sm border p-5 {{ !$resena->respuesta_negocio ? 'border-l-4' : '' }}" style="{{ !$resena->respuesta_negocio ? 'border-left-color: #ffa8d7;' : '' }}">
-                    <div class="flex items-start justify-between mb-2">
-                        <div>
-                            <span class="font-semibold text-gray-800">{{ $resena->user->name ?? 'Cliente' }}</span>
-                            <span class="text-sm text-gray-400 ml-2">{{ $resena->created_at->format('d/m/Y') }}</span>
+                <div class="resena-card {{ !$resena->respuesta_negocio ? 'resena-card-pendiente' : '' }}">
+
+                    {{-- Header --}}
+                    <div class="resena-header">
+                        <div class="resena-avatar">
+                            {{ strtoupper(substr($resena->user->name ?? 'C', 0, 2)) }}
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                                <span class="resena-name">{{ $resena->user->name ?? 'Cliente' }}</span>
+                                <span class="resena-date">{{ $resena->created_at->format('d/m/Y') }}</span>
+                            </div>
                             @if($resena->cita && $resena->cita->servicio)
-                                <span class="text-sm text-gray-400 ml-2">- {{ $resena->cita->servicio->nombre }}</span>
+                                <span class="resena-service">
+                                    <i class="fas fa-concierge-bell"></i>
+                                    {{ $resena->cita->servicio->nombre }}
+                                </span>
                             @endif
                         </div>
-                        <div class="flex">
+                        <div class="resena-stars">
                             @for($i = 1; $i <= 5; $i++)
-                                <i class="fas fa-star {{ $i <= $resena->rating ? 'text-yellow-400' : 'text-gray-200' }}" style="font-size: 0.8rem;"></i>
+                                <i class="fas fa-star" style="color:{{ $i <= $resena->rating ? '#f59e0b' : '#e5e7eb' }};"></i>
                             @endfor
                         </div>
                     </div>
-                    <p class="text-gray-700 mb-3">{{ $resena->comentario }}</p>
 
+                    {{-- Comentario --}}
+                    <p class="resena-comment">{{ $resena->comentario }}</p>
+
+                    {{-- Respuesta existente --}}
                     @if($resena->respuesta_negocio)
-                        <div class="bg-gray-50 rounded-lg p-4 ml-4 border-l-2" style="border-left-color: #5a31d7;">
-                            <div class="flex items-center gap-2 mb-1">
-                                <i class="fas fa-store text-sm" style="color: #5a31d7;"></i>
-                                <span class="font-medium text-sm" style="color: #5a31d7;">Respuesta del negocio</span>
-                                <span class="text-xs text-gray-400">{{ $resena->respuesta_fecha?->format('d/m/Y') }}</span>
+                        <div class="respuesta-box">
+                            <div class="respuesta-header">
+                                <i class="fas fa-reply" style="color:#5a31d7;font-size:0.7rem;"></i>
+                                <span class="respuesta-label">Tu respuesta</span>
+                                @if($resena->respuesta_fecha)
+                                    <span class="respuesta-date">{{ $resena->respuesta_fecha->format('d/m/Y') }}</span>
+                                @endif
                             </div>
-                            <p class="text-gray-600 text-sm">{{ $resena->respuesta_negocio }}</p>
+                            <p class="respuesta-text">{{ $resena->respuesta_negocio }}</p>
                         </div>
                     @else
-                        <div class="mt-3 ml-4">
-                            <button onclick="document.getElementById('respForm{{ $resena->id }}').classList.toggle('hidden')"
-                                    class="text-sm font-medium hover:underline" style="color: #5a31d7;">
-                                <i class="fas fa-reply"></i> Responder
-                            </button>
-                            <form id="respForm{{ $resena->id }}" action="{{ route('resenas.responder', $resena->id) }}" method="POST" class="hidden mt-2">
-                                @csrf
-                                <textarea name="respuesta_negocio" rows="2" required maxlength="1000"
-                                          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#5a31d7]"
-                                          placeholder="Escribí tu respuesta..."></textarea>
-                                <div class="flex gap-2 mt-2">
-                                    <button type="submit" class="px-4 py-1.5 text-white text-sm rounded-lg" style="background-color: #5a31d7;">Enviar</button>
-                                    <button type="button" onclick="this.closest('form').classList.add('hidden')"
-                                            class="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm rounded-lg">Cancelar</button>
-                                </div>
-                            </form>
-                        </div>
+                        {{-- Boton responder --}}
+                        <button class="btn-responder"
+                                onclick="document.getElementById('respForm{{ $resena->id }}').classList.toggle('hidden'); this.classList.toggle('hidden');">
+                            <i class="fas fa-reply"></i> Responder a esta resena
+                        </button>
+
+                        {{-- Form respuesta --}}
+                        <form id="respForm{{ $resena->id }}" action="{{ route('resenas.responder', $resena->id) }}" method="POST"
+                              class="form-respuesta hidden">
+                            @csrf
+                            <textarea name="respuesta_negocio" rows="3" required maxlength="1000"
+                                      placeholder="Escribi tu respuesta al cliente..."></textarea>
+                            <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end;">
+                                <button type="button"
+                                        onclick="this.closest('form').classList.add('hidden'); this.closest('form').previousElementSibling.classList.remove('hidden');"
+                                        style="padding:7px 16px;font-size:0.78rem;font-weight:600;color:#6b7280;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;">
+                                    Cancelar
+                                </button>
+                                <button type="submit"
+                                        style="padding:7px 18px;font-size:0.78rem;font-weight:700;color:#fff;background:#5a31d7;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;">
+                                    <i class="fas fa-paper-plane" style="margin-right:4px;font-size:0.68rem;"></i> Enviar respuesta
+                                </button>
+                            </div>
+                        </form>
                     @endif
                 </div>
             @endforeach
         </div>
     @else
-        <div class="bg-white rounded-xl shadow-sm border p-8 text-center">
-            <i class="fas fa-star text-gray-300 text-3xl mb-3"></i>
-            <p class="text-gray-500">Aún no hay reseñas para este negocio.</p>
+        <div style="text-align:center;padding:3.5rem 1rem;background:#fff;border:1px solid #ece9f8;border-radius:18px;">
+            <div style="width:60px;height:60px;border-radius:50%;background:#f0ecfb;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                <i class="fas fa-star" style="color:#5a31d7;font-size:1.4rem;opacity:0.5;"></i>
+            </div>
+            <p style="font-weight:700;color:#374151;margin:0 0 4px 0;">Aun no hay resenas</p>
+            <p style="font-size:0.82rem;color:#9ca3af;margin:0;">Cuando tus clientes dejen resenas, las vas a ver aca.</p>
         </div>
     @endif
 </div>

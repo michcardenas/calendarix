@@ -32,4 +32,9 @@ class Plan extends Model
         'price'                             => 'decimal:2',
         'price_per_additional_professional' => 'decimal:2',
     ];
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
 }

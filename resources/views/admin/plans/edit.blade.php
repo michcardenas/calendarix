@@ -75,7 +75,7 @@
                     <div class="plan-form-group">
                         <label class="plan-form-label">Moneda <span class="required">*</span></label>
                         <select name="currency" class="plan-form-control" required>
-                            @foreach(['USD','CLP','ARS','COP','MXN'] as $cur)
+                            @foreach(['UYU','USD','CLP','ARS','COP','MXN'] as $cur)
                                 <option value="{{ $cur }}" {{ old('currency', $plan->currency) === $cur ? 'selected' : '' }}>{{ $cur }}</option>
                             @endforeach
                         </select>

@@ -14,7 +14,8 @@ class ServicioEmpresa extends Model
         'descripcion',
         'precio',
         'categoria',
-        'duracion',      // ← NUEVO
+        'duracion',
+        'imagen',
     ];
 
     public function negocio()

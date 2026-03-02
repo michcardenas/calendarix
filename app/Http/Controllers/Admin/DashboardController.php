@@ -3,18 +3,66 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
+use App\Models\BambooPaymentLog;
 use App\Models\Cita;
 use App\Models\Negocio;
 use App\Models\Resena;
+use App\Models\Plan;
+use App\Models\Subscription;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard-admin');
+        // Stats reales
+        $citasHoy        = Cita::whereDate('fecha', today())->count();
+        $empresasActivas = Negocio::count();
+        $totalUsuarios   = User::count();
+        $suscripcionesActivas = Subscription::whereIn('status', ['active', 'trial'])->count();
+
+        // Citas recientes
+        $citasRecientes = Cita::with(['negocio', 'servicio', 'user'])
+            ->latest('fecha')
+            ->take(10)
+            ->get();
+
+        // Chart: citas por dia (ultima semana)
+        $citasSemana = Cita::selectRaw('DATE(fecha) as dia, COUNT(*) as total')
+            ->whereBetween('fecha', [now()->subDays(6)->startOfDay(), now()->endOfDay()])
+            ->groupByRaw('DATE(fecha)')
+            ->orderBy('dia')
+            ->pluck('total', 'dia');
+
+        // Chart: categorias de negocios
+        $categoriasRaw = Negocio::whereNotNull('neg_categorias')
+            ->pluck('neg_categorias');
+
+        $categorias = collect();
+        foreach ($categoriasRaw as $cats) {
+            $arr = is_array($cats) ? $cats : json_decode($cats, true);
+            if (is_array($arr)) {
+                foreach ($arr as $cat) {
+                    $categorias->push($cat);
+                }
+            }
+        }
+        $categorias = $categorias->countBy()->sortDesc()->take(6);
+
+        return view('admin.dashboard-admin', compact(
+            'citasHoy',
+            'empresasActivas',
+            'totalUsuarios',
+            'suscripcionesActivas',
+            'citasRecientes',
+            'citasSemana',
+            'categorias',
+        ));
     }
 
     // Entrypoint: decide a dónde ir según el rol
@@ -24,7 +72,7 @@ class DashboardController extends Controller
         $user->load('roles');
 
         if ($user->hasRole('Administrador', 'web')) {
-            return view('admin.dashboard-admin', ['user' => $user]);
+            return $this->index();
         }
 
         if ($user->hasRole('Cliente', 'web')) {
@@ -40,6 +88,13 @@ class DashboardController extends Controller
     public function cliente()
     {
         $user = Auth::user();
+
+        // Verificar si tiene suscripción activa (no expirada)
+        $user->load('subscription');
+        $activeSub = $user->subscription;
+        if (!$activeSub || $activeSub->isExpired()) {
+            return redirect()->route('client.elegir-plan');
+        }
 
         // 🔍 LOG: Usuario accediendo al dashboard
         Log::info('Dashboard Cliente - Inicio', [
@@ -173,6 +228,11 @@ class DashboardController extends Controller
 
         $resenasExistentes = Resena::where('user_id', $user->id)->pluck('cita_id')->toArray();
 
+        // Subscription & plan
+        $user->load('subscription.plan');
+        $subscription = $user->subscription;
+        $plan = $subscription?->plan;
+
         return view('client.dashboard-client', [
             'misEmpresas'             => $misEmpresas,
             'citasMes'                => $citasMes,
@@ -186,7 +246,115 @@ class DashboardController extends Controller
             'citasCompletadasSemana'  => $citasCompletadasSemana,
             'citasCompletadas'        => $citasCompletadas,
             'resenasExistentes'       => $resenasExistentes,
+            'subscription'            => $subscription,
+            'plan'                    => $plan,
         ]);
+    }
+
+    /**
+     * Actualizar perfil del cliente desde el dashboard.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name'    => 'required|string|max:255',
+            'email'   => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'dni'     => 'nullable|string|max:50',
+            'celular' => 'nullable|string|max:30',
+            'pais'    => 'nullable|string|max:100',
+            'ciudad'  => 'nullable|string|max:100',
+            'foto'    => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = 'user_' . $user->id . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/usuarios'), $filename);
+            $validated['foto'] = 'images/usuarios/' . $filename;
+        }
+
+        $user->update($validated);
+
+        return redirect()->route('client.dashboard-client')
+            ->with('profile_success', 'Perfil actualizado correctamente.');
+    }
+
+    /**
+     * Mostrar página de selección de plan.
+     */
+    public function elegirPlan()
+    {
+        $user = Auth::user();
+
+        // Si ya tiene suscripción activa, ir al dashboard
+        $user->load('subscription');
+        $activeSub = $user->subscription;
+        if ($activeSub && !$activeSub->isExpired()) {
+            return redirect()->route('client.dashboard-client');
+        }
+
+        // Verificar si ya usó un plan gratuito antes
+        $usedFreePlan = Subscription::where('user_id', $user->id)
+            ->whereHas('plan', fn($q) => $q->where('price', 0))
+            ->exists();
+
+        $plans = Plan::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('client.elegir-plan', compact('plans', 'usedFreePlan'));
+    }
+
+    /**
+     * Procesar la selección de plan.
+     */
+    public function seleccionarPlan(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+        ]);
+
+        $user = Auth::user();
+        $plan = Plan::findOrFail($request->plan_id);
+
+        // Si es plan gratuito, verificar que no lo haya usado antes
+        if ((float) $plan->price == 0) {
+            $yaUsoGratis = Subscription::where('user_id', $user->id)
+                ->whereHas('plan', fn($q) => $q->where('price', 0))
+                ->exists();
+
+            if ($yaUsoGratis) {
+                return back()->with('error', 'Ya utilizaste tu periodo gratuito de 15 días. Por favor elige un plan pago.');
+            }
+        }
+
+        // Desactivar suscripciones anteriores
+        Subscription::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->update(['status' => 'cancelled']);
+
+        // Duración según tipo de plan
+        if ((float) $plan->price == 0) {
+            // Plan gratuito: 15 días
+            $endsAt = now()->addDays(15)->toDateString();
+        } else {
+            // Plan pago: según intervalo
+            $endsAt = $plan->interval === 'yearly'
+                ? now()->addYear()->toDateString()
+                : now()->addMonth()->toDateString();
+        }
+
+        Subscription::create([
+            'user_id'   => $user->id,
+            'plan_id'   => $plan->id,
+            'status'    => 'active',
+            'is_trial'  => (float) $plan->price == 0,
+            'starts_at' => now()->toDateString(),
+            'ends_at'   => $endsAt,
+        ]);
+
+        return redirect()->route('client.dashboard-client')
+            ->with('plan_success', '¡Plan activado correctamente!');
     }
 
     /**

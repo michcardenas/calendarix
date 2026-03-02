@@ -147,7 +147,8 @@ class CatalogoController extends Controller
             'duracion'            => 'nullable|string|max:50',
             'categoria_existente' => 'nullable|string|max:255',
             'categoria_nueva'     => 'nullable|string|max:255',
-            'categoria'           => 'nullable|string|max:255', // por si el front la manda así
+            'categoria'           => 'nullable|string|max:255',
+            'imagen'              => 'nullable|image|max:2048',
         ]);
 
         $precio = $this->normalizeMoney($request->precio);
@@ -159,6 +160,11 @@ class CatalogoController extends Controller
 
         $categoria = $this->normalizeCategory($categoriaRaw);
 
+        $imagenPath = null;
+        if ($request->hasFile('imagen')) {
+            $imagenPath = $request->file('imagen')->store('servicios', 'public');
+        }
+
         $servicio = ServicioEmpresa::create([
             'negocio_id'  => $empresa->id,
             'nombre'      => trim($request->nombre),
@@ -166,6 +172,7 @@ class CatalogoController extends Controller
             'precio'      => $precio,
             'categoria'   => $categoria,
             'duracion'    => $request->duracion,
+            'imagen'      => $imagenPath,
         ]);
 
         $this->addCategoryIfMissing($empresa, $categoria);
@@ -222,10 +229,11 @@ class CatalogoController extends Controller
 
         $request->validate([
             'nombre'      => 'required|string|max:255',
-            'precio'      => 'required', // saneamos abajo
+            'precio'      => 'required',
             'categoria'   => 'required|string|max:255',
             'duracion'    => 'nullable|string|max:50',
             'descripcion' => 'nullable|string',
+            'imagen'      => 'nullable|image|max:2048',
         ]);
 
         $servicioM = ServicioEmpresa::where('negocio_id', $empresa->id)->findOrFail($servicio);
@@ -237,6 +245,13 @@ class CatalogoController extends Controller
             'categoria'   => $this->normalizeCategory($request->categoria),
             'duracion'    => $request->duracion,
         ];
+
+        if ($request->hasFile('imagen')) {
+            if ($servicioM->imagen && \Storage::disk('public')->exists($servicioM->imagen)) {
+                \Storage::disk('public')->delete($servicioM->imagen);
+            }
+            $payload['imagen'] = $request->file('imagen')->store('servicios', 'public');
+        }
 
         $servicioM->update($payload);
         $this->addCategoryIfMissing($empresa, $payload['categoria']);

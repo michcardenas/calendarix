@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Str; @endphp
 @extends('layouts.app_b')
 
 @section('title', 'Calendarix - Reserva cualquier servicio cerca de ti')
@@ -8,16 +9,54 @@
        WELCOME PAGE - HERO & SECTIONS
        ============================================ */
 
-    /* HERO SECTION - Altura automática basada en contenido */
+    /* HERO SECTION */
     .hero {
-        background:
-            linear-gradient(135deg, rgba(90, 49, 215, 0.88) 0%, rgba(50, 204, 188, 0.82) 100%),
-            url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+        position: relative;
         padding: 4rem 1.5rem 5rem;
         text-align: center;
+        overflow: hidden;
+    }
+
+    /* Overlay gradient */
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(90, 49, 215, 0.88) 0%, rgba(50, 204, 188, 0.82) 100%);
+        z-index: 1;
+    }
+
+    /* Slideshow backgrounds */
+    .hero-bg-slide {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        z-index: 0;
+    }
+
+    .hero-bg-slide.active {
+        opacity: 1;
+    }
+
+    /* Video background */
+    .hero-bg-video {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .hero-bg-video video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .hero-content {
+        position: relative;
+        z-index: 2;
         max-width: 900px;
         margin: 0 auto;
     }
@@ -29,6 +68,32 @@
         color: var(--white);
         margin-bottom: 1rem;
         line-height: 1.2;
+    }
+
+    .hero-rotating-wrapper {
+        display: inline-block;
+        position: relative;
+        vertical-align: bottom;
+    }
+
+    .hero-rotating-word {
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        white-space: nowrap;
+        background: rgba(255,255,255,0.15);
+        padding: 0 0.3em;
+        border-radius: 6px;
+    }
+
+    .hero-rotating-word.active {
+        position: relative;
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .hero-subtitle {
@@ -290,6 +355,29 @@
         display: flex;
         align-items: center;
         gap: 0.375rem;
+    }
+
+    /* EXPLORAR MÁS BOTÓN */
+    .btn-explorar-mas {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary-500);
+        color: var(--white);
+        padding: 0.875rem 2rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(90, 49, 215, 0.3);
+    }
+
+    .btn-explorar-mas:hover {
+        background: var(--primary-600);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(90, 49, 215, 0.4);
+        color: var(--white);
     }
 
     /* ============================================
@@ -749,45 +837,79 @@
 @section('content')
     <!-- HERO SECTION -->
     <section class="hero">
+        @php
+            $bgType     = $hero['bg_type'] ?? 'images';
+            $heroImgs   = $hero['images'] ?? [];
+            $videoPath  = $hero['video_path'] ?? '';
+            $fallbackImg = 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80';
+        @endphp
+
+        @if($bgType === 'video' && $videoPath)
+            <div class="hero-bg-video">
+                <video autoplay muted loop playsinline>
+                    <source src="{{ asset($videoPath) }}" type="video/{{ pathinfo($videoPath, PATHINFO_EXTENSION) === 'webm' ? 'webm' : 'mp4' }}">
+                </video>
+            </div>
+        @elseif(count($heroImgs) > 0)
+            @foreach($heroImgs as $i => $img)
+                <div class="hero-bg-slide {{ $i === 0 ? 'active' : '' }}"
+                     style="background-image:url('{{ asset($img) }}')"></div>
+            @endforeach
+        @else
+            <div class="hero-bg-slide active"
+                 style="background-image:url('{{ $fallbackImg }}')"></div>
+        @endif
+
         <div class="hero-content">
-            <h1 class="hero-title">Reserva cualquier servicio cerca de ti</h1>
+            @php
+                $heroTitle = $hero['title'] ?? 'Reserva cualquier servicio cerca de';
+                $rotatingWords = $hero['rotating_words'] ?? ['ti'];
+            @endphp
+            <h1 class="hero-title">
+                {{ $heroTitle }}
+                @if(count($rotatingWords) > 1)
+                    <span class="hero-rotating-wrapper">
+                        @foreach($rotatingWords as $i => $word)
+                            <span class="hero-rotating-word {{ $i === 0 ? 'active' : '' }}">{{ $word }}</span>
+                        @endforeach
+                    </span>
+                @else
+                    <span>{{ $rotatingWords[0] ?? '' }}</span>
+                @endif
+            </h1>
             <p class="hero-subtitle">
-                Encuentra y agenda con los mejores profesionales y negocios cerca de vos
+                {{ $hero['subtitle'] ?? 'Encuentra y agenda con los mejores profesionales y negocios cerca de vos' }}
             </p>
 
             <!-- SEARCH BAR -->
-            <form class="search-bar" action="{{ url('/buscar') }}" method="GET">
+            <form class="search-bar" action="{{ route('negocios.explorar') }}" method="GET">
                 <div class="search-field">
                     <i class="fas fa-search"></i>
-                    <input type="text" name="negocio" placeholder="Negocio o ubicación">
-                </div>
-                <div class="search-field">
-                    <i class="fas fa-scissors"></i>
-                    <input type="text" name="servicio" placeholder="Buscar servicios">
-                </div>
-                <div class="search-field">
-                    <i class="fas fa-calendar"></i>
-                    <select name="fecha">
-                        <option value="">Cualquier fecha</option>
-                        <option value="hoy">Hoy</option>
-                        <option value="manana">Mañana</option>
-                        <option value="semana">Esta semana</option>
-                        <option value="proxima">Próxima semana</option>
-                    </select>
+                    <input type="text" name="q" placeholder="{{ $hero['placeholder'] ?? 'Buscar negocio, servicio o ubicacion...' }}">
                 </div>
                 <button type="submit" class="search-btn">Buscar</button>
             </form>
 
             <!-- CATEGORY PILLS -->
             <div class="category-pills">
-                <a href="{{ url('/categoria/belleza') }}" class="category-pill"><i class="fas fa-sparkles"></i> Belleza</a>
-                <a href="{{ url('/categoria/bienestar') }}" class="category-pill"><i class="fas fa-heart"></i> Bienestar</a>
-                <a href="{{ url('/categoria/cuidados') }}" class="category-pill"><i class="fas fa-shield-alt"></i> Cuidados</a>
-                <a href="{{ url('/categoria/fitness') }}" class="category-pill"><i class="fas fa-bolt"></i> Fitness</a>
-                <a href="{{ url('/categoria/deportes') }}" class="category-pill"><i class="fas fa-trophy"></i> Deportes</a>
-                <a href="{{ url('/categoria/educacion') }}" class="category-pill"><i class="fas fa-graduation-cap"></i> Educación</a>
-                <a href="{{ url('/categoria/hogar') }}" class="category-pill"><i class="fas fa-home"></i> Hogar</a>
-                <a href="{{ url('/categoria/mascotas') }}" class="category-pill"><i class="fas fa-paw"></i> Mascotas</a>
+                @php
+                    $defaultPills = [
+                        ['icon' => 'fas fa-spa', 'label' => 'Belleza', 'slug' => 'belleza'],
+                        ['icon' => 'fas fa-heart', 'label' => 'Bienestar', 'slug' => 'bienestar'],
+                        ['icon' => 'fas fa-shield-alt', 'label' => 'Cuidados', 'slug' => 'cuidados'],
+                        ['icon' => 'fas fa-dumbbell', 'label' => 'Fitness', 'slug' => 'fitness'],
+                        ['icon' => 'fas fa-trophy', 'label' => 'Deportes', 'slug' => 'deportes'],
+                        ['icon' => 'fas fa-graduation-cap', 'label' => 'Educacion', 'slug' => 'educacion'],
+                        ['icon' => 'fas fa-home', 'label' => 'Hogar', 'slug' => 'hogar'],
+                        ['icon' => 'fas fa-paw', 'label' => 'Mascotas', 'slug' => 'mascotas'],
+                    ];
+                    $pills = !empty($hero['pills']) ? $hero['pills'] : $defaultPills;
+                @endphp
+                @foreach($pills as $pill)
+                    <a href="{{ route('negocios.explorar', ['categoria' => $pill['slug']]) }}" class="category-pill">
+                        <i class="{{ $pill['icon'] }}"></i> {{ $pill['label'] }}
+                    </a>
+                @endforeach
             </div>
         </div>
     </section>
@@ -795,95 +917,84 @@
     <!-- POPULAR SECTION -->
     <section class="section">
         <div class="section-header">
-            <h2 class="section-title">Popular en tu zona</h2>
-            <a href="{{ url('/negocios') }}" class="section-link">
-                Ver todos <i class="fas fa-chevron-right"></i>
+            <h2 class="section-title">{{ $businesses['title'] ?? 'Negocios en Calendarix' }}</h2>
+            <a href="{{ route('negocios.explorar') }}" class="section-link">
+                {{ $businesses['link_text'] ?? 'Ver todos' }} <i class="fas fa-chevron-right"></i>
             </a>
         </div>
 
+        @if($negociosDestacados->count())
         <div class="business-grid">
-            <!-- Card 1 -->
-            <a href="#" class="business-card">
-                <div class="business-card-image">
-                    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Salón de belleza">
-                    <span class="business-card-badge">Nuevo</span>
-                </div>
-                <div class="business-card-content">
-                    <h3 class="business-card-name">Studio Hair & Beauty</h3>
-                    <p class="business-card-category">Salón de belleza</p>
-                    <div class="business-card-rating">
-                        <i class="fas fa-star"></i>
-                        <span>4.9</span>
-                        <span class="reviews">(127 reseñas)</span>
+            @foreach($negociosDestacados as $neg)
+                @php
+                    $imgSrc = null;
+                    if ($neg->neg_portada) {
+                        $imgSrc = Str::startsWith($neg->neg_portada, ['http://', 'https://'])
+                            ? $neg->neg_portada
+                            : (Str::startsWith($neg->neg_portada, '/') ? $neg->neg_portada : asset('storage/' . $neg->neg_portada));
+                    } elseif ($neg->neg_imagen) {
+                        $imgSrc = Str::startsWith($neg->neg_imagen, ['http://', 'https://'])
+                            ? $neg->neg_imagen
+                            : (Str::startsWith($neg->neg_imagen, '/') ? $neg->neg_imagen : asset('storage/' . $neg->neg_imagen));
+                    }
+                    $cats = is_array($neg->neg_categorias) ? $neg->neg_categorias : [];
+                    $rating = $neg->resenas_avg_rating ? round($neg->resenas_avg_rating, 1) : null;
+                    $totalR = $neg->resenas_count ?? 0;
+                    $esNuevo = $neg->created_at && $neg->created_at->diffInDays(now()) <= 30;
+                @endphp
+                <a href="{{ route('negocios.show', ['slug' => $neg->slug]) }}" class="business-card">
+                    <div class="business-card-image">
+                        @if($imgSrc)
+                            <img src="{{ $imgSrc }}" alt="{{ $neg->neg_nombre_comercial }}">
+                        @else
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ebe7fa,#f3f0ff);">
+                                <i class="fas fa-store" style="font-size:2.5rem;color:#c7bdf2;"></i>
+                            </div>
+                        @endif
+                        @if($esNuevo)
+                            <span class="business-card-badge">Nuevo</span>
+                        @endif
                     </div>
-                    <p class="business-card-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Chapinero, Bogotá
-                    </p>
-                </div>
-            </a>
+                    <div class="business-card-content">
+                        <h3 class="business-card-name">{{ $neg->neg_nombre_comercial }}</h3>
+                        @if(count($cats))
+                            <p class="business-card-category">{{ implode(' · ', $cats) }}</p>
+                        @endif
+                        <div class="business-card-rating">
+                            @if($rating)
+                                <i class="fas fa-star"></i>
+                                <span>{{ $rating }}</span>
+                                <span class="reviews">({{ $totalR }} {{ $totalR === 1 ? 'resena' : 'resenas' }})</span>
+                            @else
+                                <i class="far fa-star" style="color:#d1d5db;"></i>
+                                <span class="reviews">Sin resenas</span>
+                            @endif
+                        </div>
+                        @if($neg->neg_direccion)
+                            <p class="business-card-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ Str::limit($neg->neg_direccion, 35) }}
+                            </p>
+                        @endif
+                    </div>
+                </a>
+            @endforeach
+        </div>
 
-            <!-- Card 2 -->
-            <a href="#" class="business-card">
-                <div class="business-card-image">
-                    <img src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Barbería">
-                </div>
-                <div class="business-card-content">
-                    <h3 class="business-card-name">The Gentleman's Barber</h3>
-                    <p class="business-card-category">Barbería</p>
-                    <div class="business-card-rating">
-                        <i class="fas fa-star"></i>
-                        <span>4.8</span>
-                        <span class="reviews">(89 reseñas)</span>
-                    </div>
-                    <p class="business-card-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Usaquén, Bogotá
-                    </p>
-                </div>
-            </a>
-
-            <!-- Card 3 -->
-            <a href="#" class="business-card">
-                <div class="business-card-image">
-                    <img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Spa">
-                </div>
-                <div class="business-card-content">
-                    <h3 class="business-card-name">Zen Spa & Wellness</h3>
-                    <p class="business-card-category">Spa y masajes</p>
-                    <div class="business-card-rating">
-                        <i class="fas fa-star"></i>
-                        <span>5.0</span>
-                        <span class="reviews">(203 reseñas)</span>
-                    </div>
-                    <p class="business-card-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Zona G, Bogotá
-                    </p>
-                </div>
-            </a>
-
-            <!-- Card 4 -->
-            <a href="#" class="business-card">
-                <div class="business-card-image">
-                    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Uñas">
-                    <span class="business-card-badge business-card-badge--discount">-20%</span>
-                </div>
-                <div class="business-card-content">
-                    <h3 class="business-card-name">Nail Art Studio</h3>
-                    <p class="business-card-category">Manicure y pedicure</p>
-                    <div class="business-card-rating">
-                        <i class="fas fa-star"></i>
-                        <span>4.7</span>
-                        <span class="reviews">(156 reseñas)</span>
-                    </div>
-                    <p class="business-card-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Cedritos, Bogotá
-                    </p>
-                </div>
+        <div style="text-align:center;margin-top:2rem;">
+            <a href="{{ route('negocios.explorar') }}" class="btn-explorar-mas">
+                {{ $businesses['btn_text'] ?? 'Explorar mas negocios' }} <i class="fas fa-arrow-right"></i>
             </a>
         </div>
+        @else
+        <div style="text-align:center;padding:3rem 1rem;color:var(--gray-500);">
+            <i class="fas fa-store" style="font-size:2.5rem;color:var(--primary-200);margin-bottom:1rem;display:block;"></i>
+            <p>Aun no hay negocios registrados. Se el primero en unirte.</p>
+            <a href="{{ route('register') }}" style="display:inline-block;margin-top:1rem;color:var(--primary-500);font-weight:600;text-decoration:none;">
+                Registrar mi negocio <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        @endif
     </section>
 
     <!-- PRICING SECTION -->
@@ -891,9 +1002,9 @@
     <section class="pricing-section">
         <div class="pricing-container">
             <div class="pricing-header">
-                <h2 class="pricing-title">Planes para tu negocio</h2>
+                <h2 class="pricing-title">{{ $pricing['title'] ?? 'Planes para tu negocio' }}</h2>
                 <p class="pricing-subtitle">
-                    Elige el plan que mejor se adapte al tamaño y necesidades de tu negocio
+                    {{ $pricing['subtitle'] ?? 'Elige el plan que mejor se adapte al tamano y necesidades de tu negocio' }}
                 </p>
             </div>
 
@@ -903,6 +1014,7 @@
                         $isFeatured = $loop->last && $plans->count() > 1;
                         $intervalLabel = $plan->interval === 'monthly' ? '/mes' : '/año';
                         $currencySymbol = match($plan->currency) {
+                            'UYU' => '$',
                             'USD' => '$',
                             'CLP' => '$',
                             'ARS' => '$',
@@ -978,72 +1090,34 @@
     <section class="features-section">
         <div class="features-container">
             <div class="features-header">
-                <h2 class="features-title">¿Por qué elegir Calendarix?</h2>
+                <h2 class="features-title">{{ $features['title'] ?? '¿Por qué elegir Calendarix?' }}</h2>
                 <p class="features-subtitle">
-                    La plataforma más confiable para reservar servicios profesionales
+                    {{ $features['subtitle'] ?? 'La plataforma más confiable para reservar servicios profesionales' }}
                 </p>
             </div>
 
+            @php
+                $defaultCards = [
+                    ['icon' => 'fas fa-clock', 'title' => 'Reserva 24/7', 'description' => 'Agenda citas en cualquier momento. Disponibilidad actualizada en tiempo real.'],
+                    ['icon' => 'fas fa-shield-alt', 'title' => 'Pagos Seguros', 'description' => 'Transacciones protegidas. Si algo sale mal, te devolvemos tu dinero.'],
+                    ['icon' => 'fas fa-star', 'title' => 'Profesionales Verificados', 'description' => 'Todos los profesionales tienen reseñas reales de clientes como tú.'],
+                    ['icon' => 'fas fa-bell', 'title' => 'Recordatorios', 'description' => 'Recibe notificaciones por email y WhatsApp para no olvidar tu cita.'],
+                    ['icon' => 'fas fa-mobile-alt', 'title' => 'Gestión Fácil', 'description' => 'Cancela o reprograma citas fácilmente desde cualquier dispositivo.'],
+                    ['icon' => 'fas fa-percent', 'title' => 'Ofertas Exclusivas', 'description' => 'Accede a descuentos especiales solo disponibles en nuestra plataforma.'],
+                ];
+                $featureCards = !empty($features['cards']) ? $features['cards'] : $defaultCards;
+            @endphp
+
             <div class="features-grid">
+                @foreach($featureCards as $card)
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
+                        <i class="{{ $card['icon'] }}"></i>
                     </div>
-                    <h3 class="feature-title">Reserva 24/7</h3>
-                    <p class="feature-description">
-                        Agenda citas en cualquier momento. Disponibilidad actualizada en tiempo real.
-                    </p>
+                    <h3 class="feature-title">{{ $card['title'] }}</h3>
+                    <p class="feature-description">{{ $card['description'] }}</p>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Pagos Seguros</h3>
-                    <p class="feature-description">
-                        Transacciones protegidas. Si algo sale mal, te devolvemos tu dinero.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="feature-title">Profesionales Verificados</h3>
-                    <p class="feature-description">
-                        Todos los profesionales tienen reseñas reales de clientes como tú.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <h3 class="feature-title">Recordatorios</h3>
-                    <p class="feature-description">
-                        Recibe notificaciones por email y WhatsApp para no olvidar tu cita.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Gestión Fácil</h3>
-                    <p class="feature-description">
-                        Cancela o reprograma citas fácilmente desde cualquier dispositivo.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-percent"></i>
-                    </div>
-                    <h3 class="feature-title">Ofertas Exclusivas</h3>
-                    <p class="feature-description">
-                        Accede a descuentos especiales solo disponibles en nuestra plataforma.
-                    </p>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -1051,21 +1125,48 @@
     <!-- CTA SECTION -->
     <section class="cta-section">
         <div class="cta-container">
-            <h2 class="cta-title">¿Tenés un negocio?</h2>
+            <h2 class="cta-title">{{ $cta['title'] ?? '¿Tenés un negocio?' }}</h2>
             <p class="cta-description">
-                Únete a miles de profesionales que usan Calendarix para gestionar sus citas,
-                atraer nuevos clientes y hacer crecer su negocio.
+                {{ $cta['subtitle'] ?? 'Únete a miles de profesionales que usan Calendarix para gestionar sus citas, atraer nuevos clientes y hacer crecer su negocio.' }}
             </p>
             <div class="cta-buttons">
                 <a href="{{ route('register') }}" class="btn btn-cta-white btn-lg">
-                    <i class="fas fa-rocket"></i>
-                    Registrar mi Negocio
+                    <i class="{{ $cta['btn1_icon'] ?? 'fas fa-rocket' }}"></i>
+                    {{ $cta['btn1_text'] ?? 'Registrar mi Negocio' }}
                 </a>
                 <a href="#" class="btn btn-cta-outline btn-lg">
-                    <i class="fas fa-play-circle"></i>
-                    Ver cómo funciona
+                    <i class="{{ $cta['btn2_icon'] ?? 'fas fa-play-circle' }}"></i>
+                    {{ $cta['btn2_text'] ?? 'Ver cómo funciona' }}
                 </a>
             </div>
         </div>
     </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rotating words
+    var words = document.querySelectorAll('.hero-rotating-word');
+    if (words.length > 1) {
+        var wCurrent = 0;
+        setInterval(function() {
+            words[wCurrent].classList.remove('active');
+            words[wCurrent].style.position = 'absolute';
+            wCurrent = (wCurrent + 1) % words.length;
+            words[wCurrent].classList.add('active');
+            words[wCurrent].style.position = 'relative';
+        }, 2500);
+    }
+
+    // Image slideshow
+    var slides = document.querySelectorAll('.hero-bg-slide');
+    if (slides.length > 1) {
+        var sCurrent = 0;
+        setInterval(function() {
+            slides[sCurrent].classList.remove('active');
+            sCurrent = (sCurrent + 1) % slides.length;
+            slides[sCurrent].classList.add('active');
+        }, 5000);
+    }
+});
+</script>
 @endsection

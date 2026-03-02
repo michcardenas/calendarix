@@ -12,13 +12,23 @@
 </head>
 <body>
 
+{{-- Hamburger button (mobile only) --}}
+<button class="admin-hamburger" id="adminHamburger" aria-label="Abrir menú">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+{{-- Overlay (mobile only) --}}
+<div class="admin-sidebar-overlay" id="adminOverlay"></div>
+
+{{-- SIDEBAR (fuera del grid para que fixed funcione al 100% en mobile) --}}
+<aside class="admin-sidebar" id="adminSidebar">
+    @include('admin.partials.sidebar')
+</aside>
+
 <div class="admin-dashboard">
     <div class="admin-main-layout">
-
-        {{-- SIDEBAR --}}
-        <aside class="admin-sidebar">
-            @include('admin.partials.sidebar')
-        </aside>
 
         {{-- CONTENIDO PRINCIPAL --}}
         <div class="admin-container">

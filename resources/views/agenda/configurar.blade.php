@@ -15,74 +15,104 @@ $diasSemana = [
 
 @section('content')
 <div class="min-h-screen px-6 py-10" style="background-color: #f6f5f7; color: #3B4269;">
-    <div class="max-w-7xl mx-auto space-y-10">
+    <div class="max-w-7xl mx-auto space-y-8">
 
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold" style="color: #5a31d7;">⚙️ Configuración de Agenda</h1>
+        <div>
+            <h1 class="text-2xl font-bold" style="color: #5a31d7;">Configuracion de Agenda</h1>
+            <p class="text-sm text-gray-400 mt-1">Gestiona tus fechas bloqueadas y horarios laborales.</p>
         </div>
 
-        <form action="{{ route('agenda.guardar_bloqueados', $empresa->id) }}" method="POST" class="space-y-10">
+        <form action="{{ route('agenda.guardar_bloqueados', $empresa->id) }}" method="POST" class="space-y-8">
             @csrf
 
             <input type="hidden" name="fechas_bloqueadas" id="fechas_bloqueadas">
 
             {{-- Calendario --}}
-            <section>
-                <h2 class="text-lg font-semibold mb-3" style="color: #5a31d7;">📅 Fechas bloqueadas</h2>
-                <div id="calendar" class="bg-white rounded-xl shadow-sm p-4"></div>
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-semibold text-[#3B4269]">Fechas bloqueadas</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">Haz clic en los dias que deseas bloquear.</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 text-xs text-red-400 bg-red-50 px-2.5 py-1 rounded-full" id="contador-bloqueados">
+                        <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                        <span id="num-bloqueados">0</span> bloqueados
+                    </span>
+                </div>
+                <div id="calendar" class="p-4"></div>
             </section>
 
             {{-- Horarios Laborales --}}
-            <section>
-                <h2 class="text-lg font-semibold mb-3" style="color: #5a31d7;">🕓 Horario laboral por día</h2>
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <table class="w-full text-sm text-gray-700">
-                        <thead style="background-color: #f6f5f7;" class="text-left text-xs uppercase text-[#5a31d7]">
-                            <tr>
-                                <th class="px-4 py-3">Día</th>
-                                <th class="px-4 py-3">Activo</th>
-                                <th class="px-4 py-3">Hora inicio</th>
-                                <th class="px-4 py-3">Hora fin</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach ($diasSemana as $numero => $nombre)
-                            @php
-                            $diaConvertido = $numero % 7;
-                            $horario = $horarios->firstWhere('dia_semana', $diaConvertido);
-                            @endphp
-                            <tr>
-                                <td class="px-4 py-2">{{ $nombre }}</td>
-                                <td class="px-4 py-2">
-                                    <input type="checkbox" name="dias_laborales[{{ $numero }}][activo]" value="1"
-                                        class="h-4 w-4 text-[#5a31d7] border-gray-300 rounded"
-                                        {{ $horario && $horario->activo ? 'checked' : '' }}>
-                                </td>
-                                <td class="px-4 py-2">
-                                    <input type="time" name="dias_laborales[{{ $numero }}][inicio]" class="form-input w-full rounded border-gray-300"
-                                        value="{{ $horario->hora_inicio ?? '' }}">
-                                </td>
-                                <td class="px-4 py-2">
-                                    <input type="time" name="dias_laborales[{{ $numero }}][fin]" class="form-input w-full rounded border-gray-300"
-                                        value="{{ $horario->hora_fin ?? '' }}">
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-base font-semibold text-[#3B4269]">Horario laboral por dia</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">Define los horarios de apertura y cierre para cada dia.</p>
                 </div>
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-[#f9f8fc] text-xs uppercase tracking-wide text-[#5a31d7]">
+                            <th class="px-6 py-3 text-left font-semibold">Dia</th>
+                            <th class="px-4 py-3 text-center font-semibold">Estado</th>
+                            <th class="px-4 py-3 text-left font-semibold">Inicio</th>
+                            <th class="px-4 py-3 text-left font-semibold">Fin</th>
+                            <th class="px-4 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($diasSemana as $numero => $nombre)
+                        @php
+                        $diaConvertido = $numero % 7;
+                        $horario = $horarios->firstWhere('dia_semana', $diaConvertido);
+                        $isActive = $horario && $horario->activo;
+                        @endphp
+                        <tr data-dia="{{ $numero }}" class="border-b border-gray-50 hover:bg-[#faf9fd] transition-colors horario-row {{ $isActive ? 'activo' : 'inactivo' }}">
+                            <td class="px-6 py-3">
+                                <span class="font-medium text-[#3B4269]">{{ $nombre }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="dias_laborales[{{ $numero }}][activo]" value="1"
+                                        class="dia-activo sr-only"
+                                        {{ $isActive ? 'checked' : '' }}>
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </td>
+                            <td class="px-4 py-3">
+                                <input type="time" name="dias_laborales[{{ $numero }}][inicio]"
+                                    class="form-input rounded-lg border-gray-200 text-sm px-3 py-1.5 focus:ring-[#5a31d7] focus:border-[#5a31d7] dia-inicio w-full max-w-[140px]"
+                                    value="{{ $horario->hora_inicio ?? '' }}">
+                            </td>
+                            <td class="px-4 py-3">
+                                <input type="time" name="dias_laborales[{{ $numero }}][fin]"
+                                    class="form-input rounded-lg border-gray-200 text-sm px-3 py-1.5 focus:ring-[#5a31d7] focus:border-[#5a31d7] dia-fin w-full max-w-[140px]"
+                                    value="{{ $horario->hora_fin ?? '' }}">
+                            </td>
+                            <td class="px-4 py-3 text-right">
+                                @if($numero > 1)
+                                    <button type="button" onclick="clonarDiaAnterior({{ $numero }})"
+                                        class="inline-flex items-center gap-1 text-[#5a31d7] hover:bg-[#5a31d7] hover:text-white px-2.5 py-1 rounded-md transition-all text-xs font-medium"
+                                        title="Copiar horario del dia anterior">
+                                        <i class="fas fa-copy"></i>
+                                        <span class="hidden sm:inline">Copiar</span>
+                                    </button>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </section>
 
             {{-- Botones --}}
-            <div class="flex flex-wrap gap-4">
+            <div class="flex flex-wrap gap-3 pt-2">
                 <button type="submit"
-                    class="inline-flex items-center px-5 py-2 bg-[#5a31d7] text-white rounded-md hover:bg-[#7b5ce0] transition text-sm font-medium">
-                    Guardar configuración
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#5a31d7] text-white rounded-xl hover:bg-[#7b5ce0] hover:shadow-lg hover:shadow-[#5a31d7]/20 transition-all text-sm font-semibold">
+                    <i class="fas fa-save"></i> Guardar configuracion
                 </button>
 
                 <a href="{{ route('empresa.agenda', $empresa->id) }}"
-                    class="inline-flex items-center px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition text-sm font-medium">
-                    Volver
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#3B4269] border border-gray-200 rounded-xl hover:bg-gray-50 transition-all text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
         </form>
@@ -93,45 +123,142 @@ $diasSemana = [
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <style>
+    /* Toggle switch */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        cursor: pointer;
+    }
+    .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #d1d5db;
+        border-radius: 999px;
+        transition: background 0.2s;
+    }
+    .toggle-track::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        transition: transform 0.2s;
+    }
+    .dia-activo:checked + .toggle-track {
+        background: #5a31d7;
+    }
+    .dia-activo:checked + .toggle-track::after {
+        transform: translateX(16px);
+    }
+
+    /* Fila inactiva */
+    .horario-row.inactivo .dia-inicio,
+    .horario-row.inactivo .dia-fin {
+        opacity: 0.4;
+    }
+
+    /* FullCalendar */
     .fc {
-        --fc-border-color: transparent;
-        --fc-today-bg-color: #f6f5f7;
+        --fc-border-color: #f0f0f5;
+        --fc-today-bg-color: rgba(90, 49, 215, 0.04);
         font-family: 'Segoe UI', sans-serif;
     }
 
     .fc .fc-toolbar-title {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 600;
-        color: #5a31d7;
+        color: #3B4269;
     }
 
     .fc .fc-button {
-        background: #5a31d7;
-        border: none;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        padding: 0.35rem 0.7rem;
+        border-radius: 8px;
         font-size: 0.75rem;
         font-weight: 500;
-        color: white;
+        color: #3B4269;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
     .fc .fc-button:hover {
-        background: #7b5ce0;
+        background: #5a31d7;
+        border-color: #5a31d7;
+        color: white;
+    }
+
+    .fc .fc-button-active {
+        background: #5a31d7 !important;
+        border-color: #5a31d7 !important;
+        color: white !important;
     }
 
     .fc a {
         text-decoration: none !important;
     }
 
-    .fc .fc-col-header-cell-cushion,
+    .fc .fc-col-header-cell-cushion {
+        color: #9c9cb9;
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
     .fc .fc-daygrid-day-number {
         color: #3B4269;
         font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .fc .fc-day-today .fc-daygrid-day-number {
+        background: #5a31d7;
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2px;
     }
 
     .fc .fc-daygrid-event {
         background-color: #fee2e2;
         border-radius: 6px;
+    }
+
+    /* Dias bloqueados */
+    .fc .fc-bg-event {
+        background: repeating-linear-gradient(
+            -45deg,
+            rgba(220, 38, 38, 0.12),
+            rgba(220, 38, 38, 0.12) 4px,
+            rgba(220, 38, 38, 0.04) 4px,
+            rgba(220, 38, 38, 0.04) 8px
+        ) !important;
+        border: 2px solid rgba(220, 38, 38, 0.25) !important;
+        border-radius: 6px !important;
+        opacity: 1 !important;
+    }
+
+    .fc .fc-daygrid-day.bloqueado-day {
+        position: relative;
+    }
+
+    .fc .fc-daygrid-day.bloqueado-day .fc-daygrid-day-number {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .fc .fc-daygrid-day.bloqueado-day .fc-daygrid-day-frame {
+        background: rgba(220, 38, 38, 0.03);
     }
 </style>
 @endpush
@@ -143,6 +270,10 @@ $diasSemana = [
     document.addEventListener('DOMContentLoaded', function() {
         let fechasSeleccionadas = @json($fechasBloqueadas ?? []);
         const calendarEl = document.getElementById('calendar');
+
+        function actualizarContador() {
+            document.getElementById('num-bloqueados').textContent = fechasSeleccionadas.length;
+        }
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -161,9 +292,15 @@ $diasSemana = [
             events: fechasSeleccionadas.map(fecha => ({
                 start: fecha,
                 display: 'background',
-                backgroundColor: '#fee2e2'
+                backgroundColor: 'rgba(220, 38, 38, 0.12)'
             })),
             eventDisplay: 'background',
+            dayCellDidMount: function(info) {
+                const dateStr = info.date.toISOString().split('T')[0];
+                if (fechasSeleccionadas.includes(dateStr)) {
+                    info.el.classList.add('bloqueado-day');
+                }
+            },
             height: 650,
             headerToolbar: {
                 left: 'prev,next today',
@@ -174,19 +311,64 @@ $diasSemana = [
 
         function actualizarEventos() {
             calendar.removeAllEvents();
+
+            document.querySelectorAll('.bloqueado-day').forEach(el => el.classList.remove('bloqueado-day'));
+
             fechasSeleccionadas.forEach(fecha => {
                 calendar.addEvent({
                     start: fecha,
                     display: 'background',
-                    backgroundColor: '#fee2e2'
+                    backgroundColor: 'rgba(220, 38, 38, 0.12)'
                 });
+
+                const cell = document.querySelector(`[data-date="${fecha}"]`);
+                if (cell) cell.classList.add('bloqueado-day');
             });
 
             document.getElementById('fechas_bloqueadas').value = fechasSeleccionadas.join(',');
+            actualizarContador();
         }
 
         calendar.render();
         actualizarEventos();
+
+        // Toggle visual de filas activas/inactivas
+        document.querySelectorAll('.dia-activo').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const row = this.closest('.horario-row');
+                row.classList.toggle('activo', this.checked);
+                row.classList.toggle('inactivo', !this.checked);
+            });
+        });
+
+        // Auto-activar al poner horario
+        document.querySelectorAll('.dia-inicio, .dia-fin').forEach(input => {
+            input.addEventListener('change', function() {
+                const fila = this.closest('tr');
+                const checkbox = fila.querySelector('.dia-activo');
+                if (this.value) {
+                    checkbox.checked = true;
+                    fila.classList.add('activo');
+                    fila.classList.remove('inactivo');
+                }
+            });
+        });
     });
+
+    function clonarDiaAnterior(diaActual) {
+        const diaAnterior = diaActual - 1;
+        const filaAnterior = document.querySelector(`tr[data-dia="${diaAnterior}"]`);
+        const filaActual = document.querySelector(`tr[data-dia="${diaActual}"]`);
+
+        if (!filaAnterior || !filaActual) return;
+
+        const wasChecked = filaAnterior.querySelector('.dia-activo').checked;
+        filaActual.querySelector('.dia-activo').checked = wasChecked;
+        filaActual.querySelector('.dia-inicio').value = filaAnterior.querySelector('.dia-inicio').value;
+        filaActual.querySelector('.dia-fin').value = filaAnterior.querySelector('.dia-fin').value;
+
+        filaActual.classList.toggle('activo', wasChecked);
+        filaActual.classList.toggle('inactivo', !wasChecked);
+    }
 </script>
 @endpush

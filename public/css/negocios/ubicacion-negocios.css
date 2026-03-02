@@ -504,6 +504,104 @@ label:not([for]) {
     }
 }
 
+/* ===== MAPA GOOGLE MAPS ===== */
+.map-section {
+    margin: var(--space-lg) 0;
+    transition: var(--transition);
+}
+
+.map-container {
+    width: 100%;
+    height: 350px;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.map-container:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.map-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: var(--space-sm);
+    margin-bottom: 0;
+    padding: var(--space-sm) 0;
+}
+
+.map-hint-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234A5EAA"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+}
+
+/* Google Places Autocomplete dropdown */
+.pac-container {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    margin-top: 4px;
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    z-index: 10000;
+}
+
+.pac-item {
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+    border-top: 1px solid rgba(209, 205, 234, 0.3);
+}
+
+.pac-item:first-child {
+    border-top: none;
+}
+
+.pac-item:hover {
+    background: rgba(74, 94, 170, 0.06);
+}
+
+.pac-item-selected {
+    background: rgba(74, 94, 170, 0.1);
+}
+
+.pac-icon {
+    margin-right: 8px;
+}
+
+.pac-item-query {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .map-container {
+        height: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .map-container {
+        height: 220px;
+    }
+
+    .map-hint {
+        font-size: 12px;
+    }
+}
+
 /* ===== ACCESIBILIDAD ===== */
 @media (prefers-reduced-motion: reduce) {
     * {

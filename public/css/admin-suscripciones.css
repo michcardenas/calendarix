@@ -1,0 +1,357 @@
+/* ============================================
+   ADMIN SUSCRIPCIONES CSS
+   ============================================ */
+
+/* Alertas */
+.admin-alert {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.admin-alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Filtros */
+.sub-filters {
+    background: var(--admin-white);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.sub-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.sub-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--admin-text-light);
+    background: var(--admin-bg);
+    transition: all 0.2s ease;
+}
+
+.sub-tab:hover {
+    color: var(--admin-primary);
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.sub-tab.active {
+    color: #fff;
+    background: var(--admin-primary);
+}
+
+.sub-tab-count {
+    background: rgba(0,0,0,0.1);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.sub-tab.active .sub-tab-count {
+    background: rgba(255,255,255,0.25);
+}
+
+/* Search */
+.sub-search {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.sub-search-input {
+    flex: 1;
+    position: relative;
+}
+
+.sub-search-input i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--admin-text-light);
+    font-size: 0.85rem;
+}
+
+.sub-search-input input {
+    width: 100%;
+    padding: 0.6rem 0.75rem 0.6rem 2.25rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.sub-search-input input:focus {
+    border-color: var(--admin-primary);
+}
+
+.sub-search-btn {
+    padding: 0.6rem 1.25rem;
+    background: var(--admin-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: inherit;
+}
+
+.sub-search-btn:hover {
+    background: #4f46e5;
+}
+
+/* Actions */
+.sub-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sub-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: var(--admin-text-light);
+}
+
+.sub-btn:hover {
+    border-color: var(--admin-primary);
+    color: var(--admin-primary);
+}
+
+.sub-btn-view:hover {
+    border-color: var(--admin-primary);
+    color: var(--admin-primary);
+}
+
+/* Dropdown */
+.sub-dropdown {
+    position: relative;
+}
+
+.sub-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: #fff;
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    min-width: 160px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.sub-dropdown-menu.show {
+    display: block;
+}
+
+.sub-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.85rem;
+    color: var(--admin-text);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+}
+
+.sub-dropdown-item:hover {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--admin-primary);
+}
+
+/* Pagination */
+.sub-pagination {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--admin-border);
+}
+
+.sub-pagination nav {
+    display: flex;
+    justify-content: center;
+}
+
+/* ============================================
+   SHOW / DETAIL VIEW
+   ============================================ */
+
+.sub-detail-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1.5rem;
+}
+
+.sub-detail-card {
+    background: var(--admin-white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.sub-detail-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--admin-text);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.sub-detail-title i {
+    color: var(--admin-primary);
+}
+
+.sub-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.sub-detail-row:last-of-type {
+    border-bottom: none;
+}
+
+.sub-detail-label {
+    font-size: 0.85rem;
+    color: var(--admin-text-light);
+    font-weight: 500;
+}
+
+/* User info */
+.sub-user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.sub-user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--admin-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* Status change form */
+.sub-detail-status-change {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--admin-border);
+}
+
+.sub-detail-status-change h4 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    margin-bottom: 0.75rem;
+}
+
+.sub-status-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.sub-select {
+    flex: 1;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    background: #fff;
+}
+
+.sub-select:focus {
+    border-color: var(--admin-primary);
+}
+
+.sub-btn-save {
+    padding: 0.6rem 1.25rem;
+    background: var(--admin-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+}
+
+.sub-btn-save:hover {
+    background: #4f46e5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sub-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .sub-search {
+        flex-direction: column;
+    }
+
+    .sub-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}

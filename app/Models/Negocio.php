@@ -26,6 +26,8 @@ class Negocio extends Model
         'neg_categorias',
         'neg_equipo',
         'neg_direccion',
+        'neg_latitud',
+        'neg_longitud',
         'neg_portada',
         'neg_virtual',
         'neg_direccion_confirmada',
@@ -83,6 +85,8 @@ class Negocio extends Model
         'neg_acepto' => 'boolean',
         'neg_virtual' => 'boolean',
         'neg_direccion_confirmada' => 'boolean',
+        'neg_latitud' => 'float',
+        'neg_longitud' => 'float',
         'configuracion_bloques' => 'array',
     ];
 
