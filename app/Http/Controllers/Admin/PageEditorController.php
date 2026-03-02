@@ -54,11 +54,25 @@ class PageEditorController extends Controller
         $heroData['bg_type'] = $bgType;
 
         // Imagenes de fondo
-        $images = $request->input('hero_existing_images', []);
+        $existing = SiteContent::get('home_hero');
+        $keptImages = $request->input('hero_existing_images', []);
         $dir = public_path('images/cms');
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
+
+        // Eliminar imagenes que el usuario quito del editor
+        $oldImages = $existing['images'] ?? [];
+        foreach ($oldImages as $oldImg) {
+            if (!in_array($oldImg, $keptImages)) {
+                $oldPath = public_path($oldImg);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+        }
+
+        $images = $keptImages;
         if ($request->hasFile('hero_images')) {
             foreach ($request->file('hero_images') as $file) {
                 $filename = 'hero_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -67,11 +81,7 @@ class PageEditorController extends Controller
             }
         }
         $heroData['images'] = array_values($images);
-        // Backwards compat: keep single 'image' key pointing to first image
         $heroData['image'] = $images[0] ?? null;
-
-        // Video de fondo
-        $existing = SiteContent::get('home_hero');
         if ($request->hasFile('hero_video')) {
             // Eliminar video anterior si existe
             if (!empty($existing['video_path'])) {
