@@ -598,6 +598,10 @@
                     @endif
                 </div>
 
+                @if($negocio->neg_descripcion)
+                    <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.55;margin:8px 0 0 0;">{{ $negocio->neg_descripcion }}</p>
+                @endif
+
                 <div class="infobar-meta">
                     @if($negocio->neg_direccion)
                         <span><i class="fas fa-map-marker-alt" style="color:var(--primary);margin-right:4px;"></i>{{ $negocio->neg_direccion }}</span>

@@ -104,6 +104,16 @@
                 </li>
             </ul>
         </nav>
+
+        <div class="clx-sidebar-footer">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="clx-logout-btn">
+                    <i class="fas fa-sign-out-alt clx-nav-icon"></i>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
     </aside>
 
     <!-- Contenido principal -->

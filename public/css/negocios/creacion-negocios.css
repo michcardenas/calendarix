@@ -324,8 +324,44 @@ body {
     line-height: 1.4;
 }
 
-/* ===== BOTÓN ===== */
+/* ===== BOTONES ===== */
 .button-container { text-align: center; }
+
+.buttons-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: var(--space-lg);
+}
+
+.btn-volver {
+    padding: 18px var(--space-2xl);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--space-md);
+    transition: var(--transition);
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 160px;
+    justify-content: center;
+}
+
+.btn-volver:hover {
+    background: rgba(74, 94, 170, 0.08);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-volver:active {
+    transform: translateY(-1px);
+}
 
 .submit-btn {
     background: var(--gradient-primary);

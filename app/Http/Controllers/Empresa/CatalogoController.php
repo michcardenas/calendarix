@@ -58,7 +58,7 @@ class CatalogoController extends Controller
 
         if (!in_array(mb_strtolower($categoria), $lower, true)) {
             $cats[] = $categoria;
-            $negocio->neg_categorias = json_encode(array_values($cats), JSON_UNESCAPED_UNICODE);
+            $negocio->neg_categorias = array_values($cats);
             $negocio->save();
         }
     }

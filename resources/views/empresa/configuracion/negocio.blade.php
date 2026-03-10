@@ -511,6 +511,11 @@
                 </div>
 
                 <div>
+                    <label class="field-label">Descripción del negocio</label>
+                    <textarea name="confneg_descripcion" class="field-input" rows="3" maxlength="1000" placeholder="Cuéntanos brevemente sobre tu negocio..." style="resize: vertical;">{{ $empresa->neg_descripcion }}</textarea>
+                </div>
+
+                <div>
                     <label class="field-label">País</label>
                     <select name="confneg_pais" class="field-input">
                         <option selected>{{ $empresa->neg_pais ?? 'Colombia' }}</option>
@@ -560,8 +565,53 @@
             </div>
         </div>
 
-        {{-- ========== COLUMNA DERECHA: Enlaces + Imágenes ========== --}}
+        {{-- ========== COLUMNA DERECHA: Categorías + Enlaces + Imágenes ========== --}}
         <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+            {{-- Card: Categorías --}}
+            <div class="profile-card">
+                <h3 class="profile-card-title">
+                    <i class="fas fa-tags"></i> Categorías
+                </h3>
+
+                @php
+                    $gruposCat = [
+                        ['nombre' => 'Belleza', 'icon' => 'fa-spa', 'color' => '#e91e63', 'subs' => ['Peluqueria','Barberia','Uñas','Depilacion','Maquillaje','Cama Solar','Tatuaje','Peluqueria canina','Bienestar','Clinicas esteticas','Spa','Masajes']],
+                        ['nombre' => 'Cuidados', 'icon' => 'fa-heartbeat', 'color' => '#00bcd4', 'subs' => ['Acupuntura','Quiropractico','Nutricionista','Coaching','Fisioterapia','Psicologia','Odontologia','Kinesiologia']],
+                        ['nombre' => 'Fitness', 'icon' => 'fa-dumbbell', 'color' => '#ff9800', 'subs' => ['Yoga','Gimnasio','Entrenador personal','Pilates','Ciclismo','Baile']],
+                        ['nombre' => 'Deportes', 'icon' => 'fa-trophy', 'color' => '#4caf50', 'subs' => ['Cancha de padel','Cancha de futbol 5','Cancha de tenis','Cancha de pickleball']],
+                    ];
+                    $currentCats = is_array($empresa->neg_categorias) ? $empresa->neg_categorias : [];
+                @endphp
+
+                @foreach($gruposCat as $gi => $grupo)
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none'">
+                            <span style="width: 28px; height: 28px; border-radius: 50%; background: {{ $grupo['color'] }}; display: inline-flex; align-items: center; justify-content: center;">
+                                <i class="fas {{ $grupo['icon'] }}" style="color: #fff; font-size: 0.7rem;"></i>
+                            </span>
+                            <span style="font-weight: 600; font-size: 0.875rem; color: #374151;">{{ $grupo['nombre'] }}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.6rem; color: #9ca3af; margin-left: auto;"></i>
+                        </div>
+                        <div style="display: {{ collect($grupo['subs'])->intersect($currentCats)->count() ? 'flex' : 'none' }}; flex-wrap: wrap; gap: 6px;">
+                            @foreach($grupo['subs'] as $sub)
+                                @php $isChecked = in_array($sub, $currentCats); @endphp
+                                <label style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; cursor: pointer; border: 1px solid {{ $isChecked ? '#5a31d7' : '#e5e7eb' }}; background: {{ $isChecked ? 'rgba(90,49,215,0.1)' : '#fff' }}; color: {{ $isChecked ? '#5a31d7' : '#6b7280' }}; transition: all 0.2s;">
+                                    <input type="checkbox" name="confneg_categorias[]" value="{{ $sub }}" {{ $isChecked ? 'checked' : '' }} style="display: none;"
+                                        onchange="var l=this.parentElement; if(this.checked){l.style.border='1px solid #5a31d7';l.style.background='rgba(90,49,215,0.1)';l.style.color='#5a31d7';}else{l.style.border='1px solid #e5e7eb';l.style.background='#fff';l.style.color='#6b7280';}">
+                                    {{ $sub }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- Otro --}}
+                <div style="margin-top: 0.5rem;">
+                    <label class="field-label">Otra categoría</label>
+                    <input type="text" name="confneg_categoria_otro" placeholder="Especifica tu categoría" class="field-input">
+                </div>
+            </div>
 
             {{-- Card: Enlaces externos --}}
             <div class="profile-card">

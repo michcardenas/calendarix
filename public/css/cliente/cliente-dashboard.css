@@ -259,6 +259,45 @@ body {
 }
 
 /* ===============================================
+   SIDEBAR FOOTER / LOGOUT
+   =============================================== */
+.clx-sidebar-footer {
+    margin-top: auto;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--clx-border);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.clx-logout-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: transparent;
+    border: 1px solid rgba(231, 76, 60, 0.15);
+    border-radius: var(--clx-radius-sm);
+    color: var(--clx-text);
+    font-family: inherit;
+    font-size: 0.925rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--clx-transition);
+}
+
+.clx-logout-btn:hover {
+    background: rgba(231, 76, 60, 0.08);
+    color: var(--clx-danger);
+    border-color: rgba(231, 76, 60, 0.3);
+}
+
+.clx-logout-btn:active {
+    transform: scale(0.98);
+}
+
+/* ===============================================
    CONTENIDO PRINCIPAL
    =============================================== */
 .clx-main {

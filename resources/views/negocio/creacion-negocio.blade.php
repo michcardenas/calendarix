@@ -34,16 +34,15 @@
             <!-- Campos del formulario -->
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="neg_nombre" class="form-label">Nombre</label>
-                    <input type="text" name="neg_nombre" id="neg_nombre" required class="form-input" value="{{ old('neg_nombre', explode(' ', $user->name)[0] ?? '') }}"
->
+                    <label for="neg_nombre" class="form-label">Nombre del encargado</label>
+                    <input type="text" name="neg_nombre" id="neg_nombre" required class="form-input" value="{{ old('neg_nombre', explode(' ', $user->name)[0] ?? '') }}">
                     @error('neg_nombre')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="neg_apellido" class="form-label">Apellido</label>
+                    <label for="neg_apellido" class="form-label">Apellido del encargado</label>
                     <input type="text" name="neg_apellido" id="neg_apellido" required class="form-input" value="{{ old('neg_apellido', explode(' ', $user->name)[1] ?? '') }}">
                     @error('neg_apellido')
                         <span class="error-message">{{ $message }}</span>
@@ -51,8 +50,15 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label for="neg_email" class="form-label">Email</label>
-                    <input type="email" name="neg_email" id="neg_email" required class="form-input" value="{{ old('neg_email', $user->email ?? '') }}">
+                    <label for="neg_email" class="form-label">Email del negocio <span style="font-weight:400;color:#9c9cb9;">(opcional)</span></label>
+                    <div class="checkbox-container" style="margin-bottom: 0.5rem; padding: 0;">
+                        <label class="checkbox-wrapper" style="margin: 0;">
+                            <input type="checkbox" id="neg_usar_email_cuenta" {{ old('neg_email', '') === '' || old('neg_email') === $user->email ? 'checked' : '' }}>
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Usar el email de mi cuenta ({{ $user->email }})</span>
+                        </label>
+                    </div>
+                    <input type="email" name="neg_email" id="neg_email" class="form-input" value="{{ old('neg_email', $user->email ?? '') }}" placeholder="correo@ejemplo.com">
                     @error('neg_email')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -60,7 +66,7 @@
 
                 <div class="form-group">
                     <label for="neg_telefono" class="form-label">Número de teléfono móvil</label>
-                    <input type="text" name="neg_telefono" id="neg_telefono" required class="form-input" value="{{ old('neg_telefono', $user->phone ?? '') }}">
+                    <input type="tel" name="neg_telefono" id="neg_telefono" required class="form-input" pattern="09[0-9]{7}" maxlength="9" placeholder="09XXXXXXX" title="Ingrese un número móvil uruguayo válido (09 seguido de 7 dígitos)" value="{{ old('neg_telefono', $user->phone ?? '') }}">
                     @error('neg_telefono')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -68,8 +74,16 @@
 
                 <div class="form-group">
                     <label for="neg_pais" class="form-label">País</label>
-                    <input type="text" name="neg_pais" id="neg_pais" value="{{ old('neg_pais', 'Colombia') }}" required class="form-input">
+                    <input type="text" name="neg_pais" id="neg_pais" value="{{ old('neg_pais', 'Uruguay') }}" required class="form-input">
                     @error('neg_pais')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="neg_descripcion" class="form-label">Descripción del negocio <span style="font-weight:400;color:#9c9cb9;">(opcional)</span></label>
+                    <textarea name="neg_descripcion" id="neg_descripcion" class="form-input" rows="3" maxlength="1000" placeholder="Cuéntanos brevemente sobre tu negocio...">{{ old('neg_descripcion') }}</textarea>
+                    @error('neg_descripcion')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
@@ -87,8 +101,11 @@
                 @enderror
             </div>
 
-            <!-- Botón de envío -->
-            <div class="button-container">
+            <!-- Botones -->
+            <div class="buttons-row">
+                <a href="{{ route('dashboard') }}" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
                 <button type="submit" class="submit-btn">
                     <span>Unirse a Calendarix</span>
                     <div class="btn-shimmer"></div>

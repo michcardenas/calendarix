@@ -16,6 +16,7 @@ use App\Models\Trabajador;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotificacionGeneral;
+use App\Models\Cliente;
 
 class AgendaController extends Controller
 {
@@ -78,8 +79,49 @@ class AgendaController extends Controller
             ];
         }
 
-        // Verificar resultado final
-        // dd($eventosHorarios);
+        // Citas agendadas
+        $citas = Cita::where('negocio_id', $empresa->id)
+            ->with(['servicio', 'trabajador'])
+            ->orderBy('fecha')
+            ->orderBy('hora_inicio')
+            ->get();
+
+        $coloresEstado = [
+            'pendiente'  => '#f59e0b',
+            'confirmada' => '#10b981',
+            'cancelada'  => '#ef4444',
+            'completada' => '#5a31d7',
+        ];
+
+        foreach ($citas as $cita) {
+            $color = $coloresEstado[$cita->estado] ?? '#6b7280';
+            $nombre = $cita->nombre_cliente ?: 'Sin nombre';
+            $servicio = $cita->servicio?->nombre;
+            $trabajador = $cita->trabajador?->nombre;
+
+            $titulo = $nombre;
+            if ($servicio) $titulo .= " · {$servicio}";
+            if ($trabajador) $titulo .= " ({$trabajador})";
+
+            $eventosHorarios[] = [
+                'id'    => 'cita-' . $cita->id,
+                'title' => $titulo,
+                'start' => $cita->fecha . 'T' . $cita->hora_inicio,
+                'end'   => $cita->fecha . 'T' . ($cita->hora_fin ?? $cita->hora_inicio),
+                'color' => $color,
+                'extendedProps' => [
+                    'cita_id'      => $cita->id,
+                    'estado'       => $cita->estado,
+                    'cliente'      => $nombre,
+                    'telefono'     => $cita->telefono_cliente,
+                    'email'        => $cita->email_cliente,
+                    'servicio'     => $servicio,
+                    'trabajador'   => $trabajador,
+                    'notas'        => $cita->notas,
+                    'precio'       => $cita->precio_cerrado ? number_format($cita->precio_cerrado / 100, 0, ',', '.') : null,
+                ],
+            ];
+        }
 
         return view('empresa.agenda', [
             'empresa' => $empresa,
@@ -229,6 +271,18 @@ class AgendaController extends Controller
             'precio_cerrado' => $precioCerrado,
             'trabajador_id'  => $validated['trabajador_id'], // ← nuevo
         ]);
+
+        // Registrar o actualizar cliente automáticamente
+        Cliente::updateOrCreate(
+            [
+                'negocio_id' => $negocioId,
+                'email'      => $validated['email_cliente'],
+            ],
+            [
+                'nombre'   => $validated['nombre_cliente'],
+                'telefono' => $validated['telefono_cliente'],
+            ]
+        );
 
         // Título sugerido (cliente + nombre de trabajador opcional)
         $trabajador = Trabajador::find($validated['trabajador_id']);

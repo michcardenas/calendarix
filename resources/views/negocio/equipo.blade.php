@@ -38,8 +38,10 @@
                     <div class="error-message">{{ $message }}</div>
                 @enderror
 
-                <br>
-                <button type="submit">Continuar →</button>
+                <div class="buttons-row">
+                    <a href="{{ route('negocio.categorias') }}" class="btn-volver">← Volver</a>
+                    <button type="submit">Continuar →</button>
+                </div>
             </form>
         </div>
     </div>

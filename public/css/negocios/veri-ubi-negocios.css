@@ -267,8 +267,48 @@ form {
     text-align: center;
 }
 
-/* ===== BOTÓN ===== */
+/* ===== BOTONES ===== */
+.buttons-row {
+    display: flex;
+    gap: 12px;
+    margin-top: var(--space-lg);
+}
+
+.buttons-row button[type="submit"] {
+    margin-top: 0;
+}
+
+.btn-volver {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px var(--space-2xl);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 18px;
+    transition: var(--transition);
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.btn-volver:hover {
+    background: var(--primary);
+    color: var(--white);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-volver:active {
+    transform: translateY(-2px);
+}
+
 button[type="submit"] {
+    flex: 1;
     background: var(--gradient-primary);
     color: var(--white);
     padding: 20px var(--space-2xl);

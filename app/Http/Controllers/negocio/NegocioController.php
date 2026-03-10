@@ -21,13 +21,14 @@ class NegocioController extends Controller
         $validated = $request->validate([
             'neg_nombre' => 'required|string|max:100',
             'neg_apellido' => 'required|string|max:100',
-            'neg_email' => 'required|email|max:255|unique:negocios',
-            'neg_telefono' => 'required|string|max:20',
+            'neg_email' => 'nullable|email|max:255',
+            'neg_telefono' => ['required', 'string', 'regex:/^09[0-9]{7}$/'],
             'neg_pais' => 'nullable|string|max:100',
             'neg_facebook' => 'nullable|string|max:255',
             'neg_instagram' => 'nullable|string|max:255',
             'neg_imagen' => 'nullable|image|max:2048',
             'neg_nombre_comercial' => 'nullable|string|max:255',
+            'neg_descripcion' => 'nullable|string|max:1000',
             'neg_sitio_web' => 'nullable|string|max:255',
             'neg_categorias' => 'nullable|string',
             'neg_equipo' => 'nullable|string|max:255',
@@ -45,6 +46,11 @@ class NegocioController extends Controller
             $destination = '/home/u533926615/domains/calendarix.uy/public_html/images';
             $file->move($destination, $filename);
             $validated['neg_imagen'] = '/images/' . $filename;
+        }
+
+        // Si no se proporcionó email, usar el de la cuenta
+        if (empty($validated['neg_email'])) {
+            $validated['neg_email'] = auth()->user()->email;
         }
 
         $validated['neg_virtual'] = $request->has('neg_virtual');

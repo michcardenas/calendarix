@@ -203,6 +203,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // Crear partículas cada 3 segundos
     setInterval(createFloatingParticle, 3000);
 
+    // ===== TOGGLE EMAIL CON CHECKBOX =====
+    const usarEmailCheckbox = document.getElementById('neg_usar_email_cuenta');
+    const emailInput = document.getElementById('neg_email');
+
+    if (usarEmailCheckbox && emailInput) {
+        // Extraer el email de la cuenta desde el texto del checkbox
+        const checkboxText = usarEmailCheckbox.closest('label').querySelector('.checkbox-text')?.textContent || '';
+        const accountEmail = (checkboxText.match(/\((.+)\)/) || [])[1] || '';
+
+        function toggleEmailField() {
+            if (usarEmailCheckbox.checked) {
+                emailInput.value = accountEmail;
+                emailInput.readOnly = true;
+                emailInput.style.opacity = '0.6';
+                emailInput.style.cursor = 'not-allowed';
+            } else {
+                emailInput.value = '';
+                emailInput.readOnly = false;
+                emailInput.style.opacity = '1';
+                emailInput.style.cursor = 'text';
+                emailInput.focus();
+            }
+        }
+
+        usarEmailCheckbox.addEventListener('change', toggleEmailField);
+        toggleEmailField(); // Aplicar estado inicial
+    }
+
     // ===== VALIDACIÓN DEL FORMULARIO AL ENVIAR =====
     form.addEventListener('submit', function(e) {
         let isValid = true;

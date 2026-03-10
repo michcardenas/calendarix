@@ -1,6 +1,6 @@
 <div class="modal fade" id="modalNuevoServicio" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <form method="POST" action="{{ route('empresa.catalogo.servicios.guardar', $negocio->id) }}" enctype="multipart/form-data" class="modal-content border-0 rounded-2xl overflow-hidden shadow-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <form method="POST" action="{{ route('empresa.catalogo.servicios.guardar', $empresa->id) }}" enctype="multipart/form-data" class="modal-content border-0 rounded-2xl overflow-hidden shadow-lg">
             @csrf
 
             {{-- Header --}}
@@ -48,13 +48,13 @@
                 {{-- Imagen --}}
                 <div>
                     <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Imagen <span class="font-normal text-gray-400">(opcional)</span></label>
-                    <label id="imagen-dropzone" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-[#5a31d7] hover:bg-[#5a31d7]/5 transition-all">
+                    <label id="imagen-dropzone" class="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-[#5a31d7] hover:bg-[#5a31d7]/5 transition-all overflow-hidden">
                         <div id="imagen-placeholder" class="flex flex-col items-center">
                             <i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i>
                             <span class="text-xs text-gray-400">Haz clic para subir una imagen</span>
                             <span class="text-xs text-gray-300 mt-0.5">JPG, PNG (max 2MB)</span>
                         </div>
-                        <img id="imagen-preview" class="hidden h-28 rounded-lg object-cover" alt="Preview">
+                        <img id="imagen-preview" class="hidden absolute inset-0 w-full h-full object-contain p-1 rounded-lg" alt="Preview">
                         <input type="file" name="imagen" accept="image/*" class="hidden" onchange="previewImagen(this)">
                     </label>
                 </div>

@@ -8,20 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const sitioWebInput = document.getElementById('neg_sitio_web');
     const submitBtn = form.querySelector('button[type="submit"]');
 
+    let isSubmitting = false;
+
     // ===== INICIALIZACIÓN =====
     initializeForm();
 
     function initializeForm() {
         // Configurar eventos
         setupEventListeners();
-        
+
         // Iniciar animaciones de fondo
         startParticleAnimation();
-        
-        // Mensaje de bienvenida
-        setTimeout(() => {
-            console.log('✨ Formulario de negocio inicializado');
-        }, 500);
+
+        // Restaurar botón al volver atrás (bfcache)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                resetLoadingState();
+            }
+        });
     }
 
     function setupEventListeners() {
@@ -102,13 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function handleFormSubmit(e) {
         e.preventDefault();
-        
+
+        if (isSubmitting) return;
+
         if (validateForm()) {
+            isSubmitting = true;
             showLoadingState();
-            // Simular un pequeño delay para mostrar el loading
-            setTimeout(() => {
-                form.submit();
-            }, 500);
+            form.submit();
         } else {
             showNotification('Por favor corrige los errores en el formulario.', 'error');
         }
@@ -219,6 +223,15 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Procesando...';
             submitBtn.style.opacity = '0.7';
+        }
+    }
+
+    function resetLoadingState() {
+        isSubmitting = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Continuar →';
+            submitBtn.style.opacity = '1';
         }
     }
 

@@ -18,6 +18,9 @@ class NegocioConfiguracionController extends Controller
             'confneg_nombre' => 'nullable|string|max:255',
             'confneg_pais' => 'nullable|string|max:100',
 
+            // Descripción
+            'confneg_descripcion' => 'nullable|string|max:1000',
+
             // Datos personales
             'confneg_nombre_real' => 'nullable|string|max:255',
             'confneg_apellido' => 'nullable|string|max:255',
@@ -37,6 +40,11 @@ class NegocioConfiguracionController extends Controller
             'confneg_instagram' => 'nullable|url|max:255',
             'confneg_web' => 'nullable|url|max:255',
 
+            // Categorías
+            'confneg_categorias' => 'nullable|array',
+            'confneg_categorias.*' => 'string|max:100',
+            'confneg_categoria_otro' => 'nullable|string|max:100',
+
             // Archivos
             'confneg_imagen' => 'nullable|image|max:2048',
             'confneg_portada' => 'nullable|image|max:4096',
@@ -51,6 +59,7 @@ class NegocioConfiguracionController extends Controller
 
         // Datos básicos
         $negocio->neg_nombre_comercial = $request->confneg_nombre;
+        $negocio->neg_descripcion = $request->confneg_descripcion;
         $negocio->neg_pais = $request->confneg_pais;
 
         // Datos personales
@@ -66,6 +75,14 @@ class NegocioConfiguracionController extends Controller
         $negocio->neg_longitud = $request->confneg_longitud;
         $negocio->neg_virtual = $request->has('confneg_virtual');
         $negocio->neg_direccion_confirmada = $request->has('confneg_direccion_confirmada');
+
+        // Categorías
+        $categorias = $request->input('confneg_categorias', []);
+        $otro = trim($request->input('confneg_categoria_otro', ''));
+        if ($otro !== '') {
+            $categorias[] = $otro;
+        }
+        $negocio->neg_categorias = $categorias;
 
         // Redes y sitio
         $negocio->neg_facebook = $request->confneg_facebook;

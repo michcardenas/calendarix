@@ -29,7 +29,10 @@
                     <span class="error-message">{{ $message }}</span>
                 @enderror
 
-                <button type="submit">Continuar →</button>
+                <div class="buttons-row">
+                    <a href="{{ route('negocio.create') }}" class="btn-volver">← Volver</a>
+                    <button type="submit">Continuar →</button>
+                </div>
             </form>
         </div>
     </div>

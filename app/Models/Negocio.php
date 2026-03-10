@@ -34,6 +34,7 @@ class Negocio extends Model
         'configuracion_bloques',
         'neg_facebook',
         'neg_instagram',
+        'neg_descripcion',
     ];
 
     protected static function boot()

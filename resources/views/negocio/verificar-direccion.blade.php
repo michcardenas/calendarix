@@ -44,7 +44,10 @@
                 @csrf
                 <input type="hidden" name="neg_latitud" id="neg_latitud" value="{{ $latitud }}">
                 <input type="hidden" name="neg_longitud" id="neg_longitud" value="{{ $longitud }}">
-                <button type="submit">Confirmar ubicacion y continuar &rarr;</button>
+                <div class="buttons-row">
+                    <a href="{{ route('negocio.ubicacion') }}" class="btn-volver">← Volver</a>
+                    <button type="submit">Confirmar ubicacion y continuar &rarr;</button>
+                </div>
             </form>
         </div>
     </div>

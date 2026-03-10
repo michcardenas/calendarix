@@ -1,5 +1,5 @@
 <div class="modal fade" id="modalEditarServicio{{ $servicio->id }}" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <form method="POST"
           action="{{ route('empresa.catalogo.servicios.actualizar', ['id' => $empresa->id, 'servicio' => $servicio->id]) }}"
           enctype="multipart/form-data"
@@ -53,14 +53,14 @@
         {{-- Imagen --}}
         <div>
           <label class="block text-sm font-semibold text-[#3B4269] mb-1.5">Imagen <span class="font-normal text-gray-400">(opcional)</span></label>
-          <label id="imagen-dropzone-edit-{{ $servicio->id }}" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-[#5a31d7] hover:bg-[#5a31d7]/5 transition-all">
+          <label id="imagen-dropzone-edit-{{ $servicio->id }}" class="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-[#5a31d7] hover:bg-[#5a31d7]/5 transition-all overflow-hidden">
             <div id="imagen-placeholder-edit-{{ $servicio->id }}" class="flex flex-col items-center {{ $servicio->imagen ? 'hidden' : '' }}">
               <i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i>
               <span class="text-xs text-gray-400">Haz clic para subir una imagen</span>
               <span class="text-xs text-gray-300 mt-0.5">JPG, PNG (max 2MB)</span>
             </div>
             <img id="imagen-preview-edit-{{ $servicio->id }}"
-                class="{{ $servicio->imagen ? '' : 'hidden' }} h-28 rounded-lg object-cover"
+                class="{{ $servicio->imagen ? '' : 'hidden' }} absolute inset-0 w-full h-full object-contain p-1 rounded-lg"
                 src="{{ $servicio->imagen ? asset('storage/' . $servicio->imagen) : '' }}" alt="Preview">
             <input type="file" name="imagen" accept="image/*" class="hidden"
                 onchange="previewImagenEdit(this, '{{ $servicio->id }}')">

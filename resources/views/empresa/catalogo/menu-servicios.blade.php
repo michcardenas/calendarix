@@ -20,11 +20,12 @@
         ['icon' => 'fa-ellipsis-h', 'nombre' => 'Otros'],
     ];
 
-    $negocio = \App\Models\Negocio::where('user_id', auth()->id())->first();
     $categoriasUsuario = [];
 
-    if ($negocio && $negocio->neg_categorias) {
-        $categoriasUsuario = json_decode($negocio->neg_categorias, true) ?? [];
+    if ($empresa && $empresa->neg_categorias) {
+        $categoriasUsuario = is_array($empresa->neg_categorias)
+            ? $empresa->neg_categorias
+            : (json_decode($empresa->neg_categorias, true) ?? []);
     }
 @endphp
 
