@@ -221,36 +221,30 @@
             <div>
                 <div class="tokenizacion-plan-name">{{ $plan->name }}</div>
                 @php
-                    $isFree = (float) $plan->price == 0;
                     $currencySymbol = match($plan->currency) {
                         'UYU' => '$', 'USD' => '$', 'CLP' => '$', 'ARS' => '$',
                         'COP' => '$', 'MXN' => '$', default => $plan->currency . ' ',
                     };
                 @endphp
                 <span class="tokenizacion-plan-interval">
-                    @if($isFree)
-                        Gratis por 15 dias
-                    @else
-                        {{ $plan->currency }} / {{ $plan->interval === 'monthly' ? 'mes' : 'año' }}
-                    @endif
+                    {{ $plan->currency }} / {{ $plan->interval === 'monthly' ? 'mes' : 'año' }}
                 </span>
             </div>
             <div class="tokenizacion-plan-price">
-                @if($isFree)
-                    $0
-                @else
-                    {{ $currencySymbol }}{{ number_format($plan->price, 0) }}
-                @endif
+                {{ $currencySymbol }}{{ number_format($plan->price, 0) }}
             </div>
         </div>
 
-        {{-- Info box for free plan --}}
-        @if($isFree)
+        {{-- Info box para trial --}}
+        @if(!auth()->user()->hasUsedTrial())
             <div class="tokenizacion-info-box">
                 <i class="fas fa-shield-alt"></i>
                 <div>
                     <strong>No se te cobrara ahora.</strong>
-                    Tu tarjeta sera utilizada al finalizar los 15 dias de prueba para activar tu plan mensual. Podes cancelar en cualquier momento antes.
+                    Tendras 15 dias de prueba gratis. Al finalizar se cobrara
+                    {{ $currencySymbol }}{{ number_format($plan->price, 0) }} {{ $plan->currency }}
+                    /{{ $plan->interval === 'monthly' ? 'mes' : 'año' }}.
+                    Podes cancelar en cualquier momento.
                 </div>
             </div>
         @endif

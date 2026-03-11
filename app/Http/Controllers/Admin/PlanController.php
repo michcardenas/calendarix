@@ -25,7 +25,7 @@ class PlanController extends Controller
         $data = $request->validate([
             'name'                              => 'required|string|max:255',
             'description'                       => 'nullable|string',
-            'price'                             => 'required|numeric|min:0',
+            'price'                             => 'required|numeric|min:1',
             'currency'                          => 'required|string|size:3',
             'interval'                          => 'required|in:monthly,yearly',
             'max_professionals'                 => 'nullable|integer|min:1',
@@ -57,7 +57,7 @@ class PlanController extends Controller
         $data = $request->validate([
             'name'                              => 'required|string|max:255',
             'description'                       => 'nullable|string',
-            'price'                             => 'required|numeric|min:0',
+            'price'                             => 'required|numeric|min:1',
             'currency'                          => 'required|string|size:3',
             'interval'                          => 'required|in:monthly,yearly',
             'max_professionals'                 => 'nullable|integer|min:1',

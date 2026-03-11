@@ -28,17 +28,6 @@ class SuscripcionController extends Controller
         $user = Auth::user();
         $plan = Plan::findOrFail($request->plan_id);
 
-        // Si es plan gratuito, verificar que no lo haya usado antes
-        if ((float) $plan->price == 0) {
-            $yaUsoGratis = Subscription::where('user_id', $user->id)
-                ->whereHas('plan', fn($q) => $q->where('price', 0))
-                ->exists();
-
-            if ($yaUsoGratis) {
-                return back()->with('error', 'Ya utilizaste tu periodo gratuito de 15 días. Por favor elige un plan pago.');
-            }
-        }
-
         // Crear customer en Bamboo si no existe
         if (!$user->bamboo_customer_id) {
             $result = $this->bamboo->createCustomer($user);
@@ -120,11 +109,9 @@ class SuscripcionController extends Controller
             ->whereIn('status', [Subscription::STATUS_ACTIVE, Subscription::STATUS_TRIAL])
             ->update(['status' => Subscription::STATUS_CANCELLED, 'cancelled_at' => now()]);
 
-        $isFree = (float) $plan->price == 0;
-
-        if ($isFree) {
-            // Plan gratuito: guardar token, crear suscripción trial (no cobrar)
-            $subscription = Subscription::create([
+        // Si el usuario no ha usado su trial → crear trial de 15 días
+        if (!$user->hasUsedTrial()) {
+            Subscription::create([
                 'user_id'      => $user->id,
                 'plan_id'      => $plan->id,
                 'status'       => Subscription::STATUS_TRIAL,
@@ -134,11 +121,13 @@ class SuscripcionController extends Controller
                 'ends_at'      => now()->addDays(15)->toDateString(),
             ]);
 
+            $user->markTrialUsed();
+
             return redirect()->route('client.dashboard-client')
-                ->with('plan_success', '¡Periodo gratuito de 15 días activado!');
+                ->with('plan_success', '¡15 días de prueba gratis activados para ' . $plan->name . '!');
         }
 
-        // Plan pago: cobrar inmediatamente
+        // Si ya usó trial → cobrar inmediatamente
         $result = $this->bamboo->createPurchase(
             trxToken: $token,
             amount: (float) $plan->price,

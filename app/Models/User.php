@@ -22,6 +22,7 @@ class User extends Authenticatable
         'foto',
         'bamboo_customer_id',
         'bamboo_unique_id',
+        'trial_used',
     ];
 
     protected $hidden = [
@@ -32,6 +33,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'trial_used' => 'boolean',
     ];
 
     public function guardName()
@@ -57,19 +59,14 @@ class User extends Authenticatable
         return $sub?->plan;
     }
 
-    /**
-     * Create a 15-day free trial subscription for this user.
-     */
-    public function createTrialSubscription(): Subscription
+    public function hasUsedTrial(): bool
     {
-        return Subscription::create([
-            'user_id'   => $this->id,
-            'plan_id'   => null,
-            'status'    => 'active',
-            'is_trial'  => true,
-            'starts_at' => now()->toDateString(),
-            'ends_at'   => now()->addDays(15)->toDateString(),
-        ]);
+        return (bool) $this->trial_used;
+    }
+
+    public function markTrialUsed(): void
+    {
+        $this->update(['trial_used' => true]);
     }
 
 }

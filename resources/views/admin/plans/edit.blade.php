@@ -68,9 +68,10 @@
                         <div class="plan-input-prefix">
                             <span class="prefix-symbol">$</span>
                             <input type="number" name="price" class="plan-form-control plan-form-control--prefixed"
-                                   value="{{ old('price', $plan->price) }}" min="0" step="0.01" required
+                                   value="{{ old('price', $plan->price) }}" min="1" step="0.01" required
                                    placeholder="9.00">
                         </div>
+                        <span class="plan-form-hint">Todos los planes incluyen 15 dias de prueba gratis</span>
                     </div>
                     <div class="plan-form-group">
                         <label class="plan-form-label">Moneda <span class="required">*</span></label>

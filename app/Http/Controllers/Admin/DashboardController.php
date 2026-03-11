@@ -295,14 +295,11 @@ class DashboardController extends Controller
             return redirect()->route('client.dashboard-client');
         }
 
-        // Verificar si ya usó un plan gratuito antes
-        $usedFreePlan = Subscription::where('user_id', $user->id)
-            ->whereHas('plan', fn($q) => $q->where('price', 0))
-            ->exists();
+        $trialUsed = $user->hasUsedTrial();
 
         $plans = Plan::where('is_active', true)->orderBy('sort_order')->get();
 
-        return view('client.elegir-plan', compact('plans', 'usedFreePlan'));
+        return view('client.elegir-plan', compact('plans', 'trialUsed'));
     }
 
     /**
@@ -317,44 +314,43 @@ class DashboardController extends Controller
         $user = Auth::user();
         $plan = Plan::findOrFail($request->plan_id);
 
-        // Si es plan gratuito, verificar que no lo haya usado antes
-        if ((float) $plan->price == 0) {
-            $yaUsoGratis = Subscription::where('user_id', $user->id)
-                ->whereHas('plan', fn($q) => $q->where('price', 0))
-                ->exists();
-
-            if ($yaUsoGratis) {
-                return back()->with('error', 'Ya utilizaste tu periodo gratuito de 15 días. Por favor elige un plan pago.');
-            }
-        }
-
         // Desactivar suscripciones anteriores
         Subscription::where('user_id', $user->id)
-            ->where('status', 'active')
-            ->update(['status' => 'cancelled']);
+            ->whereIn('status', ['active', 'trial'])
+            ->update(['status' => 'cancelled', 'cancelled_at' => now()]);
 
-        // Duración según tipo de plan
-        if ((float) $plan->price == 0) {
-            // Plan gratuito: 15 días
-            $endsAt = now()->addDays(15)->toDateString();
-        } else {
-            // Plan pago: según intervalo
-            $endsAt = $plan->interval === 'yearly'
-                ? now()->addYear()->toDateString()
-                : now()->addMonth()->toDateString();
+        // Si no usó trial → 15 días gratis, si ya usó → duración según intervalo
+        if (!$user->hasUsedTrial()) {
+            Subscription::create([
+                'user_id'   => $user->id,
+                'plan_id'   => $plan->id,
+                'status'    => 'trial',
+                'is_trial'  => true,
+                'starts_at' => now()->toDateString(),
+                'ends_at'   => now()->addDays(15)->toDateString(),
+            ]);
+
+            $user->markTrialUsed();
+
+            return redirect()->route('client.dashboard-client')
+                ->with('plan_success', '¡15 días de prueba gratis activados para ' . $plan->name . '!');
         }
+
+        $endsAt = $plan->interval === 'yearly'
+            ? now()->addYear()->toDateString()
+            : now()->addMonth()->toDateString();
 
         Subscription::create([
             'user_id'   => $user->id,
             'plan_id'   => $plan->id,
             'status'    => 'active',
-            'is_trial'  => (float) $plan->price == 0,
+            'is_trial'  => false,
             'starts_at' => now()->toDateString(),
             'ends_at'   => $endsAt,
         ]);
 
         return redirect()->route('client.dashboard-client')
-            ->with('plan_success', '¡Plan activado correctamente!');
+            ->with('plan_success', '¡Plan ' . $plan->name . ' activado correctamente!');
     }
 
     /**

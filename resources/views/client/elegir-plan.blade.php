@@ -232,7 +232,7 @@
         color: #fff;
     }
 
-    .pricing-free-badge {
+    .pricing-trial-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
@@ -246,27 +246,6 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         border: 1px solid #a7f3d0;
-    }
-
-    .pricing-card--disabled {
-        opacity: 0.55;
-        pointer-events: none;
-        filter: grayscale(0.3);
-    }
-
-    .pricing-cta--disabled {
-        background: var(--gray-300) !important;
-        color: var(--gray-500) !important;
-        cursor: not-allowed;
-        display: block;
-        text-align: center;
-        padding: 0.875rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 1rem;
-        border: none;
-        width: 100%;
-        margin-top: auto;
     }
 
     .elegir-plan-logout {
@@ -315,12 +294,12 @@
             </p>
         </div>
 
-        {{-- Alerta si ya usó el plan gratuito --}}
-        @if($usedFreePlan)
-            <div style="display:flex;align-items:center;gap:10px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:14px 18px;border-radius:14px;margin-bottom:1.5rem;font-size:0.9rem;">
+        {{-- Alerta si ya usó el periodo de prueba --}}
+        @if($trialUsed)
+            <div style="display:flex;align-items:center;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:14px 18px;border-radius:14px;margin-bottom:1.5rem;font-size:0.9rem;">
                 <i class="fas fa-info-circle" style="font-size:1.1rem;flex-shrink:0;"></i>
                 <div>
-                    Tu periodo gratuito de 15 dias ha finalizado. Elige un plan pago para seguir usando Calendarix.
+                    Tu periodo de prueba ya fue utilizado. Al elegir un plan se cobrara de inmediato.
                 </div>
             </div>
         @endif
@@ -337,8 +316,6 @@
             @foreach($plans as $plan)
                 @php
                     $isFeatured = $loop->last && $plans->count() > 1;
-                    $isFree = (float) $plan->price == 0;
-                    $freeDisabled = $isFree && $usedFreePlan;
                     $intervalLabel = $plan->interval === 'monthly' ? '/mes' : '/año';
                     $currencySymbol = match($plan->currency) {
                         'UYU' => '$',
@@ -356,18 +333,14 @@
                         ['enabled' => $plan->email_reminders,      'label' => 'Recordatorios Email'],
                     ];
                 @endphp
-                <div class="pricing-card {{ $isFeatured ? 'pricing-card--featured' : '' }} {{ $freeDisabled ? 'pricing-card--disabled' : '' }}">
-                    @if($isFree && !$freeDisabled)
-                        <span class="pricing-free-badge">
-                            <i class="fas fa-gift"></i> Gratis · 15 dias
-                        </span>
-                    @elseif($freeDisabled)
-                        <span class="pricing-free-badge" style="background:#fef2f2;color:#dc2626;border-color:#fecaca;">
-                            <i class="fas fa-clock"></i> Periodo usado
+                <div class="pricing-card {{ $isFeatured ? 'pricing-card--featured' : '' }}">
+                    @if(!$trialUsed)
+                        <span class="pricing-trial-badge">
+                            <i class="fas fa-gift"></i> 15 dias gratis
                         </span>
                     @elseif($isFeatured)
                         <span class="pricing-popular-badge">
-                            <i class="fas fa-star"></i> Más popular
+                            <i class="fas fa-star"></i> Mas popular
                         </span>
                     @endif
 
@@ -379,17 +352,9 @@
 
                     <div class="pricing-price-wrap">
                         <div class="pricing-price">
-                            @if($isFree)
-                                Gratis
-                            @else
-                                <sup>{{ $currencySymbol }}</sup>{{ number_format($plan->price, 0) }}
-                            @endif
+                            <sup>{{ $currencySymbol }}</sup>{{ number_format($plan->price, 0) }}
                         </div>
-                        @if($isFree)
-                            <div class="pricing-interval">por 15 dias</div>
-                        @else
-                            <div class="pricing-interval">{{ $plan->currency }} {{ $intervalLabel }}</div>
-                        @endif
+                        <div class="pricing-interval">{{ $plan->currency }} {{ $intervalLabel }}</div>
                     </div>
 
                     <div class="pricing-professionals">
@@ -419,23 +384,17 @@
                         @endforeach
                     </ul>
 
-                    @if($freeDisabled)
-                        <button type="button" class="pricing-cta pricing-cta--disabled" disabled>
-                            <i class="fas fa-lock"></i> Ya utilizado
+                    <form method="POST" action="{{ route('suscripcion.iniciar') }}">
+                        @csrf
+                        <input type="hidden" name="plan_id" value="{{ $plan->id }}">
+                        <button type="submit" class="pricing-cta">
+                            @if(!$trialUsed)
+                                Comenzar 15 dias gratis
+                            @else
+                                Elegir este plan
+                            @endif
                         </button>
-                    @else
-                        <form method="POST" action="{{ route('suscripcion.iniciar') }}">
-                            @csrf
-                            <input type="hidden" name="plan_id" value="{{ $plan->id }}">
-                            <button type="submit" class="pricing-cta">
-                                @if($isFree)
-                                    Comenzar gratis · 15 dias
-                                @else
-                                    Elegir este plan
-                                @endif
-                            </button>
-                        </form>
-                    @endif
+                    </form>
                 </div>
             @endforeach
         </div>
