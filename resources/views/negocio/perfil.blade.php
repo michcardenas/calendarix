@@ -467,6 +467,132 @@
         color: #92400e;
         font-weight: 600;
     }
+
+    /* ===== TABS ===== */
+    .tabs-bar {
+        background: #fff;
+        border-bottom: 2px solid #ece9f8;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+    }
+    .tabs-inner {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        gap: 0;
+    }
+    .tab-btn {
+        background: none;
+        border: none;
+        padding: 14px 20px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--gray-400);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+    .tab-btn:hover { color: var(--gray-600); }
+    .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    .tab-btn i { font-size: 0.8rem; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== EQUIPO GRID (tab) ===== */
+    .equipo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
+    }
+    @media (min-width: 640px) { .equipo-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .equipo-grid { grid-template-columns: repeat(4, 1fr); } }
+    .equipo-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #ece9f8;
+        padding: 1.25rem;
+        text-align: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 4px rgba(90,49,215,0.06);
+    }
+    .equipo-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(90,49,215,0.12);
+    }
+    .equipo-card-avatar {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto 12px;
+        border: 3px solid rgba(90,49,215,0.12);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .equipo-card-initials {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 700; font-size: 1.3rem;
+        margin: 0 auto 12px;
+        box-shadow: 0 4px 12px rgba(90,49,215,0.25);
+    }
+
+    /* ===== SERVICIOS GRID (tab) ===== */
+    .servicios-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
+    }
+    @media (min-width: 640px) { .servicios-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .servicios-grid { grid-template-columns: repeat(3, 1fr); } }
+    .servicio-card-full {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px;
+        background: #fff;
+        border: 1px solid #ece9f8;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 4px rgba(90,49,215,0.06);
+    }
+    .servicio-card-full:hover {
+        border-color: var(--primary);
+        box-shadow: 0 6px 20px rgba(90,49,215,0.12);
+        transform: translateY(-2px);
+    }
+    .servicio-img-full {
+        width: 76px; height: 76px; min-width: 76px;
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .servicio-img-full img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .servicio-placeholder-full {
+        width: 76px; height: 76px; min-width: 76px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f0ecfb, #e8e3f7);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .servicio-placeholder-full i { color: var(--primary); font-size: 1.4rem; opacity: 0.6; }
 </style>
 
 {{-- Leaflet CSS --}}
@@ -633,7 +759,19 @@
     </div>
 </div>
 
-{{-- ===== EQUIPO ===== --}}
+{{-- ===== TABS BAR ===== --}}
+<div class="tabs-bar">
+    <div class="tabs-inner">
+        <button class="tab-btn active" data-tab="acerca"><i class="fas fa-info-circle"></i> Acerca</button>
+        <button class="tab-btn" data-tab="equipo"><i class="fas fa-users"></i> Equipo</button>
+        <button class="tab-btn" data-tab="servicios"><i class="fas fa-concierge-bell"></i> Servicios</button>
+    </div>
+</div>
+
+{{-- ===== PANEL: ACERCA ===== --}}
+<div id="panel-acerca" class="tab-panel active">
+
+{{-- ===== EQUIPO (mini strip dentro de Acerca) ===== --}}
 @if($trabajadores->count())
 <div style="background:linear-gradient(180deg,#faf9ff 0%,#f9fafb 100%);border-bottom:1px solid #ece9f8;">
     <div style="max-width:1152px;margin:0 auto;padding:16px 1rem 18px;">
@@ -760,40 +898,6 @@
         {{-- SIDEBAR --}}
         <div class="col-right">
 
-            {{-- Servicios --}}
-            @if($negocio->servicios->count())
-            <div class="perfil-card perfil-card-hover fade-up">
-                <h2 class="card-title"><i class="fas fa-concierge-bell"></i>Servicios</h2>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                @foreach($negocio->servicios as $servicio)
-                    <div class="servicio-card" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
-                        @if($servicio->imagen)
-                            <div class="servicio-img">
-                                <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
-                            </div>
-                        @else
-                            <div class="servicio-img-placeholder">
-                                <i class="fas fa-concierge-bell"></i>
-                            </div>
-                        @endif
-                        <div style="flex:1;min-width:0;">
-                            <p style="font-weight:700;color:var(--gray-800);font-size:0.85rem;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $servicio->nombre }}</p>
-                            @if($servicio->duracion)
-                                <p style="font-size:0.72rem;color:var(--gray-400);margin:3px 0 0 0;">
-                                    <i class="far fa-clock" style="margin-right:3px;"></i>{{ $servicio->duracion }} min
-                                </p>
-                            @endif
-                            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
-                                <span class="precio-tag">${{ number_format($servicio->precio, 0, ',', '.') }}</span>
-                                <span style="font-size:0.68rem;font-weight:700;color:var(--accent);"><i class="fas fa-calendar-plus" style="margin-right:3px;font-size:0.6rem;"></i>Reservar</span>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-                </div>
-            </div>
-            @endif
-
             {{-- Horarios --}}
             @if($negocio->horarios->count())
             <div class="perfil-card perfil-card-hover fade-up">
@@ -909,6 +1013,93 @@
             @endif
 
         </div>
+    </div>
+</div>
+
+</div>{{-- /panel-acerca --}}
+
+{{-- ===== PANEL: EQUIPO ===== --}}
+<div id="panel-equipo" class="tab-panel">
+    <div style="background:var(--gray-50);min-height:40vh;">
+        @if($trabajadores->count())
+            <div style="max-width:1152px;margin:0 auto;padding:1.5rem 1rem 0.5rem;">
+                <p style="font-size:0.75rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0;">
+                    <i class="fas fa-users" style="color:var(--primary);margin-right:5px;"></i>Nuestro equipo
+                    <span style="font-weight:600;color:#c4b5fd;margin-left:6px;">{{ $trabajadores->count() }} profesionales</span>
+                </p>
+            </div>
+            <div class="equipo-grid">
+                @foreach($trabajadores as $trab)
+                    <div class="equipo-card">
+                        @if($trab->foto)
+                            <img src="{{ asset('storage/' . $trab->foto) }}" alt="{{ $trab->nombre }}" class="equipo-card-avatar">
+                        @else
+                            <div class="equipo-card-initials">{{ strtoupper(substr($trab->nombre, 0, 2)) }}</div>
+                        @endif
+                        <p style="font-weight:700;color:var(--gray-800);font-size:0.9rem;margin:0;">{{ $trab->nombre }}</p>
+                        @if($trab->especialidades)
+                            <p style="font-size:0.78rem;color:var(--gray-400);margin:4px 0 0 0;">{{ $trab->especialidades }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div style="max-width:1152px;margin:0 auto;padding:3rem 1rem;text-align:center;">
+                <i class="fas fa-users" style="font-size:2rem;color:var(--gray-200);margin-bottom:12px;"></i>
+                <p style="color:var(--gray-400);font-size:0.9rem;">Este negocio aun no ha agregado miembros del equipo.</p>
+            </div>
+        @endif
+    </div>
+</div>
+
+{{-- ===== PANEL: SERVICIOS ===== --}}
+<div id="panel-servicios" class="tab-panel">
+    <div style="background:var(--gray-50);min-height:40vh;">
+        @if($negocio->servicios->count())
+            <div style="max-width:1152px;margin:0 auto;padding:1.5rem 1rem 0.5rem;">
+                <p style="font-size:0.75rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0;">
+                    <i class="fas fa-concierge-bell" style="color:var(--primary);margin-right:5px;"></i>Nuestros servicios
+                    <span style="font-weight:600;color:#c4b5fd;margin-left:6px;">{{ $negocio->servicios->count() }} disponibles</span>
+                </p>
+            </div>
+            <div class="servicios-grid">
+                @foreach($negocio->servicios as $servicio)
+                    <div class="servicio-card-full" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
+                        @if($servicio->imagen)
+                            <div class="servicio-img-full">
+                                <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
+                            </div>
+                        @else
+                            <div class="servicio-placeholder-full">
+                                <i class="fas fa-concierge-bell"></i>
+                            </div>
+                        @endif
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-weight:700;color:var(--gray-800);font-size:0.92rem;margin:0;">{{ $servicio->nombre }}</p>
+                            @if($servicio->descripcion)
+                                <p style="font-size:0.78rem;color:var(--gray-400);margin:4px 0 0 0;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ $servicio->descripcion }}</p>
+                            @endif
+                            <div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
+                                <span class="precio-tag">${{ number_format($servicio->precio, 0, ',', '.') }}</span>
+                                @if($servicio->duracion)
+                                    <span style="font-size:0.75rem;color:var(--gray-400);">
+                                        <i class="far fa-clock" style="margin-right:3px;"></i>{{ $servicio->duracion }} min
+                                    </span>
+                                @endif
+                                <span style="font-size:0.72rem;font-weight:700;color:var(--accent);margin-left:auto;">
+                                    <i class="fas fa-calendar-plus" style="margin-right:3px;font-size:0.65rem;"></i>Reservar
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div style="max-width:1152px;margin:0 auto;padding:3rem 1rem;text-align:center;">
+                <i class="fas fa-concierge-bell" style="font-size:2rem;color:var(--gray-200);margin-bottom:12px;"></i>
+                <p style="color:var(--gray-400);font-size:0.9rem;">Este negocio aun no ha agregado servicios.</p>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -1095,4 +1286,23 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endif
+
+{{-- Tab switching --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            var panel = document.getElementById('panel-' + this.dataset.tab);
+            if (panel) panel.classList.add('active');
+            // Re-render calendar when switching back to Acerca tab
+            if (this.dataset.tab === 'acerca' && window.calendar) {
+                setTimeout(function() { window.calendar.updateSize(); }, 50);
+            }
+        });
+    });
+});
+</script>
 @endpush
