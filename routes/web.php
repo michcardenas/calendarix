@@ -224,6 +224,7 @@ Route::prefix('empresa')->name('empresa.')->group(function () {
         // 👇 nuevas
         Route::get('/citas/{cita}', [EmpresaController::class, 'showCita'])->name('citas.show');
         Route::patch('/citas/{cita}/estado', [EmpresaController::class, 'cambiarEstadoCita'])->name('citas.estado');
+        Route::patch('/citas/{cita}/reprogramar', [EmpresaController::class, 'reprogramarCita'])->name('citas.reprogramar');
         Route::delete('/citas/{cita}', [EmpresaController::class, 'destroyCita'])->name('citas.destroy');
 
 

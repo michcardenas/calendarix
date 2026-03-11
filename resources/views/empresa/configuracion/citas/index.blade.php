@@ -423,6 +423,7 @@
 @foreach ($citas as $cita)
     @include('empresa.configuracion.citas.modals._detalle', ['cita' => $cita, 'id' => $id])
     @include('empresa.configuracion.citas.modals._estado',   ['cita' => $cita, 'id' => $id])
+    @include('empresa.configuracion.citas.modals._reprogramar', ['cita' => $cita, 'id' => $id])
     @include('empresa.configuracion.citas.modals._eliminar', ['cita' => $cita, 'id' => $id])
 @endforeach
 @endsection

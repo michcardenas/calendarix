@@ -364,6 +364,51 @@ public function indexCitas(Request $request, $id)
         return back()->with('success', 'Estado actualizado a: ' . ucfirst($data['estado']));
     }
 
+    public function reprogramarCita(Request $request, $id, $citaId)
+    {
+        $empresa = Negocio::findOrFail($id);
+
+        $data = $request->validate([
+            'fecha'       => 'required|date|after_or_equal:today',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin'    => 'required|date_format:H:i|after:hora_inicio',
+        ]);
+
+        $cita = Cita::where('negocio_id', $empresa->id)->findOrFail($citaId);
+
+        // Verificar que no haya solapamiento con otra cita del mismo trabajador
+        $overlap = Cita::where('negocio_id', $empresa->id)
+            ->where('trabajador_id', $cita->trabajador_id)
+            ->where('id', '!=', $cita->id)
+            ->whereDate('fecha', $data['fecha'])
+            ->where(function ($q) use ($data) {
+                $q->whereRaw('TIME(hora_inicio) < TIME(?)', [$data['hora_fin']])
+                  ->whereRaw('TIME(hora_fin) > TIME(?)', [$data['hora_inicio']]);
+            })
+            ->exists();
+
+        if ($overlap) {
+            return back()->with('error', 'El trabajador ya tiene una cita en ese horario. Elige otro horario.');
+        }
+
+        // Verificar dia bloqueado
+        $bloqueada = \App\Models\DiaBloqueado::where('negocio_id', $empresa->id)
+            ->whereDate('fecha_bloqueada', $data['fecha'])
+            ->exists();
+
+        if ($bloqueada) {
+            return back()->with('error', 'Ese dia esta bloqueado. Elige otra fecha.');
+        }
+
+        $cita->update([
+            'fecha'       => $data['fecha'],
+            'hora_inicio' => $data['hora_inicio'],
+            'hora_fin'    => $data['hora_fin'],
+        ]);
+
+        return back()->with('success', 'Cita reprogramada al ' . $data['fecha'] . ' de ' . $data['hora_inicio'] . ' a ' . $data['hora_fin'] . '.');
+    }
+
     public function destroyCita(Request $request, $id, $citaId)
     {
         $empresa = Negocio::findOrFail($id);

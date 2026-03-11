@@ -97,6 +97,10 @@
                   data-bs-target="#citaEstado-{{ $cita->id }}" data-bs-toggle="modal" data-bs-dismiss="modal">
             <i class="bi bi-arrow-repeat"></i> Cambiar estado
           </button>
+          <button type="button" class="btn btn-clx-outline"
+                  data-bs-target="#citaReprogramar-{{ $cita->id }}" data-bs-toggle="modal" data-bs-dismiss="modal">
+            <i class="bi bi-calendar-event"></i> Reprogramar
+          </button>
           <button type="button" class="btn btn-outline-light"
                   style="background:var(--clx-danger);border-color:var(--clx-danger);"
                   data-bs-target="#citaEliminar-{{ $cita->id }}" data-bs-toggle="modal" data-bs-dismiss="modal">

@@ -71,6 +71,13 @@ $citasManana = $citas->filter(fn($c) => $c->fecha->isTomorrow())->sortBy('hora_i
             </div>
         @endif
 
+        {{-- Flash de error --}}
+        @if(session('error'))
+            <div class="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+            </div>
+        @endif
+
         {{-- Resumen rápido --}}
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
@@ -282,6 +289,7 @@ $citasManana = $citas->filter(fn($c) => $c->fecha->isTomorrow())->sortBy('hora_i
 @foreach($citasHoy->merge($citasManana) as $cita)
     @include('empresa.configuracion.citas.modals._detalle', ['cita' => $cita, 'id' => $empresa->id])
     @include('empresa.configuracion.citas.modals._estado', ['cita' => $cita, 'id' => $empresa->id])
+    @include('empresa.configuracion.citas.modals._reprogramar', ['cita' => $cita, 'id' => $empresa->id])
 @endforeach
 
 @endsection
