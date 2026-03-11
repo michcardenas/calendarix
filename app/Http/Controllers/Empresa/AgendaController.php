@@ -127,6 +127,7 @@ class AgendaController extends Controller
             'empresa' => $empresa,
             'eventos' => $eventosHorarios,
             'horarios' => $horarios,
+            'citas' => $citas,
         ]);
     }
 

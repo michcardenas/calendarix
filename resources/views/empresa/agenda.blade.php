@@ -13,16 +13,37 @@ $diasSemana = [
     7 => 'Domingo',
 ];
 
-$allCitas = collect($eventos)->filter(fn($e) => isset($e['extendedProps']));
-$pendientes = $allCitas->where('extendedProps.estado', 'pendiente')->count();
-$confirmadas = $allCitas->where('extendedProps.estado', 'confirmada')->count();
-$canceladas = $allCitas->where('extendedProps.estado', 'cancelada')->count();
-$completadas = $allCitas->where('extendedProps.estado', 'completada')->count();
-$totalCitas = $allCitas->count();
+$pendientes = $citas->where('estado', 'pendiente')->count();
+$confirmadas = $citas->where('estado', 'confirmada')->count();
+$canceladas = $citas->where('estado', 'cancelada')->count();
+$completadas = $citas->where('estado', 'completada')->count();
+$totalCitas = $citas->count();
 
-$citasHoy = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', now()->format('Y-m-d')));
-$citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', now()->addDay()->format('Y-m-d')));
+$citasHoy = $citas->filter(fn($c) => $c->fecha->isToday())->sortBy('hora_inicio');
+$citasManana = $citas->filter(fn($c) => $c->fecha->isTomorrow())->sortBy('hora_inicio');
 @endphp
+
+@push('styles')
+<style>
+    /* Estilos para modals de citas */
+    .clx-modal .modal-content { border: 1px solid #ece9f8; border-radius: 16px; box-shadow: 0 20px 40px rgba(90,49,215,0.15); overflow: hidden; }
+    .clx-modal .modal-header { background: linear-gradient(135deg, #5a31d7, #7b5ce0); color: #fff; border-bottom: none; padding: 1.25rem 1.5rem; }
+    .clx-modal .modal-title { color: #fff; font-weight: 700; }
+    .clx-modal .modal-body { padding: 1.5rem; }
+    .clx-modal .modal-footer { border-top: 1px solid #f3f4f6; padding: 1rem 1.5rem; }
+    .btn-clx-primary { background: #5a31d7; color: #fff; border: none; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; }
+    .btn-clx-primary:hover { background: #4a22b8; color: #fff; }
+    .btn-clx-outline { background: transparent; color: #5a31d7; border: 1.5px solid #e5e7eb; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; }
+    .btn-clx-outline:hover { border-color: #5a31d7; background: #faf9ff; }
+    .clx-select { border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.875rem; }
+    .clx-select:focus { border-color: #5a31d7; box-shadow: 0 0 0 3px rgba(90,49,215,0.1); outline: none; }
+    .badge-state { padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+    .badge-pendiente { background: #fef9c3; color: #92400e; }
+    .badge-confirmada { background: #d1fae5; color: #065f46; }
+    .badge-cancelada { background: #fee2e2; color: #991b1b; }
+    .badge-completada { background: #ede9fe; color: #5b21b6; }
+</style>
+@endpush
 
 @section('content')
 <div class="min-h-screen px-4 md:px-6 py-8" style="background-color: #f6f5f7; color: #3B4269;">
@@ -34,7 +55,7 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
                 <h1 class="text-2xl font-bold" style="color: #5a31d7;">
                     <i class="fas fa-calendar-alt mr-2"></i>Agenda
                 </h1>
-                <p class="text-sm text-gray-400 mt-1">Resumen de tus citas y horarios de trabajo.</p>
+                <p class="text-sm text-gray-400 mt-1">Gestiona tus citas y horarios de trabajo.</p>
             </div>
             <a href="{{ route('empresa.agenda.configurar', $empresa->id) }}"
                 class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:shadow-lg hover:shadow-[#5a31d7]/20 transition-all"
@@ -43,8 +64,15 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
             </a>
         </div>
 
+        {{-- Flash de éxito --}}
+        @if(session('success'))
+            <div class="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+        @endif
+
         {{-- Resumen rápido --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
                 <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#f8f6ff] mb-2">
                     <i class="fas fa-calendar-check text-[#5a31d7]"></i>
@@ -65,6 +93,13 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
                 </div>
                 <p class="text-2xl font-bold text-emerald-500">{{ $confirmadas }}</p>
                 <p class="text-xs text-gray-400 mt-0.5">Confirmadas</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-purple-50 mb-2">
+                    <i class="fas fa-clipboard-check text-[#5a31d7]"></i>
+                </div>
+                <p class="text-2xl font-bold text-[#5a31d7]">{{ $completadas }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">Completadas</p>
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
                 <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 mb-2">
@@ -88,7 +123,7 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
                     </h2>
                     <span class="text-xs text-gray-400">{{ now()->isoFormat('ddd D MMM') }}</span>
                 </div>
-                <div class="px-3 py-2 flex-1 overflow-y-auto" style="max-height: 260px;">
+                <div class="px-3 py-2 flex-1 overflow-y-auto" style="max-height: 400px;">
                     @if($citasHoy->isEmpty())
                         <div class="text-center py-6">
                             <i class="fas fa-calendar-check text-3xl text-gray-200 mb-2"></i>
@@ -96,31 +131,38 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
                         </div>
                     @else
                         <div class="space-y-1.5">
-                            @foreach($citasHoy->sortBy('start') as $ev)
+                            @foreach($citasHoy as $cita)
                             @php
-                                $props = $ev['extendedProps'] ?? [];
-                                $estadoColor = match($props['estado'] ?? '') {
+                                $estadoColor = match($cita->estado) {
                                     'confirmada' => '#10b981',
                                     'cancelada'  => '#ef4444',
                                     'completada' => '#5a31d7',
                                     default      => '#f59e0b',
                                 };
-                                $hora = substr($ev['start'] ?? '', 11, 5);
-                                $horaFin = substr($ev['end'] ?? '', 11, 5);
+                                $hora = substr($cita->hora_inicio, 0, 5);
+                                $horaFin = substr($cita->hora_fin, 0, 5);
                             @endphp
-                            <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-100 hover:border-[#5a31d7]/20 hover:bg-[#faf9ff] transition-all">
+                            <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-100 hover:border-[#5a31d7]/20 hover:bg-[#faf9ff] transition-all cursor-pointer"
+                                 data-bs-toggle="modal" data-bs-target="#citaDetalle-{{ $cita->id }}">
                                 <div class="w-1 h-9 rounded-full flex-shrink-0" style="background: {{ $estadoColor }};"></div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-xs font-semibold text-[#3B4269] truncate">{{ $props['cliente'] ?? 'Sin nombre' }}</p>
+                                    <p class="text-xs font-semibold text-[#3B4269] truncate">{{ $cita->nombre_cliente ?? 'Sin nombre' }}</p>
                                     <p class="text-xs text-gray-400 truncate">
-                                        {{ $hora }}{{ $horaFin ? " - $horaFin" : '' }}
-                                        @if($props['servicio'] ?? null) · {{ $props['servicio'] }} @endif
-                                        @if($props['trabajador'] ?? null) · {{ $props['trabajador'] }} @endif
+                                        {{ $hora }} - {{ $horaFin }}
+                                        @if($cita->servicio) · {{ $cita->servicio->nombre }} @endif
+                                        @if($cita->trabajador) · {{ $cita->trabajador->nombre }} @endif
                                     </p>
                                 </div>
-                                <span class="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0" style="background: {{ $estadoColor }}15; color: {{ $estadoColor }};">
-                                    {{ ucfirst($props['estado'] ?? 'pendiente') }}
-                                </span>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-xs font-medium px-2 py-0.5 rounded-full" style="background: {{ $estadoColor }}15; color: {{ $estadoColor }};">
+                                        {{ ucfirst($cita->estado) }}
+                                    </span>
+                                    <button type="button" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#5a31d7] transition-colors"
+                                            data-bs-toggle="modal" data-bs-target="#citaEstado-{{ $cita->id }}"
+                                            onclick="event.stopPropagation();" title="Cambiar estado">
+                                        <i class="fas fa-exchange-alt text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                             @endforeach
                         </div>
@@ -139,7 +181,7 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
                     </h2>
                     <span class="text-xs text-gray-400">{{ now()->addDay()->isoFormat('ddd D MMM') }}</span>
                 </div>
-                <div class="px-3 py-2 flex-1 overflow-y-auto" style="max-height: 260px;">
+                <div class="px-3 py-2 flex-1 overflow-y-auto" style="max-height: 400px;">
                     @if($citasManana->isEmpty())
                         <div class="text-center py-6">
                             <i class="fas fa-calendar text-3xl text-gray-200 mb-2"></i>
@@ -147,30 +189,38 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
                         </div>
                     @else
                         <div class="space-y-1.5">
-                            @foreach($citasManana->sortBy('start') as $ev)
+                            @foreach($citasManana as $cita)
                             @php
-                                $props = $ev['extendedProps'] ?? [];
-                                $estadoColor = match($props['estado'] ?? '') {
+                                $estadoColor = match($cita->estado) {
                                     'confirmada' => '#10b981',
                                     'cancelada'  => '#ef4444',
                                     'completada' => '#5a31d7',
                                     default      => '#f59e0b',
                                 };
-                                $hora = substr($ev['start'] ?? '', 11, 5);
-                                $horaFin = substr($ev['end'] ?? '', 11, 5);
+                                $hora = substr($cita->hora_inicio, 0, 5);
+                                $horaFin = substr($cita->hora_fin, 0, 5);
                             @endphp
-                            <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-100 hover:border-[#5a31d7]/20 hover:bg-[#faf9ff] transition-all">
+                            <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-gray-100 hover:border-[#5a31d7]/20 hover:bg-[#faf9ff] transition-all cursor-pointer"
+                                 data-bs-toggle="modal" data-bs-target="#citaDetalle-{{ $cita->id }}">
                                 <div class="w-1 h-9 rounded-full flex-shrink-0" style="background: {{ $estadoColor }};"></div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-xs font-semibold text-[#3B4269] truncate">{{ $props['cliente'] ?? 'Sin nombre' }}</p>
+                                    <p class="text-xs font-semibold text-[#3B4269] truncate">{{ $cita->nombre_cliente ?? 'Sin nombre' }}</p>
                                     <p class="text-xs text-gray-400 truncate">
-                                        {{ $hora }}{{ $horaFin ? " - $horaFin" : '' }}
-                                        @if($props['servicio'] ?? null) · {{ $props['servicio'] }} @endif
+                                        {{ $hora }} - {{ $horaFin }}
+                                        @if($cita->servicio) · {{ $cita->servicio->nombre }} @endif
+                                        @if($cita->trabajador) · {{ $cita->trabajador->nombre }} @endif
                                     </p>
                                 </div>
-                                <span class="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0" style="background: {{ $estadoColor }}15; color: {{ $estadoColor }};">
-                                    {{ ucfirst($props['estado'] ?? 'pendiente') }}
-                                </span>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-xs font-medium px-2 py-0.5 rounded-full" style="background: {{ $estadoColor }}15; color: {{ $estadoColor }};">
+                                        {{ ucfirst($cita->estado) }}
+                                    </span>
+                                    <button type="button" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#5a31d7] transition-colors"
+                                            data-bs-toggle="modal" data-bs-target="#citaEstado-{{ $cita->id }}"
+                                            onclick="event.stopPropagation();" title="Cambiar estado">
+                                        <i class="fas fa-exchange-alt text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                             @endforeach
                         </div>
@@ -227,4 +277,11 @@ $citasManana = $allCitas->filter(fn($e) => str_starts_with($e['start'] ?? '', no
 
     </div>
 </div>
+
+{{-- Modals para citas de hoy y mañana --}}
+@foreach($citasHoy->merge($citasManana) as $cita)
+    @include('empresa.configuracion.citas.modals._detalle', ['cita' => $cita, 'id' => $empresa->id])
+    @include('empresa.configuracion.citas.modals._estado', ['cita' => $cita, 'id' => $empresa->id])
+@endforeach
+
 @endsection
