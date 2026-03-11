@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    
+    <link rel="icon" href="{{ asset('images/morado.png') }}" type="image/png">
+
     {{-- Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
