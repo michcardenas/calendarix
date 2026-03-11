@@ -304,6 +304,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/resenas/{resena}/responder', [ResenaController::class, 'responder'])->name('resenas.responder');
 });
 
+// Reseñas - calificacion publica (signed URL, no requiere auth)
+Route::get('/calificar/{cita}', [ResenaController::class, 'calificar'])
+    ->name('resena.calificar')
+    ->middleware('signed');
+Route::post('/calificar/{cita}', [ResenaController::class, 'calificarStore'])
+    ->name('resena.calificar.store');
+
 //agenda
 Route::get('/empresa/{id}/agenda', [AgendaController::class, 'index'])->name('empresa.agenda');
 // routes/web.php

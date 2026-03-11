@@ -161,6 +161,40 @@
     .btn-accion:hover { border-color: #5a31d7; color: #5a31d7; background: #faf9ff; }
     .btn-accion-danger:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
 
+    /* Reseña badges */
+    .badge-resena {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+        border: none;
+        cursor: default;
+    }
+    .badge-resena--si {
+        background: #fef9c3;
+        color: #92400e;
+    }
+    .badge-resena--si i { color: #f59e0b; }
+    .badge-resena--no {
+        background: #f3f4f6;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .badge-resena--no:hover {
+        background: #ede9fe;
+        color: #5a31d7;
+    }
+    .badge-resena--copied {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
     /* Stats */
     .stats-row {
         display: grid;
@@ -238,6 +272,18 @@
             <p style="font-size:0.82rem;color:#9ca3af;margin:4px 0 0 0;">Gestiona las citas de tu negocio.</p>
         </div>
     </div>
+
+    {{-- Flash messages --}}
+    @if(session('success'))
+        <div style="display:flex;align-items:center;gap:10px;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:12px 16px;border-radius:12px;margin-bottom:1rem;font-size:0.85rem;">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div style="display:flex;align-items:center;gap:10px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px 16px;border-radius:12px;margin-bottom:1rem;font-size:0.85rem;">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
+    @endif
 
     {{-- Stats --}}
     @php
@@ -384,6 +430,21 @@
                     {{ ucfirst($cita->estado) }}
                 </span>
 
+                {{-- Reseña badge --}}
+                @if($cita->estado === 'completada')
+                    @if($cita->resena)
+                        <span class="badge-resena badge-resena--si" title="Calificada con {{ $cita->resena->rating }} estrellas">
+                            <i class="fas fa-star"></i> {{ $cita->resena->rating }}.0
+                        </span>
+                    @else
+                        <button type="button" class="badge-resena badge-resena--no"
+                                title="Copiar link de calificacion"
+                                onclick="copiarLinkResena({{ $cita->id }}, this)">
+                            <i class="fas fa-link"></i> Copiar link
+                        </button>
+                    @endif
+                @endif
+
                 {{-- Acciones --}}
                 <div class="cita-acciones">
                     <button type="button" class="btn-accion" title="Ver detalle"
@@ -426,4 +487,43 @@
     @include('empresa.configuracion.citas.modals._reprogramar', ['cita' => $cita, 'id' => $id])
     @include('empresa.configuracion.citas.modals._eliminar', ['cita' => $cita, 'id' => $id])
 @endforeach
+
+{{-- URLs firmadas para copiar link de reseña --}}
+<script>
+    var resenaLinks = {
+        @foreach($citas as $cita)
+            @if($cita->estado === 'completada' && !$cita->resena)
+                {{ $cita->id }}: @json(Illuminate\Support\Facades\URL::signedRoute('resena.calificar', ['cita' => $cita->id])),
+            @endif
+        @endforeach
+    };
+
+    function copiarLinkResena(citaId, btn) {
+        var url = resenaLinks[citaId];
+        if (!url) return;
+
+        navigator.clipboard.writeText(url).then(function() {
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            btn.classList.add('badge-resena--copied');
+            setTimeout(function() {
+                btn.innerHTML = '<i class="fas fa-link"></i> Copiar link';
+                btn.classList.remove('badge-resena--copied');
+            }, 2000);
+        }).catch(function() {
+            // Fallback para navegadores sin clipboard API
+            var input = document.createElement('input');
+            input.value = url;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            btn.classList.add('badge-resena--copied');
+            setTimeout(function() {
+                btn.innerHTML = '<i class="fas fa-link"></i> Copiar link';
+                btn.classList.remove('badge-resena--copied');
+            }, 2000);
+        });
+    }
+</script>
 @endsection

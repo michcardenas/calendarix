@@ -43,6 +43,58 @@ class ResenaController extends Controller
         return redirect()->back()->with('success', 'Reseña enviada correctamente.');
     }
 
+    /**
+     * Mostrar formulario publico de calificacion (signed URL, no requiere auth).
+     */
+    public function calificar(Request $request, Cita $cita)
+    {
+        $cita->load(['servicio', 'trabajador', 'negocio']);
+
+        if ($cita->estado !== 'completada') {
+            abort(404);
+        }
+
+        $resenaExistente = Resena::where('cita_id', $cita->id)->first();
+
+        return view('resenas.calificar', [
+            'cita'             => $cita,
+            'negocio'          => $cita->negocio,
+            'yaCalificada'     => (bool) $resenaExistente,
+            'resenaExistente'  => $resenaExistente,
+        ]);
+    }
+
+    /**
+     * Guardar reseña desde formulario publico (no requiere auth).
+     */
+    public function calificarStore(Request $request, Cita $cita)
+    {
+        $request->validate([
+            'rating'     => 'required|integer|min:1|max:5',
+            'comentario' => 'required|string|max:1000',
+        ]);
+
+        if ($cita->estado !== 'completada') {
+            return back()->with('error', 'Solo se pueden calificar citas completadas.');
+        }
+
+        if (Resena::where('cita_id', $cita->id)->exists()) {
+            return back()->with('error', 'Esta cita ya fue calificada.');
+        }
+
+        Resena::create([
+            'cita_id'         => $cita->id,
+            'negocio_id'      => $cita->negocio_id,
+            'user_id'         => Auth::id(),
+            'nombre_cliente'  => $cita->nombre_cliente,
+            'email_cliente'   => $cita->email_cliente,
+            'rating'          => $request->rating,
+            'comentario'      => $request->comentario,
+        ]);
+
+        return redirect()->signedRoute('resena.calificar', ['cita' => $cita->id]);
+    }
+
     public function responder(Request $request, $resenaId)
     {
         $request->validate([

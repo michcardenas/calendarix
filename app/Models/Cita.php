@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Empresa\ServicioEmpresa;
 use App\Models\Negocio;
+use App\Models\Resena;
 use App\Models\User;
 use App\Models\Trabajador;
 
@@ -60,5 +61,10 @@ class Cita extends Model
     public function trabajador()
     {
         return $this->belongsTo(Trabajador::class, 'trabajador_id');
+    }
+
+    public function resena()
+    {
+        return $this->hasOne(Resena::class);
     }
 }

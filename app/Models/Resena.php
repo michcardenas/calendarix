@@ -12,6 +12,8 @@ class Resena extends Model
         'cita_id',
         'negocio_id',
         'user_id',
+        'nombre_cliente',
+        'email_cliente',
         'rating',
         'comentario',
         'respuesta_negocio',

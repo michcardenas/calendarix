@@ -11,7 +11,10 @@ use App\Models\Cliente;
 use App\Models\Cita;
 use App\Models\Resena;
 use App\Models\Empresa\ServicioEmpresa;
+use App\Mail\NotificacionGeneral;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class EmpresaController extends Controller
 {
@@ -290,7 +293,8 @@ public function indexCitas(Request $request, $id)
 
     $query = Cita::with([
         'trabajador:id,nombre',
-        'servicio:id,nombre'
+        'servicio:id,nombre',
+        'resena:id,cita_id,rating'
     ])->where('negocio_id', $empresa->id);
 
     if ($request->filled('q')) {
@@ -357,9 +361,44 @@ public function indexCitas(Request $request, $id)
             'estado' => 'required|in:pendiente,confirmada,cancelada,completada',
         ]);
 
-        $cita = Cita::where('negocio_id', $empresa->id)->findOrFail($citaId);
+        $cita = Cita::with(['servicio', 'trabajador'])->where('negocio_id', $empresa->id)->findOrFail($citaId);
         $cita->estado = $data['estado'];
         $cita->save();
+
+        // Enviar email de calificacion al completar la cita
+        if ($data['estado'] === 'completada' && $cita->email_cliente) {
+            try {
+                $reviewUrl = URL::signedRoute('resena.calificar', ['cita' => $cita->id]);
+
+                $detalles = [
+                    'Negocio'    => $empresa->neg_nombre,
+                    'Fecha'      => optional($cita->fecha)->format('d/m/Y'),
+                    'Hora'       => substr($cita->hora_inicio, 0, 5) . ' - ' . substr($cita->hora_fin, 0, 5),
+                ];
+
+                if ($cita->servicio) {
+                    $detalles['Servicio'] = $cita->servicio->nombre;
+                }
+                if ($cita->trabajador) {
+                    $detalles['Profesional'] = $cita->trabajador->nombre;
+                }
+
+                Mail::to($cita->email_cliente)->send(new NotificacionGeneral(
+                    asunto: 'Como fue tu experiencia? - ' . $empresa->neg_nombre,
+                    titulo: 'Califica tu cita',
+                    mensaje: 'Hola ' . $cita->nombre_cliente . ', tu cita en ' . $empresa->neg_nombre . ' fue completada. Nos encantaria saber como fue tu experiencia.',
+                    detalles: $detalles,
+                    accionTexto: 'Dejar mi reseña',
+                    accionUrl: $reviewUrl,
+                    tipoIcono: 'success',
+                ));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Error enviando email de calificacion', [
+                    'cita_id' => $cita->id,
+                    'error'   => $e->getMessage(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'Estado actualizado a: ' . ucfirst($data['estado']));
     }
