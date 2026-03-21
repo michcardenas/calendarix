@@ -1,3 +1,5 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 {{-- CSS específico del dashboard cliente --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +14,21 @@
         overflow-y: auto !important;
     }
 </style>
+
+{{-- Topbar móvil --}}
+<div class="clx-topbar">
+    <button type="button" class="clx-topbar__hamburger" id="btnHamburguerCliente">
+        <i class="fas fa-bars"></i>
+    </button>
+    <span class="clx-topbar__title" id="clxTopbarTitle">Dashboard</span>
+    @if(auth()->user()->foto)
+        <img src="{{ asset(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="clx-topbar__avatar">
+    @else
+        <div class="clx-topbar__avatar-placeholder">
+            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+        </div>
+    @endif
+</div>
 
 {{-- Container principal del dashboard --}}
 <div id="clx-dash-container" class="clx-container">
@@ -303,179 +320,6 @@
         {{-- ===== SECCION: MI PERFIL ===== --}}
         <div data-clx-section="profile" style="display:none;">
 
-            <style>
-                .profile-section { max-width: 720px; }
-                .profile-card {
-                    background: #fff;
-                    border: 1px solid #ece9f8;
-                    border-radius: 18px;
-                    padding: 1.75rem;
-                    box-shadow: 0 1px 4px rgba(90,49,215,0.06);
-                    margin-bottom: 1.25rem;
-                }
-                .profile-card-title {
-                    font-size: 1.1rem;
-                    font-weight: 800;
-                    color: #5a31d7;
-                    margin: 0 0 1.25rem 0;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .plan-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 5px 14px;
-                    border-radius: 20px;
-                    font-size: 0.78rem;
-                    font-weight: 700;
-                }
-                .plan-badge-free {
-                    background: #f0ecfb;
-                    color: #5a31d7;
-                }
-                .plan-badge-pro {
-                    background: linear-gradient(135deg, #5a31d7, #7b5ce0);
-                    color: #fff;
-                }
-                .plan-features {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 8px;
-                    margin-top: 12px;
-                }
-                .plan-feature {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 5px;
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    color: #6b7280;
-                    background: #f9fafb;
-                    padding: 4px 10px;
-                    border-radius: 8px;
-                    border: 1px solid #f3f4f6;
-                }
-                .plan-feature i { font-size: 0.65rem; }
-                .plan-feature-on i { color: #10b981; }
-                .plan-feature-off i { color: #d1d5db; }
-
-                .profile-avatar-wrapper {
-                    display: flex;
-                    align-items: center;
-                    gap: 1.25rem;
-                    margin-bottom: 1.5rem;
-                }
-                .profile-avatar-img {
-                    width: 80px;
-                    height: 80px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                    border: 3px solid #ece9f8;
-                }
-                .profile-avatar-placeholder {
-                    width: 80px;
-                    height: 80px;
-                    min-width: 80px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, #5a31d7, #7b5ce0);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #fff;
-                    font-weight: 800;
-                    font-size: 1.6rem;
-                }
-                .profile-avatar-info h3 {
-                    font-size: 1.15rem;
-                    font-weight: 700;
-                    color: #1f2937;
-                    margin: 0 0 2px 0;
-                }
-                .profile-avatar-info p {
-                    font-size: 0.82rem;
-                    color: #9ca3af;
-                    margin: 0;
-                }
-
-                .profile-form-group {
-                    margin-bottom: 1rem;
-                }
-                .profile-form-group label {
-                    display: block;
-                    font-size: 0.82rem;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                }
-                .profile-form-group input[type="text"],
-                .profile-form-group input[type="email"],
-                .profile-form-group input[type="tel"] {
-                    width: 100%;
-                    padding: 10px 14px;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    font-size: 0.88rem;
-                    color: #374151;
-                    font-family: inherit;
-                    outline: none;
-                    transition: all 0.2s;
-                    background: #fff;
-                }
-                .profile-form-group input:focus {
-                    border-color: #5a31d7;
-                    box-shadow: 0 0 0 3px rgba(90,49,215,0.1);
-                }
-                .profile-form-row {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 1rem;
-                }
-                @media (max-width: 600px) {
-                    .profile-form-row { grid-template-columns: 1fr; }
-                }
-                .profile-btn-save {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 10px 24px;
-                    font-size: 0.88rem;
-                    font-weight: 700;
-                    color: #fff;
-                    background: #5a31d7;
-                    border: none;
-                    border-radius: 10px;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    box-shadow: 0 2px 8px rgba(90,49,215,0.25);
-                }
-                .profile-btn-save:hover {
-                    background: #7b5ce0;
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 12px rgba(90,49,215,0.35);
-                }
-                .profile-alert {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 12px 16px;
-                    border-radius: 12px;
-                    font-size: 0.82rem;
-                    margin-bottom: 1rem;
-                }
-                .profile-alert-success {
-                    background: #ecfdf5;
-                    border: 1px solid #a7f3d0;
-                    color: #065f46;
-                }
-                .profile-alert-error {
-                    background: #fef2f2;
-                    border: 1px solid #fecaca;
-                    color: #991b1b;
-                }
-            </style>
-
             <div class="profile-section">
 
                 {{-- Header --}}
@@ -642,6 +486,191 @@
 
     </main>
 </div>
+
+{{-- Bottom Nav (mobile) — 5 items --}}
+<nav class="clx-bottom-nav">
+    <a href="#" class="clx-bottom-nav__item clx-bnav-active" data-clx-page="dashboard">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="#" class="clx-bottom-nav__item" data-clx-page="favorites">
+        <i class="fas fa-heart"></i>
+        <span>Favoritos</span>
+    </a>
+    <a href="#" class="clx-bottom-nav__item" data-clx-page="history">
+        <i class="fas fa-history"></i>
+        <span>Historial</span>
+    </a>
+    <a href="#" class="clx-bottom-nav__item" data-clx-page="profile">
+        <i class="fas fa-user"></i>
+        <span>Mi Perfil</span>
+    </a>
+    <button type="button" class="clx-bottom-nav__item" id="btnMasCliente">
+        <i class="fas fa-bars"></i>
+        <span>Más</span>
+    </button>
+</nav>
+
+{{-- Drawer lateral (mobile) --}}
+<div id="mobileDrawerCliente">
+    <div class="drawer-overlay" onclick="cerrarDrawerCliente()"></div>
+    <div class="drawer-panel">
+        <button class="drawer-close btn-cerrar-drawer" onclick="cerrarDrawerCliente()">
+            <i class="fas fa-times"></i>
+        </button>
+
+        {{-- User info --}}
+        <div class="drawer-user">
+            @if(auth()->user()->foto)
+                <img src="{{ asset(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="drawer-user-avatar">
+            @else
+                <div class="drawer-user-avatar-placeholder">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                </div>
+            @endif
+            <div class="drawer-user-name">{{ auth()->user()->name }}</div>
+            <div class="drawer-user-email">{{ auth()->user()->email }}</div>
+            @if($plan ?? false)
+                <span class="drawer-user-badge" style="background:linear-gradient(135deg,#5a31d7,#7b5ce0);color:#fff;">
+                    <i class="fas fa-gem" style="font-size:0.55rem;"></i> {{ $plan->name }}
+                </span>
+            @else
+                <span class="drawer-user-badge" style="background:#f0ecfb;color:#5a31d7;">
+                    <i class="fas fa-tag" style="font-size:0.55rem;"></i> Free
+                </span>
+            @endif
+        </div>
+
+        {{-- Links --}}
+        <a href="#" class="drawer-link drawer-active" data-clx-drawer-page="dashboard">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="#" class="drawer-link" data-clx-drawer-page="favorites">
+            <i class="fas fa-heart"></i> Favoritos
+        </a>
+        <a href="#" class="drawer-link" data-clx-drawer-page="history">
+            <i class="fas fa-history"></i> Historial
+        </a>
+        <a href="#" class="drawer-link" data-clx-drawer-page="profile">
+            <i class="fas fa-user-cog"></i> Mi Perfil
+        </a>
+
+        <div class="drawer-separator"></div>
+
+        @if(($misEmpresas ?? collect())->isEmpty())
+            <a href="{{ route('negocio.create') }}" class="drawer-link">
+                <i class="fas fa-briefcase"></i> Mi Empresa
+            </a>
+        @else
+            @foreach ($misEmpresas as $empresa)
+                <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="drawer-link">
+                    <i class="fas fa-store"></i> {{ $empresa->neg_nombre_comercial ?? 'Mi Empresa' }}
+                </a>
+            @endforeach
+        @endif
+
+        <div class="drawer-separator"></div>
+
+        <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+            @csrf
+            <button type="submit" class="drawer-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </button>
+        </form>
+    </div>
+</div>
+
+{{-- Drawer + Bottom Nav + Topbar JS --}}
+<script>
+(function() {
+    var drawerCliente = document.getElementById('mobileDrawerCliente');
+    var btnHamCliente = document.getElementById('btnHamburguerCliente');
+    var btnMasCliente = document.getElementById('btnMasCliente');
+    var topbarTitle = document.getElementById('clxTopbarTitle');
+
+    // Page title map
+    var pageTitles = {
+        dashboard: 'Dashboard',
+        favorites: 'Favoritos',
+        history: 'Historial',
+        profile: 'Mi Perfil'
+    };
+
+    window.abrirDrawerCliente = function() {
+        drawerCliente.style.display = 'block';
+        setTimeout(function() { drawerCliente.classList.add('open'); }, 10);
+    };
+    window.cerrarDrawerCliente = function() {
+        drawerCliente.classList.remove('open');
+        setTimeout(function() { drawerCliente.style.display = 'none'; }, 300);
+    };
+
+    if (btnHamCliente) btnHamCliente.addEventListener('click', abrirDrawerCliente);
+    if (btnMasCliente) btnMasCliente.addEventListener('click', abrirDrawerCliente);
+
+    // Bottom nav: trigger sidebar page navigation + sync active states
+    document.querySelectorAll('.clx-bottom-nav__item[data-clx-page]').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            var page = this.dataset.clxPage;
+
+            // Trigger sidebar nav link
+            var sidebarLink = document.querySelector('.clx-nav-link[data-clx-page="' + page + '"]');
+            if (sidebarLink) sidebarLink.click();
+
+            // Update bottom nav active
+            document.querySelectorAll('.clx-bottom-nav__item').forEach(function(i) {
+                i.classList.remove('clx-bnav-active');
+            });
+            this.classList.add('clx-bnav-active');
+
+            // Update topbar title
+            if (topbarTitle && pageTitles[page]) topbarTitle.textContent = pageTitles[page];
+        });
+    });
+
+    // Drawer links: trigger sidebar page navigation + close drawer
+    document.querySelectorAll('[data-clx-drawer-page]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var page = this.dataset.clxDrawerPage;
+
+            var sidebarLink = document.querySelector('.clx-nav-link[data-clx-page="' + page + '"]');
+            if (sidebarLink) sidebarLink.click();
+
+            // Sync drawer active
+            document.querySelectorAll('[data-clx-drawer-page]').forEach(function(l) {
+                l.classList.remove('drawer-active');
+            });
+            this.classList.add('drawer-active');
+
+            // Sync bottom nav
+            document.querySelectorAll('.clx-bottom-nav__item').forEach(function(i) {
+                i.classList.toggle('clx-bnav-active', i.dataset.clxPage === page);
+            });
+
+            // Update topbar title
+            if (topbarTitle && pageTitles[page]) topbarTitle.textContent = pageTitles[page];
+
+            cerrarDrawerCliente();
+        });
+    });
+
+    // Sync bottom nav when sidebar nav is clicked (desktop)
+    document.querySelectorAll('.clx-nav-link[data-clx-page]').forEach(function(link) {
+        link.addEventListener('click', function() {
+            var page = this.dataset.clxPage;
+            document.querySelectorAll('.clx-bottom-nav__item').forEach(function(i) {
+                i.classList.toggle('clx-bnav-active', i.dataset.clxPage === page);
+            });
+            document.querySelectorAll('[data-clx-drawer-page]').forEach(function(l) {
+                l.classList.toggle('drawer-active', l.dataset.clxDrawerPage === page);
+            });
+            if (topbarTitle && pageTitles[page]) topbarTitle.textContent = pageTitles[page];
+        });
+    });
+})();
+</script>
 
 {{-- Star rating interactive JS --}}
 <script>

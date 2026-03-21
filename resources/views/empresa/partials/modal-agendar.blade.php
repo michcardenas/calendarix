@@ -6,7 +6,7 @@
     $trabajadores = $trabajadores ?? \App\Models\Trabajador::where('negocio_id', $negocio->id)->orderBy('nombre')->get();
 @endphp
 
-<div id="modalAgendar" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+<div id="modalAgendar" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center" style="z-index:100;">
   <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden" style="max-height: 90vh; display: flex; flex-direction: column;">
 
     {{-- Botón cerrar --}}
@@ -299,7 +299,13 @@
 
     // Acciones especiales por paso
     if (n === 3) initMiniCalendar();
-    if (n === 4) buildTimeSlotGrid();
+    if (n === 4) {
+      // Solo reconstruir si cambió la fecha o no hay slots aún
+      const grid = document.getElementById('timeSlotGrid');
+      if (!grid._builtForFecha || grid._builtForFecha !== state.fecha) {
+        buildTimeSlotGrid();
+      }
+    }
     if (n === 5) populateConfirmation();
   }
 
@@ -327,19 +333,35 @@
     hideError();
 
     // Pre-selecciones
-    let startStep = 1;
-
     if (options.serviceId) {
-      const card = document.querySelector(`.service-card[data-id="${options.serviceId}"]`);
+      const card = document.querySelector('.service-card[data-id="' + options.serviceId + '"]');
       if (card) {
         selectServiceCard(card);
-        startStep = 2;
+      }
+    }
+
+    if (options.workerId) {
+      const card = document.querySelector('.worker-card[data-id="' + options.workerId + '"]');
+      if (card) {
+        card.style.borderColor = '#5a31d7';
+        card.style.backgroundColor = 'rgba(90,49,215,0.04)';
+        state.trabajadorId = card.dataset.id;
+        state.trabajadorNombre = card.dataset.nombre;
       }
     }
 
     if (options.date) {
       state.fecha = options.date;
+      if (typeof window.cargarCitasDelDia === 'function') {
+        window.cargarCitasDelDia(options.date);
+      }
     }
+
+    // Calcular paso inicial inteligente
+    let startStep = 1;
+    if (state.servicioId) startStep = 2;
+    if (state.servicioId && state.trabajadorId) startStep = 3;
+    if (state.servicioId && state.trabajadorId && state.fecha) startStep = 4;
 
     // Show modal
     modal.classList.remove('hidden');
@@ -542,6 +564,21 @@
 
     if (!hasSlots) {
       grid.innerHTML = '<p class="col-span-4 text-center text-gray-400 py-6">No hay horarios disponibles para este profesional en esta fecha.</p>';
+    }
+
+    // Marcar la fecha para la que se construyó (evitar reconstrucción innecesaria)
+    grid._builtForFecha = state.fecha;
+
+    // Si ya hay hora pre-seleccionada, resaltarla
+    if (state.horaInicio) {
+      const preSelected = grid.querySelector('button[data-start="' + state.horaInicio + '"]');
+      if (preSelected) {
+        preSelected.style.backgroundColor = '#5a31d7';
+        preSelected.style.color = '#ffffff';
+        preSelected.style.borderColor = '#5a31d7';
+        displayText.textContent = state.horaInicio + ' – ' + state.horaFin + ' (' + duracion + ' min)';
+        displayEl.classList.remove('hidden');
+      }
     }
   }
 

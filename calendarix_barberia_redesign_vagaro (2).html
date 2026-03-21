@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barbería de los Pocitos — Rediseño estilo Vagaro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --card-2:#fafbff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e8ebf3;
+      --primary:#3b82f6;
+      --primary-dark:#2563eb;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --shadow:0 18px 45px rgba(15, 23, 42, .08);
+      --radius:22px;
+      --radius-sm:14px;
+      --max:1260px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,.12), transparent 32%),
+        radial-gradient(circle at top right, rgba(14,165,233,.08), transparent 26%),
+        var(--bg);
+    }
+    a{text-decoration:none;color:inherit}
+    .container{max-width:var(--max);margin:0 auto;padding:0 24px}
+    .topbar{
+      position:sticky; top:0; z-index:30;
+      backdrop-filter: blur(14px);
+      background:rgba(246,247,251,.82);
+      border-bottom:1px solid rgba(232,235,243,.9);
+    }
+    .topbar-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:74px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800}
+    .brand-mark{
+      width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#60a5fa);
+      display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 10px 24px rgba(59,130,246,.28);
+    }
+    .nav{display:flex;gap:12px;align-items:center}
+    .nav a{padding:11px 14px;border-radius:12px;color:var(--muted);font-weight:600}
+    .nav a:hover{background:#fff;color:var(--text)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:14px;font-weight:700;border:1px solid transparent;cursor:pointer;transition:.2s ease}
+    .btn-primary{background:var(--primary);color:#fff;box-shadow:0 14px 30px rgba(59,130,246,.28)}
+    .btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px)}
+    .btn-light{background:#fff;border-color:var(--line);color:var(--text)}
+    .btn-light:hover{background:#f8fafc}
+    .hero{padding:28px 0 10px}
+    .hero-grid{display:grid;grid-template-columns:1.3fr .82fr;gap:24px}
+    .hero-card,.booking-card,.section-card,.mini-card,.gallery-card,.team-card,.service-card,.review-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .hero-card{border-radius:28px;overflow:hidden}
+    .hero-cover{
+      height:330px;
+      background:
+        linear-gradient(180deg, rgba(15,23,42,.08), rgba(15,23,42,.48)),
+        url('https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1400&q=80') center/cover;
+      display:flex;align-items:flex-end;padding:28px;
+    }
+    .hero-overlay{width:100%;display:flex;justify-content:space-between;gap:20px;align-items:end;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:13px;font-weight:700;backdrop-filter: blur(10px)}
+    .hero-title{color:#fff;font-size:38px;line-height:1.05;margin:14px 0 12px;font-weight:800;letter-spacing:-.03em}
+    .hero-meta{display:flex;gap:10px;flex-wrap:wrap}
+    .meta-chip{padding:10px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:14px;font-weight:600}
+    .hero-bottom{padding:22px 26px 24px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+    .hero-desc{color:var(--muted);font-size:15px;line-height:1.7;max-width:760px}
+
+    .booking-card{border-radius:24px;padding:22px;position:sticky;top:96px;height:max-content}
+    .booking-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+    .booking-title{font-size:24px;font-weight:800;letter-spacing:-.03em}
+    .badge-live{background:#ecfdf3;color:var(--success);padding:8px 12px;border-radius:999px;font-size:13px;font-weight:800}
+    .stepper{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+    .step{flex:1;min-width:70px;padding:10px 10px;border-radius:12px;background:var(--card-2);border:1px solid var(--line);text-align:center}
+    .step strong{display:block;font-size:13px}
+    .step span{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+    .field{margin-bottom:14px}
+    .label{display:block;margin-bottom:8px;font-size:13px;font-weight:700;color:#334155}
+    select,input,textarea{
+      width:100%;padding:14px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit;outline:none;
+      transition:.2s ease;
+    }
+    select:focus,input:focus,textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 4px rgba(59,130,246,.12)}
+    .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 16px}
+    .slot{padding:12px;border-radius:14px;border:1px solid var(--line);background:#fff;text-align:center;font-weight:700;cursor:pointer}
+    .slot.active,.slot:hover{border-color:#bfdbfe;background:#eff6ff;color:var(--primary-dark)}
+    .booking-summary{padding:14px;border-radius:18px;background:linear-gradient(180deg,#f8fbff,#f2f7ff);border:1px solid #dbeafe;margin:16px 0}
+    .summary-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;color:#334155;font-size:14px}
+    .summary-row strong{color:var(--text)}
+    .full{width:100%}
+    .subtle{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
+
+    .content{padding:22px 0 54px}
+    .section{margin-bottom:24px}
+    .section-card{border-radius:24px;padding:24px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+    .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--primary-dark);font-weight:800;margin-bottom:8px}
+    h2{margin:0;font-size:29px;letter-spacing:-.03em}
+    .section-copy{margin:6px 0 0;color:var(--muted);line-height:1.7}
+
+    .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .service-card{border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+    .service-card::after{content:"";position:absolute;inset:auto -20px -26px auto;width:120px;height:120px;background:radial-gradient(circle, rgba(59,130,246,.12), transparent 70%)}
+    .service-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .service-type{font-size:12px;color:var(--primary-dark);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .service-name{font-size:20px;font-weight:800;margin-top:6px;letter-spacing:-.02em}
+    .price{font-size:26px;font-weight:800}
+    .service-meta{display:flex;gap:10px;flex-wrap:wrap}
+    .tag{padding:8px 10px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:13px;font-weight:700;color:#334155}
+    .service-desc{color:var(--muted);font-size:14px;line-height:1.65;min-height:68px}
+
+    .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .team-card{border-radius:22px;padding:18px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+    .avatar{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:grid;place-items:center;font-weight:800;color:var(--primary-dark)}
+    .team-name{font-size:19px;font-weight:800}
+    .team-role{color:var(--muted);margin-top:4px}
+    .team-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+    .gallery-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:16px}
+    .gallery-card{border-radius:22px;min-height:220px;overflow:hidden;position:relative;background:#ddd center/cover no-repeat}
+    .gallery-card.large{min-height:380px;background-image:url('https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80')}
+    .gallery-card.g2{background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=900&q=80')}
+    .gallery-card.g3{background-image:url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=900&q=80')}
+    .gallery-card.g4{background-image:url('https://images.unsplash.com/photo-1503951458645-643d53d661c5?auto=format&fit=crop&w=900&q=80')}
+    .gallery-card.g5{background-image:url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80')}
+    .gallery-overlay{position:absolute;inset:auto 0 0 0;padding:18px;background:linear-gradient(180deg,transparent,rgba(15,23,42,.72));color:#fff;font-weight:700}
+
+    .reviews-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:16px}
+    .review-card{border-radius:22px;padding:20px}
+    .score-box{display:flex;align-items:end;gap:14px}
+    .score{font-size:56px;font-weight:800;line-height:1}
+    .stars{color:#f59e0b;font-size:20px;letter-spacing:2px}
+    .review-quote{color:#334155;line-height:1.75;font-size:15px}
+    .review-author{margin-top:14px;font-weight:800}
+    .review-small{color:var(--muted);font-size:14px}
+
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .mini-card{border-radius:22px;padding:20px}
+    .info-list{display:grid;gap:14px}
+    .info-item{display:flex;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:14px}
+    .info-item:last-child{padding-bottom:0;border-bottom:none}
+    .mapbox{height:100%;min-height:290px;border-radius:18px;background:
+      linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.1)),
+      url('https://maps.geoapify.com/v1/staticmap?style=osm-bright-grey&width=800&height=500&center=lonlat:-56.1507,-34.9167&zoom=14&marker=lonlat:-56.1507,-34.9167;color:%233b82f6;size:large') center/cover;
+      border:1px solid var(--line);overflow:hidden;display:flex;align-items:end}
+    .maptag{margin:16px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.92);font-weight:800;box-shadow:0 10px 22px rgba(15,23,42,.08)}
+
+    .footer{padding:18px 0 46px;color:var(--muted);font-size:14px}
+    .footer-inner{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:22px}
+
+    @media (max-width: 1100px){
+      .hero-grid,.info-grid,.reviews-grid,.services-grid,.gallery-grid{grid-template-columns:1fr}
+      .booking-card{position:static}
+      .team-grid{grid-template-columns:1fr}
+      .hero-bottom{grid-template-columns:1fr}
+      .services-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 760px){
+      .topbar-inner{height:auto;padding:14px 0;align-items:flex-start;gap:12px;flex-direction:column}
+      .nav{width:100%;justify-content:space-between;flex-wrap:wrap}
+      .hero-cover{height:280px;padding:20px}
+      .hero-title{font-size:30px}
+      .services-grid,.slots{grid-template-columns:1fr}
+      .service-card,.team-card,.review-card,.mini-card,.section-card,.booking-card{border-radius:18px}
+      .container{padding:0 16px}
+      .team-card{grid-template-columns:auto 1fr}
+      .team-card > :last-child{grid-column:1 / -1}
+      .price{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <div>
+          <div>Calendarix</div>
+          <div style="font-size:12px;color:var(--muted);font-weight:600">Marketplace & reservas</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#servicios">Servicios</a>
+        <a href="#equipo">Equipo</a>
+        <a href="#galeria">Galería</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contacto">Contacto</a>
+        <a class="btn btn-primary" href="#reserva">Reservar ahora</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-card">
+          <div class="hero-cover">
+            <div class="hero-overlay">
+              <div>
+                <span class="pill">● Abierto ahora</span>
+                <h1 class="hero-title">Barbería de los Pocitos</h1>
+                <div class="hero-meta">
+                  <span class="meta-chip">★ 4.8 · 132 reseñas</span>
+                  <span class="meta-chip">Peluquería & Barbería</span>
+                  <span class="meta-chip">Pocitos, Montevideo</span>
+                </div>
+              </div>
+              <div class="pill">21 de Septiembre 3083</div>
+            </div>
+          </div>
+          <div class="hero-bottom">
+            <div class="hero-desc">
+              Un rediseño pensado para vender mejor: portada grande, servicios tipo card, profesionales destacados, reviews visibles y un bloque de reserva que permanece claro y siempre a mano.
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <a class="btn btn-primary" href="#reserva">Agendar cita</a>
+              <a class="btn btn-light" href="#contacto">Escribir por WhatsApp</a>
+            </div>
+          </div>
+        </div>
+
+        <aside class="booking-card" id="reserva">
+          <div class="booking-head">
+            <div>
+              <div class="booking-title">Reserva tu cita</div>
+              <div style="color:var(--muted);margin-top:6px">Flujo corto, claro y muy visual.</div>
+            </div>
+            <div class="badge-live">Hoy disponible</div>
+          </div>
+
+          <div class="stepper">
+            <div class="step"><strong>1</strong><span>Servicio</span></div>
+            <div class="step"><strong>2</strong><span>Barbero</span></div>
+            <div class="step"><strong>3</strong><span>Fecha</span></div>
+            <div class="step"><strong>4</strong><span>Hora</span></div>
+          </div>
+
+          <div class="field">
+            <label class="label">Servicio</label>
+            <select>
+              <option>Corte de cabello caballeros · $700 · 30 min</option>
+              <option>Corte de cabello damas · $800 · 30 min</option>
+              <option>Corte de barba · $500 · 15 min</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label">Profesional</label>
+            <select>
+              <option>Luis Perez Hoyos · Barba y color</option>
+              <option>Ricardo Rocha · Corte y color</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label">Fecha</label>
+            <input type="date" value="2026-03-18" />
+          </div>
+
+          <div class="field">
+            <label class="label">Horario disponible</label>
+            <div class="slots">
+              <div class="slot">09:30</div>
+              <div class="slot active">11:00</div>
+              <div class="slot">12:30</div>
+              <div class="slot">15:00</div>
+              <div class="slot">17:30</div>
+              <div class="slot">19:00</div>
+            </div>
+          </div>
+
+          <div class="booking-summary">
+            <div class="summary-row"><span>Servicio</span><strong>Corte caballeros</strong></div>
+            <div class="summary-row"><span>Profesional</span><strong>Ricardo Rocha</strong></div>
+            <div class="summary-row"><span>Fecha</span><strong>18 Mar · 11:00</strong></div>
+            <div class="summary-row"><span>Total</span><strong>$700</strong></div>
+          </div>
+
+          <button class="btn btn-primary full">Continuar reserva</button>
+          <div class="subtle">Consejo UX: en mobile este bloque debería abrir como bottom sheet para no ocupar toda la pantalla.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="container">
+
+        <section class="section" id="servicios">
+          <div class="section-card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Servicios destacados</div>
+                <h2>Elegir debería tomar segundos</h2>
+                <p class="section-copy">Cada servicio con precio, duración, categoría y CTA directo. Muy estilo Vagaro: limpio, visual y orientado a conversión.</p>
+              </div>
+              <a class="btn btn-light" href="#reserva">Ver disponibilidad</a>
+            </div>
+            <div class="services-grid">
+              <article class="service-card">
+                <div class="service-top">
+                  <div>
+                    <div class="service-type">Cortes</div>
+                    <div class="service-name">Corte de Cabello Damas</div>
+                  </div>
+                  <div class="price">$800</div>
+                </div>
+                <div class="service-meta">
+                  <span class="tag">30 min</span>
+                  <span class="tag">Alta demanda</span>
+                </div>
+                <div class="service-desc">Servicio premium con terminación prolija y asesoramiento rápido de estilo. La descripción corta ayuda a no saturar la pantalla.</div>
+                <a class="btn btn-primary" href="#reserva">Reservar</a>
+              </article>
+
+              <article class="service-card">
+                <div class="service-top">
+                  <div>
+                    <div class="service-type">Cortes</div>
+                    <div class="service-name">Corte de Cabello Caballeros</div>
+                  </div>
+                  <div class="price">$700</div>
+                </div>
+                <div class="service-meta">
+                  <span class="tag">30 min</span>
+                  <span class="tag">Top seller</span>
+                </div>
+                <div class="service-desc">El servicio principal debe ir primero, con CTA directo y señales de popularidad. Es el que más probablemente convierta.</div>
+                <a class="btn btn-primary" href="#reserva">Reservar</a>
+              </article>
+
+              <article class="service-card">
+                <div class="service-top">
+                  <div>
+                    <div class="service-type">Barba</div>
+                    <div class="service-name">Corte de barba</div>
+                  </div>
+                  <div class="price">$500</div>
+                </div>
+                <div class="service-meta">
+                  <span class="tag">15 min</span>
+                  <span class="tag">Express</span>
+                </div>
+                <div class="service-desc">Ideal como upsell o servicio rápido. En una segunda etapa podrías sumar combos como Corte + Barba para subir ticket promedio.</div>
+                <a class="btn btn-primary" href="#reserva">Reservar</a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="equipo">
+          <div class="section-card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Equipo</div>
+                <h2>Deja que el cliente elija a quién atenderse</h2>
+                <p class="section-copy">Mostrar el profesional mejora confianza y conversión, especialmente en barbería, estética y bienestar.</p>
+              </div>
+            </div>
+            <div class="team-grid">
+              <article class="team-card">
+                <div class="avatar">LU</div>
+                <div>
+                  <div class="team-name">Luis Perez Hoyos</div>
+                  <div class="team-role">Especialista en barba y color</div>
+                  <div class="team-stats">
+                    <span class="tag">★ 4.9</span>
+                    <span class="tag">+240 reservas</span>
+                    <span class="tag">Habla español</span>
+                  </div>
+                </div>
+                <a class="btn btn-light" href="#reserva">Reservar con Luis</a>
+              </article>
+
+              <article class="team-card">
+                <div class="avatar">RI</div>
+                <div>
+                  <div class="team-name">Ricardo Rocha</div>
+                  <div class="team-role">Especialista en corte y color</div>
+                  <div class="team-stats">
+                    <span class="tag">★ 4.8</span>
+                    <span class="tag">+180 reservas</span>
+                    <span class="tag">Fade specialist</span>
+                  </div>
+                </div>
+                <a class="btn btn-light" href="#reserva">Reservar con Ricardo</a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="galeria">
+          <div class="section-card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Galería</div>
+                <h2>Más visual, más confianza</h2>
+                <p class="section-copy">Una galería editorial ayuda mucho en barberías: muestra el local, el estilo y el nivel del trabajo antes de reservar.</p>
+              </div>
+            </div>
+            <div class="gallery-grid">
+              <div class="gallery-card large"><div class="gallery-overlay">Interior del local</div></div>
+              <div class="gallery-card g2"><div class="gallery-overlay">Fade & textura</div></div>
+              <div class="gallery-card g3"><div class="gallery-overlay">Beard styling</div></div>
+              <div class="gallery-card g4"><div class="gallery-overlay">Ambiente premium</div></div>
+              <div class="gallery-card g5"><div class="gallery-overlay">Resultado final</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="reviews">
+          <div class="section-card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Reseñas</div>
+                <h2>Prueba social visible desde arriba</h2>
+                <p class="section-copy">Las reviews no deberían quedar escondidas. En este tipo de negocio venden casi tanto como las fotos.</p>
+              </div>
+            </div>
+            <div class="reviews-grid">
+              <article class="review-card">
+                <div class="score-box">
+                  <div class="score">4.8</div>
+                  <div>
+                    <div class="stars">★★★★★</div>
+                    <div class="review-small">132 opiniones verificadas</div>
+                  </div>
+                </div>
+                <p class="section-copy" style="margin-top:14px">Excelente ubicación, atención rápida y resultados consistentes. Este bloque da autoridad inmediata.</p>
+              </article>
+              <article class="review-card">
+                <div class="review-quote">“La reserva fue rápida, el local impecable y el corte quedó perfecto. Volvería sin dudar.”</div>
+                <div class="review-author">Martín G.</div>
+                <div class="review-small">Cliente frecuente</div>
+              </article>
+              <article class="review-card">
+                <div class="review-quote">“Muy buena atención, me gustó poder elegir al barbero y ver precios claros antes de agendar.”</div>
+                <div class="review-author">Santiago R.</div>
+                <div class="review-small">Reservó online</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="contacto">
+          <div class="section-card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Ubicación & contacto</div>
+                <h2>Todo lo importante, sin desorden</h2>
+                <p class="section-copy">Este bloque reemplaza una ficha plana por una vista más premium y escaneable.</p>
+              </div>
+            </div>
+            <div class="info-grid">
+              <div class="mini-card">
+                <div class="info-list">
+                  <div class="info-item"><span>Dirección</span><strong>21 de Septiembre 3083, Pocitos</strong></div>
+                  <div class="info-item"><span>Teléfono</span><strong>45465465465465</strong></div>
+                  <div class="info-item"><span>Email</span><strong>fgonzalez@multisoft.com.uy</strong></div>
+                  <div class="info-item"><span>WhatsApp</span><strong>Atención inmediata</strong></div>
+                  <div class="info-item"><span>Lunes a sábado</span><strong>09:00 – 20:00</strong></div>
+                  <div class="info-item"><span>Domingo</span><strong>Cerrado</strong></div>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+                  <a class="btn btn-primary" href="#reserva">Agendar cita</a>
+                  <a class="btn btn-light" href="#">Abrir Instagram</a>
+                </div>
+              </div>
+              <div class="mini-card" style="padding:10px">
+                <div class="mapbox">
+                  <div class="maptag">Pocitos · Montevideo</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>Concept redesign para Calendarix · Estilo inspirado en marketplaces premium de reservas.</div>
+      <div>Hecho para prueba visual local</div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.slot').forEach(slot => {
+      slot.addEventListener('click', () => {
+        document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+        slot.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

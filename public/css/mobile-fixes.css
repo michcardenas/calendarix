@@ -1,0 +1,45 @@
+/* ============================================
+   CALENDARIX — Global Mobile Fixes
+   ============================================
+   Safe global rules only. Component-specific
+   overrides stay in each dashboard's own CSS.
+*/
+
+/* FIX 5: Images, videos, iframes never overflow */
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* FIX 6: Prevent horizontal scroll globally */
+html {
+    overflow-x: hidden;
+}
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* ===== Mobile-only fixes (≤768px) ===== */
+@media (max-width: 768px) {
+
+    /* FIX 4: Text size adjust */
+    body {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    /* FIX 4: Touch targets — only native form elements */
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+    }
+}
+
+/* FIX 7: Bottom nav clearance — client dashboard only */
+@media (max-width: 1023px) {
+    .clx-main {
+        padding-bottom: 80px !important;
+    }
+}

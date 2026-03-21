@@ -12,7 +12,7 @@
                 <i class="fas fa-images mr-2 opacity-70"></i>Galeria de Fotos
             </h1>
             <p class="text-sm text-gray-400 mt-1">
-                Mostra tu negocio con fotos atractivas.
+                Muestra tu negocio con fotos atractivas.
                 <span class="inline-flex items-center ml-1 px-2 py-0.5 rounded-full text-xs font-semibold"
                       style="background-color: #f0ecfb; color: #5a31d7;">
                     {{ $fotos->count() }} / 12
@@ -82,7 +82,7 @@
                         </button>
                     </div>
                 </div>
-                <div id="preview-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3"></div>
+                <div id="preview-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2"></div>
             </div>
         </form>
     </div>
@@ -91,11 +91,11 @@
     {{-- Galeria --}}
     @if($fotos->count())
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
                 @foreach($fotos as $foto)
-                    <div class="relative group rounded-xl overflow-hidden shadow-sm border border-gray-100 bg-gray-50" style="aspect-ratio: 1/1;">
+                    <div class="relative group rounded-xl overflow-hidden shadow-sm border border-gray-100 bg-gray-50" style="aspect-ratio:1/1;">
                         <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto galeria"
-                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                             class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-end p-2.5">
                             <form action="{{ route('empresa.galeria.destroy', [$empresa->id, $foto->id]) }}" method="POST"
                                   onsubmit="return confirm('Eliminar esta foto?')">
@@ -145,7 +145,7 @@ function previewFotos(input) {
             const div = document.createElement('div');
             div.className = 'relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50';
             div.style.aspectRatio = '1/1';
-            div.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover" alt="Preview">';
+            div.innerHTML = '<img src="' + e.target.result + '" class="absolute inset-0 w-full h-full object-cover" alt="Preview">';
             grid.appendChild(div);
         };
         reader.readAsDataURL(file);

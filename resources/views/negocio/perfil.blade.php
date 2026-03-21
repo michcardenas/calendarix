@@ -3,607 +3,834 @@
 
 @section('content')
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css');
+
     :root {
+        --bg: #f6f7fb;
+        --card: #ffffff;
+        --card-2: #fafbff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --line: #e8ebf3;
         --primary: #5a31d7;
+        --primary-dark: #4a22b5;
         --primary-light: #7b5ce0;
-        --primary-dark: #4a22b8;
         --accent: #32ccbc;
-        --accent-light: #5ee0d4;
-        --gray-50: #f9fafb;
-        --gray-100: #f3f4f6;
-        --gray-200: #e5e7eb;
-        --gray-400: #9ca3af;
-        --gray-600: #4b5563;
-        --gray-800: #1f2937;
-        --gray-900: #111827;
+        --accent-light: #90f7ec;
+        --success: #16a34a;
+        --warning: #f59e0b;
+        --shadow: 0 18px 45px rgba(15, 23, 42, .08);
+        --radius: 22px;
+        --radius-sm: 14px;
+        --max: 1260px;
+        --gray-50: #f6f7fb;
+        --gray-100: #f1f5f9;
+        --gray-200: #e8ebf3;
+        --gray-400: #94a3b8;
+        --gray-600: #64748b;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
     }
 
-    /* ===== RESET BASE ===== */
     * { box-sizing: border-box; }
+    body {
+        font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+        background: radial-gradient(circle at top left, rgba(90,49,215,.12), transparent 32%),
+                    radial-gradient(circle at top right, rgba(50,204,188,.08), transparent 26%),
+                    var(--bg);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container-perfil { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    /* ===== BUTTONS ===== */
+    .btn-ref { display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:14px 18px; border-radius:14px; font-weight:700; border:1px solid transparent; cursor:pointer; transition:.2s ease; font-size:.92rem; text-decoration:none; }
+    .btn-ref-primary { background:var(--primary); color:#fff; box-shadow:0 14px 30px rgba(90,49,215,.28); }
+    .btn-ref-primary:hover { background:var(--primary-dark); transform:translateY(-1px); }
+    .btn-ref-light { background:#fff; border-color:var(--line); color:var(--text); }
+    .btn-ref-light:hover { background:#f8fafc; }
+
+    /* ===== SECTION CARD ===== */
+    .section-card { background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow); border-radius:24px; padding:24px; }
+    .section-head { display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+    .eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--primary-dark); font-weight:800; margin-bottom:8px; }
+    .section-title { margin:0; font-size:29px; font-weight:800; letter-spacing:-.03em; color:var(--text); line-height:1.1; }
+    .section-copy { margin:6px 0 0; color:var(--muted); line-height:1.7; font-size:15px; }
+    .tag-ref { padding:8px 10px; border-radius:999px; background:#f8fafc; border:1px solid var(--line); font-size:13px; font-weight:700; color:#334155; display:inline-flex; align-items:center; gap:5px; }
 
     /* ===== FULLCALENDAR ===== */
-    .fc-day-past { background-color: #f3f4f6 !important; opacity: 0.6; cursor: not-allowed !important; }
-    .fc-day-past .fc-daygrid-day-number { color: #9ca3af !important; text-decoration: line-through; }
+    .fc-day-past { background-color: #f1f5f9 !important; opacity: 0.6; cursor: not-allowed !important; }
+    .fc-day-past .fc-daygrid-day-number { color: #94a3b8 !important; text-decoration: line-through; }
     .fc-day-blocked { background-color: #fee2e2 !important; cursor: not-allowed !important; }
     .fc-day-blocked .fc-daygrid-day-number { color: #dc2626 !important; font-weight: bold; }
-    .fc .fc-daygrid-day:not(.fc-day-past):not(.fc-day-blocked):hover { background-color: #ede9fe !important; cursor: pointer; }
-    .fc-event { border-radius: 4px; padding: 2px 4px; font-size: 0.75rem; font-weight: 500; cursor: pointer; }
+    .fc .fc-daygrid-day:not(.fc-day-past):not(.fc-day-blocked):hover { background-color: #f3f0ff !important; cursor: pointer; }
+    .fc-event { border-radius: 6px; padding: 2px 6px; font-size: 0.75rem; font-weight: 500; cursor: pointer; }
     .fc .fc-toolbar-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--gray-800); }
-    .fc .fc-button { background: var(--primary) !important; border-color: var(--primary) !important; font-size: 0.75rem !important; padding: 4px 10px !important; border-radius: 6px !important; }
-    .fc .fc-button:hover { background: var(--primary-light) !important; }
-    .fc .fc-col-header-cell { background: #faf9ff; }
-    .fc .fc-col-header-cell-cushion { color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
+    .fc .fc-button { background: #5a31d7 !important; border-color: #5a31d7 !important; font-size: 0.75rem !important; padding: 4px 10px !important; border-radius: 8px !important; }
+    .fc .fc-button:hover { background: #5a31d7 !important; }
+    .fc .fc-col-header-cell { background: #f8faff; }
+    .fc .fc-col-header-cell-cushion { color: #5a31d7; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
 
     /* ===== SCROLLBAR ===== */
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* ===== COVER ===== */
-    .cover-wrap {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        background: #e5e7eb;
-        height: 220px;
+    /* ===== HERO GRID ===== */
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 0.82fr;
+        gap: 24px;
+        align-items: start;
     }
-    @media (min-width: 640px) { .cover-wrap { height: 280px; } }
-    @media (min-width: 1024px) { .cover-wrap { height: 340px; } }
-    .cover-pattern {
-        position: absolute;
-        inset: 0;
+
+    /* ===== HERO CARD (left) ===== */
+    .hero-card {
+        border-radius: 28px;
+        overflow: hidden;
+        background: var(--card);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+    }
+    .hero-cover-ref {
+        position: relative;
+        height: 330px;
+        display: flex;
+        align-items: flex-end;
+        padding: 28px;
+        overflow: hidden;
+        background: #e8ebf3;
+    }
+    .hero-cover-ref img.hero-cover-img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: center;
+        display: block;
+    }
+    .hero-cover-ref .cover-pattern {
+        position: absolute; inset: 0;
         background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
         background-size: 20px 20px;
+        z-index: 1; pointer-events: none;
+    }
+    .hero-cover-ref .cover-gradient {
+        position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(15,23,42,.08), rgba(15,23,42,.48));
         z-index: 1;
-        pointer-events: none;
     }
-
-    /* ===== INFO BAR ===== */
-    .infobar-row {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        padding-bottom: 18px;
+    .hero-overlay-ref {
+        position: relative; z-index: 2;
+        width: 100%;
+        display: flex; justify-content: space-between; gap: 20px; align-items: end; flex-wrap: wrap;
     }
-    @media (min-width: 640px) {
-        .infobar-row {
-            flex-direction: row;
-            align-items: flex-end;
-            gap: 20px;
-            padding-bottom: 20px;
-        }
+    .hero-title-cover {
+        color: #fff; font-size: 38px; line-height: 1.05;
+        margin: 14px 0 12px; font-weight: 800; letter-spacing: -.03em;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
-    .infobar-text { text-align: center; flex: 1; min-width: 0; }
-    @media (min-width: 640px) { .infobar-text { text-align: left; } }
-    .infobar-tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin-top: 6px; }
-    @media (min-width: 640px) { .infobar-tags { justify-content: flex-start; } }
-    .infobar-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; margin-top: 8px; font-size: 0.78rem; color: var(--gray-600); }
-    @media (min-width: 640px) { .infobar-meta { justify-content: flex-start; } }
-
-    /* ===== AVATAR ===== */
-    .avatar-ring {
-        width: 96px; height: 96px; min-width: 96px;
-        border-radius: 50%;
-        border: 4px solid #fff;
-        box-shadow: 0 4px 20px rgba(90,49,215,0.18), 0 2px 8px rgba(0,0,0,0.12);
-        overflow: hidden;
+    .hero-meta-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill-ref {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 8px 12px; border-radius: 999px;
+        background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.18);
+        color: #fff; font-size: 13px; font-weight: 700;
+        backdrop-filter: blur(10px);
+    }
+    .meta-chip-ref {
+        padding: 10px 12px; border-radius: 999px;
+        background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+        color: #fff; font-size: 14px; font-weight: 600;
+    }
+    .hero-bottom-ref {
+        padding: 22px 26px 24px;
         background: #fff;
-        margin-top: -48px;
-        flex-shrink: 0;
-        position: relative;
-        z-index: 2;
+        display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center;
     }
-    @media (min-width: 640px) {
-        .avatar-ring { width: 116px; height: 116px; min-width: 116px; margin-top: -58px; }
+    .hero-bottom-left { display: flex; align-items: center; gap: 18px; }
+    .hero-avatar {
+        width: 72px; height: 72px; min-width: 72px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 16px rgba(90,49,215,0.2);
+        overflow: hidden; flex-shrink: 0;
     }
-    @media (min-width: 1024px) {
-        .avatar-ring { width: 128px; height: 128px; min-width: 128px; margin-top: -64px; }
-    }
-    .avatar-ring img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-desc { color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .hero-desc strong { color: var(--text); }
 
-    /* ===== BTN AGENDAR ===== */
-    .btn-agendar {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 11px 24px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        color: #fff;
+    /* ===== BOOKING CARD (right, sticky) ===== */
+    .booking-card {
+        position: sticky;
+        top: 96px;
+        background: #fff;
+        border: 1px solid #e8ebf3;
+        border-radius: 24px;
+        box-shadow: 0 18px 45px rgba(15,23,42,.08);
+        padding: 22px;
+    }
+    .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+    .booking-title {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -.03em;
+        color: #0f172a;
+    }
+    .booking-subtitle {
+        color: #64748b;
+        font-size: 14px;
+        margin-top: 6px;
+    }
+    .booking-badge {
+        background: #ecfdf5;
+        color: #16a34a;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Stepper */
+    .booking-stepper {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+    .booking-stepper-box {
+        flex: 1;
+        padding: 10px;
+        border-radius: 12px;
+        background: #fafbff;
+        border: 1px solid #e8ebf3;
+        text-align: center;
+    }
+    .booking-stepper-box strong {
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        display: block;
+    }
+    .booking-stepper-box span {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* Booking fields */
+    .booking-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+    .booking-field {
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid #e8ebf3;
+        background: #fff;
+        font-family: inherit;
+        font-size: 14px;
+        color: #0f172a;
+        outline: none;
+        cursor: pointer;
+        transition: border-color .2s, box-shadow .2s;
+        margin-bottom: 16px;
+    }
+    .booking-field:focus {
+        border-color: #d4c8f5;
+        box-shadow: 0 0 0 4px rgba(90,49,215,.12);
+    }
+
+    /* Flatpickr overrides */
+    .flatpickr-calendar {
+        font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
+        border-radius: 18px !important;
+        box-shadow: 0 18px 45px rgba(15,23,42,.12) !important;
+        border: 1px solid #e8ebf3 !important;
+        overflow: hidden;
+    }
+    .flatpickr-months { background: #5a31d7; padding: 4px 0; }
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year { color: #fff !important; }
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month { fill: #fff !important; color: #fff !important; }
+    .flatpickr-months .flatpickr-prev-month:hover svg,
+    .flatpickr-months .flatpickr-next-month:hover svg { fill: #e8e0fb !important; }
+    span.flatpickr-weekday { color: #5a31d7 !important; font-weight: 700 !important; font-size: 12px !important; }
+    .flatpickr-day { border-radius: 10px !important; font-weight: 600 !important; }
+    .flatpickr-day:hover { background: #f3f0ff !important; border-color: #d4c8f5 !important; }
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover { background: #5a31d7 !important; border-color: #5a31d7 !important; color: #fff !important; }
+    .flatpickr-day.today { border-color: #5a31d7 !important; color: #5a31d7 !important; }
+    .flatpickr-day.today.selected { color: #fff !important; }
+    .flatpickr-day.flatpickr-disabled,
+    .flatpickr-day.flatpickr-disabled:hover {
+        color: #cbd5e1 !important;
+        background: #f8f9fa !important;
+        text-decoration: line-through !important;
+        cursor: not-allowed !important;
+        border-color: transparent !important;
+    }
+
+    /* Time slots */
+    .booking-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 6px 0 16px;
+    }
+    .booking-slot {
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid #e8ebf3;
+        background: #fff;
+        text-align: center;
         font-weight: 700;
         font-size: 0.9rem;
-        border: none;
-        border-radius: 12px;
         cursor: pointer;
-        white-space: nowrap;
-        box-shadow: 0 4px 15px rgba(90,49,215,0.35);
-        transition: all 0.2s ease;
-        text-decoration: none;
-        flex-shrink: 0;
+        transition: all .2s;
+        user-select: none;
+        color: #0f172a;
     }
-    .btn-agendar:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(90,49,215,0.45);
-    }
-    .btn-agendar:active { transform: translateY(0); }
-    .btn-agendar-desktop { display: none; }
-    @media (min-width: 640px) { .btn-agendar-desktop { display: inline-flex; } }
-
-    /* ===== LAYOUT GRID ===== */
-    .perfil-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-        max-width: 1152px;
-        margin: 0 auto;
-        padding: 1.25rem 1rem 5.5rem;
-    }
-    @media (min-width: 1024px) {
-        .perfil-grid {
-            grid-template-columns: 1fr 320px;
-            gap: 1.5rem;
-            padding: 1.5rem 1rem 2.5rem;
-        }
+    .booking-slot:hover,
+    .booking-slot.active {
+        border-color: #d4c8f5;
+        background: #f3f0ff;
+        color: #5a31d7;
     }
 
-    /* ===== CARDS ===== */
-    .perfil-card {
-        background: #fff;
-        border-radius: 16px;
-        border: 1px solid #ece9f8;
-        box-shadow: 0 1px 4px rgba(90,49,215,0.06), 0 1px 2px rgba(0,0,0,0.04);
-        padding: 1.25rem;
-        transition: box-shadow 0.2s ease;
+    /* Summary */
+    .booking-summary-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, #f9f7ff, #f3f0ff);
+        border: 1px solid #e8e0fb;
+        margin: 0 0 16px;
     }
-    @media (min-width: 640px) { .perfil-card { padding: 1.5rem; } }
-    .perfil-card-hover:hover {
-        box-shadow: 0 4px 20px rgba(90,49,215,0.1), 0 2px 8px rgba(0,0,0,0.06);
+    .booking-summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 8px 0;
+        font-size: 14px;
+        color: #334155;
+        border-bottom: 1px solid #e8ebf3;
     }
-    .card-title {
-        font-size: 0.95rem;
+    .booking-summary-row:last-child {
+        border-bottom: none;
+    }
+    .booking-summary-row strong {
         font-weight: 700;
-        color: var(--gray-800);
+        color: #0f172a;
+        text-align: right;
+    }
+
+    /* Submit button */
+    .booking-btn-submit {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #5a31d7, #32ccbc);
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow: 0 14px 30px rgba(90,49,215,.3);
+        transition: all .2s;
+    }
+    .booking-btn-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 20px 40px rgba(90,49,215,.4);
+    }
+
+    .booking-footnote {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    /* ===== HIDE PARENT NAVBAR ===== */
+    .clx-navbar { display: none !important; }
+
+    /* ===== PROFILE NAV ===== */
+    .profile-nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 50;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(232,235,243,.7);
+        box-shadow: 0 1px 12px rgba(15,23,42,0.06);
+        transition: box-shadow 0.3s ease;
+    }
+    .profile-nav.scrolled {
+        box-shadow: 0 4px 20px rgba(15,23,42,0.1);
+    }
+    .profile-nav-inner {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 0 24px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin: 0 0 14px 0;
-    }
-    .card-title i { color: var(--primary); font-size: 0.9rem; }
-
-    /* ===== SIDEBAR STICKY ===== */
-    .col-left { display: flex; flex-direction: column; gap: 1.25rem; }
-    .col-right { display: flex; flex-direction: column; gap: 1.25rem; }
-    @media (min-width: 1024px) {
-        .col-right { position: sticky; top: 76px; align-self: start; }
-    }
-
-    /* ===== EQUIPO ===== */
-    .team-scroll { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; }
-    .team-item {
-        display: flex; flex-direction: column; align-items: center;
-        flex-shrink: 0; width: 68px;
-        transition: transform 0.2s ease;
-    }
-    .team-item:hover { transform: translateY(-3px); }
-    .team-avatar {
-        width: 52px; height: 52px; border-radius: 50%;
-        object-fit: cover; display: block;
-        border: 2px solid rgba(90,49,215,0.15);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .team-avatar-initials {
-        width: 52px; height: 52px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-weight: 700; font-size: 0.85rem;
-        box-shadow: 0 2px 8px rgba(90,49,215,0.25);
-    }
-
-    /* ===== GALERÍA ===== */
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        height: 64px;
         gap: 8px;
     }
-    @media (min-width: 480px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 768px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
-    .gallery-item {
-        aspect-ratio: 1;
+    .profile-nav-logo {
+        height: 28px;
+        width: auto;
+        flex-shrink: 0;
+    }
+    .profile-nav-logo-text {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        letter-spacing: -0.03em;
+        text-decoration: none;
+    }
+    .profile-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: auto;
+    }
+    .nav-link {
+        background: none;
+        border: none;
+        padding: 9px 14px;
         border-radius: 10px;
-        overflow: hidden;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--muted);
         cursor: pointer;
-        position: relative;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        white-space: nowrap;
     }
-    .gallery-item img {
-        width: 100%; height: 100%;
-        object-fit: cover; display: block;
-        transition: transform 0.35s ease;
+    .nav-link:hover { background: #f1f5f9; color: var(--text); }
+    .nav-link.active { background: #f3f0ff; color: var(--primary); }
+    .nav-cta {
+        margin-left: 8px;
     }
-    .gallery-item:hover img { transform: scale(1.08); }
-    .gallery-item::after {
-        content: '';
-        position: absolute; inset: 0;
-        background: rgba(90,49,215,0);
-        transition: background 0.25s ease;
-        border-radius: 10px;
-        pointer-events: none;
+
+    /* Hide nav links on mobile, show hamburger */
+    @media (max-width: 860px) {
+        .profile-nav-links .nav-link { display: none; }
+        .profile-nav-links .nav-cta { margin-left: auto; }
+        .nav-mobile-toggle { display: flex; }
     }
-    .gallery-item:hover::after { background: rgba(90,49,215,0.18); }
+    @media (min-width: 861px) {
+        .nav-mobile-toggle { display: none; }
+    }
+    .nav-mobile-toggle {
+        align-items: center;
+        justify-content: center;
+        width: 40px; height: 40px;
+        border: none; background: none;
+        color: var(--text); font-size: 1.2rem;
+        cursor: pointer; border-radius: 10px;
+        transition: background 0.2s;
+    }
+    .nav-mobile-toggle:hover { background: #f1f5f9; }
+
+    /* Mobile dropdown */
+    .nav-mobile-menu {
+        display: none;
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        z-index: 49;
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--line);
+        box-shadow: 0 12px 32px rgba(15,23,42,0.1);
+        padding: 12px 16px;
+    }
+    .nav-mobile-menu.open { display: flex; flex-direction: column; gap: 4px; }
+    .nav-mobile-menu .nav-link-mobile {
+        display: flex; align-items: center; gap: 10px;
+        padding: 14px 16px; border-radius: 12px;
+        font-size: 0.92rem; font-weight: 600;
+        color: var(--text); text-decoration: none;
+        border: none; background: none; cursor: pointer;
+        width: 100%; text-align: left;
+        transition: background 0.2s;
+    }
+    .nav-mobile-menu .nav-link-mobile:hover { background: #f1f5f9; }
+    .nav-mobile-menu .nav-link-mobile.active { background: #f3f0ff; color: var(--primary); }
+
+    /* Scroll sections offset for fixed nav */
+    .scroll-section { scroll-margin-top: 80px; }
+
+    /* ===== ACERCA FLOW ===== */
+    .acerca-flow {
+        display: flex; flex-direction: column; gap: 24px;
+        max-width: var(--max); margin: 0 auto;
+        padding: 24px;
+    }
+
+    /* ===== REVIEWS ===== */
+    .rev-section-card {
+        background: #fff; border-radius: 24px; border: 1px solid #e8ebf3;
+        box-shadow: 0 18px 45px rgba(15,23,42,.08); padding: 24px; margin-bottom: 24px;
+    }
+    .rev-header { margin-bottom: 18px; }
+    .rev-eyebrow {
+        font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+        color: #5a31d7; font-weight: 800; margin-bottom: 8px;
+        background: #f3f0ff; padding: 4px 10px; border-radius: 6px; display: inline-block;
+    }
+    .rev-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em; color: #0f172a; margin: 0; }
+    .rev-copy { color: #64748b; font-size: 0.9rem; line-height: 1.7; margin: 6px 0 0; }
+    .rev-grid { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 16px; }
+    .rev-grid.no-score { grid-template-columns: 1fr 1fr; }
+    .rev-card {
+        background: #fff; border-radius: 20px; border: 1px solid #e8ebf3;
+        padding: 22px; box-shadow: 0 4px 16px rgba(15,23,42,.06);
+    }
+    .rev-score-num { font-size: 56px; font-weight: 800; line-height: 1; letter-spacing: -.04em; color: #0f172a; }
+    .rev-stars { color: #f59e0b; font-size: 20px; letter-spacing: 2px; }
+    .rev-verified { color: #64748b; font-size: 14px; margin-top: 4px; }
+    .rev-score-text { color: #64748b; font-size: 0.87rem; line-height: 1.65; margin-top: 14px; }
+    .rev-quote { color: #334155; font-size: 0.9rem; line-height: 1.75; }
+    .rev-author { font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-top: 14px; }
+    .rev-date { color: #64748b; font-size: 13px; margin-top: 3px; }
+    .rev-reply {
+        margin-top: 12px; padding: 10px 14px;
+        border-left: 3px solid #5a31d7;
+        background: linear-gradient(135deg, #f9f7ff, #f3f0ff);
+        border-radius: 0 12px 12px 0;
+    }
+    .rev-reply-label { font-size: 11px; font-weight: 800; color: #5a31d7; margin-bottom: 4px; }
+    .rev-reply-text { font-size: 0.83rem; color: #64748b; margin: 0; }
+    .rev-empty { text-align: center; padding: 3rem 1rem; }
+    .rev-empty i { font-size: 2rem; color: #e2e8f0; }
+    .rev-empty p { color: #64748b; font-size: 0.9rem; margin-top: 8px; }
+
+    /* ===== GALLERY ===== */
+    .gal-section-card {
+        background: #fff; border-radius: 24px; border: 1px solid #e8ebf3;
+        box-shadow: 0 18px 45px rgba(15,23,42,.08); padding: 24px; margin-bottom: 24px;
+    }
+    .gal-header { margin-bottom: 18px; }
+    .gal-eyebrow {
+        font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+        color: #5a31d7; font-weight: 800; margin-bottom: 8px;
+        background: #f3f0ff; padding: 4px 10px; border-radius: 6px; display: inline-block;
+    }
+    .gal-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em; color: #0f172a; margin: 0; }
+    .gal-copy { color: #64748b; font-size: 0.9rem; line-height: 1.7; margin: 6px 0 0; }
+    .gal-grid {
+        display: grid; grid-template-columns: 1.2fr 0.9fr 0.9fr; gap: 14px;
+    }
+    .gal-item {
+        border-radius: 18px; overflow: hidden; position: relative;
+        cursor: pointer; min-height: 180px;
+    }
+    .gal-item.gal-featured { grid-row: span 2; min-height: 340px; }
+    .gal-item img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+        transition: transform .4s ease;
+    }
+    .gal-item:hover img { transform: scale(1.06); }
+    .gal-label {
+        position: absolute; inset: auto 0 0 0; padding: 16px 18px;
+        background: linear-gradient(180deg, transparent, rgba(15,23,42,.72));
+        color: #fff; font-weight: 700; font-size: 0.85rem; letter-spacing: -.01em;
+        z-index: 2;
+    }
+    .gal-hover-overlay {
+        position: absolute; inset: 0; background: rgba(90,49,215,0);
+        transition: background .25s; border-radius: 18px; pointer-events: none; z-index: 1;
+    }
+    .gal-item:hover .gal-hover-overlay { background: rgba(90,49,215,.18); }
+    .gal-empty { text-align: center; padding: 3rem 1rem; }
+    .gal-empty i { font-size: 2rem; color: #e2e8f0; }
+    .gal-empty p { color: #64748b; font-size: 0.9rem; margin-top: 8px; }
 
     /* ===== LIGHTBOX ===== */
     .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); align-items: center; justify-content: center; z-index: 999; animation: lbIn 0.2s ease; }
     @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
     .lightbox.open { display: flex; }
 
-    /* ===== SERVICIOS ===== */
-    .servicio-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px;
-        border: 1px solid #f0ecf8;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background: #fff;
+    /* ===== INFO GRID ===== */
+    .info-grid-ref { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .info-list-ref { display: grid; gap: 0; }
+    .info-item-ref {
+        display: flex; justify-content: space-between; gap: 16px;
+        padding: 14px 0; border-bottom: 1px solid var(--line);
+        font-size: 14px; color: var(--muted);
     }
-    .servicio-card:hover {
-        border-color: var(--primary);
-        box-shadow: 0 4px 16px rgba(90,49,215,0.1);
-        transform: translateY(-1px);
-    }
-    .servicio-img {
-        width: 64px; height: 64px; min-width: 64px;
-        border-radius: 10px;
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-    .servicio-img img {
-        width: 100%; height: 100%;
-        object-fit: cover; display: block;
-    }
-    .servicio-img-placeholder {
-        width: 64px; height: 64px; min-width: 64px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #f0ecfb, #e8e3f7);
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
-    .servicio-img-placeholder i {
-        color: var(--primary);
-        font-size: 1.2rem;
-        opacity: 0.6;
-    }
-
-    /* ===== RESEÑAS ===== */
-    .resena-item { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
-    .resena-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .stars-display { display: inline-flex; gap: 2px; }
-    .stars-display i { font-size: 0.62rem; }
-
-    /* ===== HORARIOS ===== */
-    .horario-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 0;
-        font-size: 0.82rem;
-        border-bottom: 1px solid #f8f8fb;
-    }
-    .horario-row:last-child { border-bottom: none; }
-
-    /* ===== CONTACTO ===== */
-    .contacto-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        font-size: 0.82rem;
-        color: var(--gray-600);
-        padding: 5px 0;
-        text-decoration: none;
-        transition: color 0.15s;
-    }
-    .contacto-row:hover { color: var(--primary); }
-    .contacto-icon {
-        width: 28px; height: 28px;
-        border-radius: 8px;
-        background: #f0ecff;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
-    .contacto-icon i { color: var(--primary); font-size: 0.75rem; }
+    .info-item-ref:last-child { border-bottom: none; }
+    .info-item-ref strong { color: var(--text); font-weight: 700; text-align: right; }
 
     /* ===== MAPA ===== */
     .mapa-container {
-        position: relative;
-        border-radius: 14px;
-        overflow: hidden;
-        height: 200px;
-        border: 1px solid #ece9f8;
+        position: relative; border-radius: 18px;
+        overflow: hidden; height: 100%; min-height: 290px;
+        border: 1px solid var(--line);
     }
-    .mapa-container #mapaUbicacion {
-        width: 100%; height: 100%;
-        z-index: 1;
-    }
+    .mapa-container #mapaUbicacion { width: 100%; height: 100%; z-index: 1; }
     .mapa-direccion-overlay {
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        z-index: 2;
+        position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
         background: linear-gradient(to top, rgba(255,255,255,0.97) 60%, transparent 100%);
         padding: 28px 14px 12px;
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 8px;
+        display: flex; align-items: flex-end; justify-content: space-between; gap: 8px;
     }
-    .mapa-direccion-text {
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: var(--gray-800);
-        line-height: 1.35;
-        flex: 1;
-        min-width: 0;
-    }
-    .mapa-direccion-text i {
-        color: var(--primary);
-        margin-right: 5px;
-        font-size: 0.72rem;
-    }
+    .mapa-direccion-text { font-size: 0.78rem; font-weight: 800; color: var(--text); line-height: 1.35; flex: 1; min-width: 0; }
     .mapa-btn-ir {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 6px 12px;
-        background: var(--primary);
-        color: #fff;
-        font-size: 0.7rem;
-        font-weight: 700;
-        border-radius: 8px;
-        text-decoration: none;
-        white-space: nowrap;
-        flex-shrink: 0;
-        transition: all 0.2s;
-        box-shadow: 0 2px 8px rgba(90,49,215,0.25);
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 8px 14px; background: var(--primary-dark); color: #fff;
+        font-size: 0.72rem; font-weight: 700; border-radius: 10px;
+        text-decoration: none; white-space: nowrap; flex-shrink: 0;
+        transition: all 0.2s; box-shadow: 0 4px 12px rgba(90,49,215,0.25);
     }
-    .mapa-btn-ir:hover {
-        background: var(--primary-light);
+    .mapa-btn-ir:hover { background: var(--primary); transform: translateY(-1px); color: #fff; }
+
+    /* ===== TEAM GRID ===== */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+    @media (max-width: 640px) { .team-grid { grid-template-columns: 1fr; } }
+    .team-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #e8ebf3;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(15,23,42,.06);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 16px;
+        align-items: center;
+        transition: all .2s;
+    }
+    .team-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(90,49,215,.12);
+        border-color: #d4c8f5;
+    }
+    .team-avatar {
+        width: 64px; height: 64px;
+        border-radius: 18px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .team-avatar img {
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+    }
+    .team-avatar-initials {
+        background: linear-gradient(135deg, #e8e0fb, #d4c8f5);
+        display: grid; place-items: center;
+        font-weight: 800; color: #5a31d7; font-size: 1.1rem;
+    }
+    .team-name {
+        font-size: 1rem; font-weight: 800;
+        letter-spacing: -.02em; color: #0f172a; margin: 0;
+    }
+    .team-role {
+        font-size: 0.83rem; color: #64748b; margin: 4px 0 10px;
+    }
+    .team-tags {
+        display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .team-tag {
+        padding: 6px 12px; border-radius: 999px;
+        background: #f8fafc; border: 1px solid #e8ebf3;
+        font-size: 12px; font-weight: 700; color: #334155;
+    }
+    .team-btn {
+        padding: 11px 18px; border-radius: 14px;
+        background: #fff; color: #0f172a;
+        font-weight: 700; font-size: 0.82rem;
+        border: 1px solid #e8ebf3;
+        cursor: pointer; white-space: nowrap;
+        font-family: inherit; transition: all .2s;
+    }
+    .team-btn:hover {
+        background: #f8fafc; border-color: #d4c8f5;
+    }
+    @media (max-width: 760px) {
+        .team-card { grid-template-columns: auto 1fr; }
+        .team-btn { grid-column: 1 / -1; }
+    }
+
+    /* ===== SERVICIOS SECTION ===== */
+    .servicios-section { max-width: var(--max); margin: 0 auto; padding: 24px; }
+    .srv-section-card {
+        background: #fff; border-radius: 24px;
+        border: 1px solid #e8ebf3;
+        box-shadow: 0 18px 45px rgba(15,23,42,.08);
+        padding: 24px; margin-bottom: 24px;
+    }
+    .srv-header {
+        display: flex; justify-content: space-between; align-items: flex-end;
+        gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .srv-eyebrow {
+        font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+        color: #5a31d7; font-weight: 800; margin-bottom: 8px;
+        background: #f3f0ff; padding: 4px 10px; border-radius: 6px;
+        display: inline-block;
+    }
+    .srv-title {
+        font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em;
+        color: #0f172a; margin: 0;
+    }
+    .srv-copy {
+        color: #64748b; font-size: 0.9rem; line-height: 1.7; margin: 6px 0 0;
+    }
+    .srv-btn-outline {
+        padding: 12px 18px; border-radius: 14px;
+        background: #fff; color: #0f172a;
+        font-weight: 700; font-size: 0.85rem;
+        border: 1px solid #e8ebf3;
+        cursor: pointer; font-family: inherit;
+        transition: all .2s;
+    }
+    .srv-btn-outline:hover { background: #f8fafc; }
+    .srv-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    @media (max-width: 900px) { .srv-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .srv-grid { grid-template-columns: 1fr; } }
+    .srv-card {
+        background: #fff; border-radius: 20px; padding: 20px;
+        border: 1px solid #e8ebf3;
+        box-shadow: 0 4px 16px rgba(15,23,42,.06);
+        display: flex; flex-direction: column; gap: 14px;
+        position: relative; overflow: hidden;
+        cursor: pointer; transition: all .2s;
+    }
+    .srv-card::after {
+        content: ""; position: absolute; inset: auto -20px -26px auto;
+        width: 130px; height: 130px;
+        background: radial-gradient(circle, rgba(90,49,215,.1), transparent 70%);
+        pointer-events: none;
+    }
+    .srv-card:hover {
+        border-color: #93c5fd;
+        box-shadow: 0 16px 40px rgba(90,49,215,.16);
+        transform: translateY(-3px);
+    }
+    .srv-card-top {
+        display: flex; justify-content: space-between; gap: 12px;
+    }
+    .srv-card-eyebrow {
+        font-size: 11px; color: #5a31d7; font-weight: 800;
+        text-transform: uppercase; letter-spacing: .08em;
+    }
+    .srv-card-name {
+        font-size: 1.05rem; font-weight: 800; margin-top: 5px;
+        letter-spacing: -.02em; color: #0f172a;
+    }
+    .srv-card-price {
+        font-size: 1.5rem; font-weight: 800; color: #0f172a;
+        white-space: nowrap;
+    }
+    .srv-card-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .srv-tag {
+        padding: 7px 12px; border-radius: 999px;
+        background: #f8fafc; border: 1px solid #e8ebf3;
+        font-size: 12px; font-weight: 700; color: #334155;
+    }
+    .srv-tag-accent {
+        padding: 7px 12px; border-radius: 999px;
+        background: #f3f0ff; border: 1px solid #d4c8f5;
+        font-size: 12px; font-weight: 700; color: #5a31d7;
+    }
+    .srv-card-desc {
+        color: #64748b; font-size: 0.85rem; line-height: 1.65; flex: 1;
+    }
+    .srv-card-btn {
+        width: 100%; padding: 13px;
+        background: linear-gradient(135deg, #5a31d7, #32ccbc);
+        color: #fff; font-weight: 700; font-size: 0.9rem;
+        border: none; border-radius: 14px; cursor: pointer;
+        font-family: inherit;
+        box-shadow: 0 8px 20px rgba(90,49,215,.25);
+        transition: all .2s; position: relative; z-index: 1;
+    }
+    .srv-card-btn:hover {
+        background: linear-gradient(135deg, #3d1fa0, #5a31d7);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(90,49,215,0.35);
-        color: #fff;
     }
 
     /* ===== STICKY MÓVIL ===== */
     .sticky-bar {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        z-index: 40;
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
         padding: 12px 16px;
-        background: rgba(255,255,255,0.97);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid #ece9f8;
-        box-shadow: 0 -4px 20px rgba(90,49,215,0.1);
+        background: rgba(255,255,255,0.96); backdrop-filter: blur(14px);
+        border-top: 1px solid var(--line);
+        box-shadow: 0 -8px 32px rgba(15,23,42,0.1);
     }
     @media (min-width: 1024px) { .sticky-bar { display: none; } }
     .btn-agendar-full {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        color: #fff;
-        font-weight: 700;
-        font-size: 0.95rem;
-        border: none;
-        border-radius: 14px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 4px 15px rgba(90,49,215,0.35);
-        transition: all 0.2s;
+        width: 100%; padding: 15px;
+        background: linear-gradient(135deg, #5a31d7, #32ccbc);
+        color: #fff; font-weight: 700; font-size: 1rem;
+        border: none; border-radius: 16px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        box-shadow: 0 14px 30px rgba(90,49,215,0.3); transition: all 0.2s;
     }
-    .btn-agendar-full:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(90,49,215,0.45); }
+    .btn-agendar-full:hover { transform: translateY(-1px); box-shadow: 0 18px 36px rgba(90,49,215,0.4); }
 
-    /* ===== BADGE VIRTUAL ===== */
-    .badge-virtual {
-        display: inline-flex; align-items: center; gap: 4px;
-        background: rgba(50,204,188,0.12);
-        color: #0ea5a0;
-        font-size: 0.7rem; font-weight: 700;
-        padding: 3px 10px; border-radius: 999px;
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .booking-card { position: static; top: auto; }
+        .info-grid-ref, .rev-grid, .rev-grid.no-score { grid-template-columns: 1fr; }
+        .hero-bottom-ref { grid-template-columns: 1fr; }
+        .gal-grid { grid-template-columns: 1fr 1fr; }
+        .gal-item.gal-featured { grid-row: auto; min-height: 260px; }
     }
-    .badge-cat {
-        display: inline-flex; align-items: center;
-        background: rgba(90,49,215,0.1);
-        color: var(--primary);
-        font-size: 0.7rem; font-weight: 600;
-        padding: 3px 10px; border-radius: 999px;
+    @media (max-width: 760px) {
+        .hero-cover-ref { height: 280px; padding: 20px; }
+        .hero-title-cover { font-size: 28px; }
+        .section-card { border-radius: 18px; padding: 18px; }
+        .section-title { font-size: 22px; }
+        .container-perfil, .acerca-flow, .servicios-section { padding: 16px; }
+        .booking-card { padding: 16px; border-radius: 18px; }
+        .booking-stepper { gap: 6px; }
+        .booking-slots-grid { gap: 8px; }
+        .hero-bottom-ref { padding: 18px; }
+        .hero-bottom-left { flex-direction: column; align-items: flex-start; }
+        .rev-score-num { font-size: 40px; }
+        .gal-grid { grid-template-columns: 1fr; }
+        .profile-nav-inner { height: 56px; padding: 0 16px; }
     }
-    .badge-open {
-        display: inline-flex; align-items: center; gap: 5px;
-        background: #ecfdf5;
-        color: #059669;
-        font-size: 0.7rem; font-weight: 700;
-        padding: 3px 10px; border-radius: 999px;
-        border: 1px solid #a7f3d0;
+    @media (max-width: 900px) {
+        .rev-grid { grid-template-columns: 1fr 1fr; }
     }
-    .badge-open .pulse-dot {
-        width: 6px; height: 6px;
-        background: #10b981;
-        border-radius: 50%;
-        animation: pulse-dot 1.5s ease-in-out infinite;
+    @media (max-width: 580px) {
+        .rev-grid, .rev-grid.no-score { grid-template-columns: 1fr; }
     }
-    @keyframes pulse-dot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(1.3); }
-    }
-    .badge-closed {
-        display: inline-flex; align-items: center; gap: 5px;
-        background: #fef2f2;
-        color: #dc2626;
-        font-size: 0.7rem; font-weight: 700;
-        padding: 3px 10px; border-radius: 999px;
-        border: 1px solid #fecaca;
-    }
-
-    /* ===== PRECIO ===== */
-    .precio-tag {
-        font-weight: 800;
-        font-size: 0.9rem;
-        color: var(--primary);
-        background: rgba(90,49,215,0.07);
-        padding: 3px 8px;
-        border-radius: 6px;
-    }
-
-    /* ===== RATING GRANDE ===== */
-    .rating-summary {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        background: #fffbeb;
-        border: 1px solid #fde68a;
-        border-radius: 10px;
-        padding: 4px 12px;
-        font-size: 0.82rem;
-        color: #92400e;
-        font-weight: 600;
-    }
-
-    /* ===== TABS ===== */
-    .tabs-bar {
-        background: #fff;
-        border-bottom: 2px solid #ece9f8;
-        position: sticky;
-        top: 0;
-        z-index: 30;
-    }
-    .tabs-inner {
-        max-width: 1152px;
-        margin: 0 auto;
-        padding: 0 1rem;
-        display: flex;
-        gap: 0;
-    }
-    .tab-btn {
-        background: none;
-        border: none;
-        padding: 14px 20px;
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: var(--gray-400);
-        cursor: pointer;
-        border-bottom: 3px solid transparent;
-        margin-bottom: -2px;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-    }
-    .tab-btn:hover { color: var(--gray-600); }
-    .tab-btn.active {
-        color: var(--primary);
-        border-bottom-color: var(--primary);
-    }
-    .tab-btn i { font-size: 0.8rem; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ===== EQUIPO GRID (tab) ===== */
-    .equipo-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        max-width: 1152px;
-        margin: 0 auto;
-        padding: 1.5rem 1rem 3rem;
-    }
-    @media (min-width: 640px) { .equipo-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 1024px) { .equipo-grid { grid-template-columns: repeat(4, 1fr); } }
-    .equipo-card {
-        background: #fff;
-        border-radius: 16px;
-        border: 1px solid #ece9f8;
-        padding: 1.25rem;
-        text-align: center;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 4px rgba(90,49,215,0.06);
-    }
-    .equipo-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 24px rgba(90,49,215,0.12);
-    }
-    .equipo-card-avatar {
-        width: 80px; height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        display: block;
-        margin: 0 auto 12px;
-        border: 3px solid rgba(90,49,215,0.12);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .equipo-card-initials {
-        width: 80px; height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-weight: 700; font-size: 1.3rem;
-        margin: 0 auto 12px;
-        box-shadow: 0 4px 12px rgba(90,49,215,0.25);
-    }
-
-    /* ===== SERVICIOS GRID (tab) ===== */
-    .servicios-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        max-width: 1152px;
-        margin: 0 auto;
-        padding: 1.5rem 1rem 3rem;
-    }
-    @media (min-width: 640px) { .servicios-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .servicios-grid { grid-template-columns: repeat(3, 1fr); } }
-    .servicio-card-full {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 14px;
-        background: #fff;
-        border: 1px solid #ece9f8;
-        border-radius: 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 4px rgba(90,49,215,0.06);
-    }
-    .servicio-card-full:hover {
-        border-color: var(--primary);
-        box-shadow: 0 6px 20px rgba(90,49,215,0.12);
-        transform: translateY(-2px);
-    }
-    .servicio-img-full {
-        width: 76px; height: 76px; min-width: 76px;
-        border-radius: 12px;
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-    .servicio-img-full img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .servicio-placeholder-full {
-        width: 76px; height: 76px; min-width: 76px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #f0ecfb, #e8e3f7);
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
-    .servicio-placeholder-full i { color: var(--primary); font-size: 1.4rem; opacity: 0.6; }
 </style>
 
 {{-- Leaflet CSS --}}
 @if($negocio->neg_latitud && $negocio->neg_longitud)
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-    /* Custom marker */
     .marker-pin {
         width: 36px; height: 36px;
         border-radius: 50% 50% 50% 0;
-        background: var(--primary);
+        background: #5a31d7;
         position: absolute;
         transform: rotate(-45deg);
         left: 50%; top: 50%;
@@ -620,19 +847,15 @@
     }
     .marker-pin-icon {
         position: absolute;
-        width: 36px;
-        font-size: 14px;
+        width: 36px; font-size: 14px;
         left: 0; top: 3px;
         text-align: center;
-        color: var(--primary);
-        z-index: 1;
+        color: #5a31d7; z-index: 1;
     }
     .leaflet-control-zoom a {
-        border-radius: 8px !important;
-        border: none !important;
+        border-radius: 8px !important; border: none !important;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
-        color: var(--gray-800) !important;
-        font-weight: 700 !important;
+        color: var(--gray-800) !important; font-weight: 700 !important;
     }
     .leaflet-control-zoom { border: none !important; border-radius: 10px !important; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important; }
     .leaflet-control-attribution { font-size: 9px !important; opacity: 0.5; }
@@ -654,452 +877,493 @@
     };
     $imgPortada = $resolveImg($negocio->neg_portada);
     $imgPerfil  = $resolveImg($negocio->neg_imagen) ?? asset('images/default-user.png');
+
+    $hoyDia = now()->dayOfWeekIso;
+    $horarioHoy = $negocio->horarios->where('dia_semana', $hoyDia)->where('activo', 1)->first();
+    $abierto = false;
+    if ($horarioHoy && $horarioHoy->hora_inicio && $horarioHoy->hora_fin) {
+        $ahora = now()->format('H:i:s');
+        $abierto = $ahora >= $horarioHoy->hora_inicio && $ahora <= $horarioHoy->hora_fin;
+    }
 @endphp
 
-{{-- ===== PORTADA ===== --}}
-<div class="cover-wrap">
-    <div id="portadaFallback"
-         style="position:absolute;inset:0;background:linear-gradient(135deg,#4a22b8 0%,#5a31d7 30%,#7b5ce0 60%,#32ccbc 100%);{{ $imgPortada ? 'display:none;' : '' }}">
-    </div>
-    @if($imgPortada)
-        <img src="{{ $imgPortada }}"
-             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;"
-             alt="Portada"
-             onerror="this.style.display='none';document.getElementById('portadaFallback').style.display='block';">
-    @endif
-    <div class="cover-pattern"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.15) 40%,transparent 70%);"></div>
-    {{-- Nombre sobre portada para mobile --}}
-    <div style="position:absolute;bottom:16px;left:1rem;right:1rem;z-index:2;display:none;" id="coverNameMobile">
-        <h1 style="font-size:1.3rem;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.4);margin:0;">
-            {{ $negocio->neg_nombre_comercial ?? $negocio->neg_nombre }}
-        </h1>
-    </div>
-</div>
+{{-- ===== HERO SECTION ===== --}}
+<section class="hero">
+<div class="container-perfil" style="padding-top:84px;padding-bottom:10px;">
+    <div class="hero-grid">
+        {{-- LEFT: Hero Card --}}
+        <div class="hero-card">
+            {{-- Cover --}}
+            <div class="hero-cover-ref">
+                <div id="portadaFallback"
+                     style="position:absolute;inset:0;background:linear-gradient(135deg,#3d1fa0 0%,#5a31d7 40%,#32ccbc 100%);z-index:0;{{ $imgPortada ? 'display:none;' : '' }}">
+                </div>
+                @if($imgPortada)
+                    <img src="{{ $imgPortada }}" class="hero-cover-img"
+                         alt="Portada"
+                         onerror="this.style.display='none';document.getElementById('portadaFallback').style.display='block';">
+                @endif
+                <div class="cover-pattern"></div>
+                <div class="cover-gradient"></div>
 
-{{-- ===== INFO BAR ===== --}}
-<div style="background:#fff;border-bottom:1px solid #ece9f8;box-shadow:0 2px 8px rgba(90,49,215,0.06);">
-    <div style="max-width:1152px;margin:0 auto;padding:0 1rem;">
-        <div class="infobar-row">
-
-            <div class="avatar-ring">
-                <img src="{{ $imgPerfil }}"
-                     alt="{{ $negocio->neg_nombre_comercial }}"
-                     onerror="this.src='{{ asset('images/default-user.png') }}'">
-            </div>
-
-            <div class="infobar-text">
-                <h1 style="font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;color:var(--gray-900);line-height:1.15;margin:0;letter-spacing:-0.02em;">
-                    {{ $negocio->neg_nombre_comercial ?? $negocio->neg_nombre }}
-                </h1>
-
-                <div class="infobar-tags">
-                    @php
-                        $hoyDia = now()->dayOfWeekIso;
-                        $horarioHoy = $negocio->horarios->where('dia_semana', $hoyDia)->where('activo', 1)->first();
-                        $abierto = false;
-                        if ($horarioHoy && $horarioHoy->hora_inicio && $horarioHoy->hora_fin) {
-                            $ahora = now()->format('H:i:s');
-                            $abierto = $ahora >= $horarioHoy->hora_inicio && $ahora <= $horarioHoy->hora_fin;
-                        }
-                    @endphp
-                    @if($horarioHoy)
-                        @if($abierto)
-                            <span class="badge-open"><span class="pulse-dot"></span> Abierto ahora</span>
-                        @else
-                            <span class="badge-closed"><i class="fas fa-clock" style="font-size:0.55rem;"></i> Cerrado</span>
+                <div class="hero-overlay-ref">
+                    {{-- Left block --}}
+                    <div>
+                        @if($horarioHoy)
+                            @if($abierto)
+                                <span class="pill-ref"><span style="width:8px;height:8px;background:#4ade80;border-radius:50%;"></span> Abierto ahora</span>
+                            @else
+                                <span class="pill-ref"><i class="fas fa-clock" style="font-size:11px;"></i> Cerrado</span>
+                            @endif
                         @endif
-                    @endif
-                    @if(is_array($negocio->neg_categorias))
-                        @foreach($negocio->neg_categorias as $cat)
-                            <span class="badge-cat">{{ $cat }}</span>
-                        @endforeach
-                    @endif
-                    @if($promedioRating)
-                        <div class="rating-summary">
-                            <i class="fas fa-star" style="color:#f59e0b;font-size:0.75rem;"></i>
-                            <strong>{{ $promedioRating }}</strong>
-                            <span style="font-weight:400;color:#b45309;">({{ $totalResenas }} reseñas)</span>
+                        <h1 class="hero-title-cover">{{ $negocio->neg_nombre_comercial ?? $negocio->neg_nombre }}</h1>
+                        <div class="hero-meta-pills">
+                            @if($promedioRating)
+                                <span class="meta-chip-ref">★ {{ $promedioRating }} · {{ $totalResenas }} reseñas</span>
+                            @endif
+                            @if(is_array($negocio->neg_categorias))
+                                @foreach($negocio->neg_categorias as $cat)
+                                    <span class="meta-chip-ref">{{ $cat }}</span>
+                                @endforeach
+                            @endif
                         </div>
+                    </div>
+                    {{-- Right block --}}
+                    @if($negocio->neg_direccion)
+                        <span class="pill-ref"><i class="fas fa-map-marker-alt" style="font-size:11px;"></i> {{ $negocio->neg_direccion }}</span>
                     @endif
                 </div>
+            </div>
 
-                @if($negocio->neg_descripcion)
-                    <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.55;margin:8px 0 0 0;">{{ $negocio->neg_descripcion }}</p>
-                @endif
-
-                <div class="infobar-meta">
-                    @if($negocio->neg_direccion)
-                        <span><i class="fas fa-map-marker-alt" style="color:var(--primary);margin-right:4px;"></i>{{ $negocio->neg_direccion }}</span>
-                    @endif
+            {{-- Bottom bar --}}
+            <div class="hero-bottom-ref">
+                <div class="hero-bottom-left">
+                    <div>
+                        @if($negocio->neg_descripcion)
+                            <div class="hero-desc">{{ $negocio->neg_descripcion }}</div>
+                        @else
+                            <div class="hero-desc"><strong>{{ $negocio->neg_nombre_comercial ?? $negocio->neg_nombre }}</strong></div>
+                        @endif
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button onclick="window.openAgendarModal()" class="btn-ref btn-ref-primary">
+                        <i class="fas fa-calendar-plus"></i> Agendar cita
+                    </button>
                     @if($negocio->neg_telefono)
-                        <a href="tel:{{ $negocio->neg_telefono }}" style="color:inherit;text-decoration:none;">
-                            <i class="fas fa-phone" style="color:var(--primary);margin-right:4px;"></i>{{ $negocio->neg_telefono }}
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $negocio->neg_telefono) }}" target="_blank" class="btn-ref btn-ref-light">
+                            <i class="fab fa-whatsapp" style="color:#25D366;"></i> Escribir por WhatsApp
                         </a>
                     @endif
-                    @if($negocio->neg_virtual)
-                        <span class="badge-virtual"><i class="fas fa-laptop"></i>Atención virtual</span>
-                    @endif
-                    @if($negocio->neg_facebook)
-                        <a href="{{ $negocio->neg_facebook }}" target="_blank" style="color:#9ca3af;font-size:1.05rem;text-decoration:none;" onmouseover="this.style.color='#1877F2'" onmouseout="this.style.color='#9ca3af'"><i class="fab fa-facebook"></i></a>
-                    @endif
-                    @if($negocio->neg_instagram)
-                        <a href="{{ $negocio->neg_instagram }}" target="_blank" style="color:#9ca3af;font-size:1.05rem;text-decoration:none;" onmouseover="this.style.color='#E4405F'" onmouseout="this.style.color='#9ca3af'"><i class="fab fa-instagram"></i></a>
-                    @endif
-                    @if($negocio->neg_sitio_web)
-                        <a href="{{ $negocio->neg_sitio_web }}" target="_blank" style="color:#9ca3af;font-size:1.05rem;text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='#9ca3af'"><i class="fas fa-globe"></i></a>
-                    @endif
+                </div>
+            </div>
+        </div>
+
+        {{-- RIGHT: Booking Card (sticky) --}}
+        <aside class="booking-card" id="reserva">
+            {{-- 1. Cabecera --}}
+            <div class="booking-header">
+                <div>
+                    <h2 class="booking-title">Reserva tu cita</h2>
+                    <p class="booking-subtitle">Elige servicio, profesional y horario</p>
+                </div>
+                @if($abierto)
+                    <span class="booking-badge">Hoy disponible</span>
+                @endif
+            </div>
+
+            {{-- 2. Stepper visual --}}
+            <div class="booking-stepper">
+                <div class="booking-stepper-box"><strong>1</strong><span>Servicio</span></div>
+                <div class="booking-stepper-box"><strong>2</strong><span>Profesional</span></div>
+                <div class="booking-stepper-box"><strong>3</strong><span>Fecha</span></div>
+                <div class="booking-stepper-box"><strong>4</strong><span>Hora</span></div>
+            </div>
+
+            {{-- 3. Select Servicio --}}
+            <label class="booking-label" for="heroServicio">Servicio</label>
+            <select class="booking-field" id="heroServicio">
+                @foreach($negocio->servicios as $servicio)
+                    <option value="{{ $servicio->id }}"
+                            data-precio="{{ $servicio->precio }}"
+                            data-nombre="{{ $servicio->nombre }}"
+                            data-duracion="{{ $servicio->duracion }}">
+                        {{ $servicio->nombre }} · ${{ number_format($servicio->precio, 0, ',', '.') }}{{ $servicio->duracion ? ' · '.$servicio->duracion.' min' : '' }}
+                    </option>
+                @endforeach
+            </select>
+
+            {{-- 4. Select Profesional --}}
+            <label class="booking-label" for="heroProfesional">Profesional</label>
+            <select class="booking-field" id="heroProfesional">
+                <option value="">Cualquier profesional</option>
+                @foreach($trabajadores as $trab)
+                    <option value="{{ $trab->id }}"
+                            data-nombre="{{ $trab->nombre }}">
+                        {{ $trab->nombre }}{{ $trab->especialidades ? ' · '.$trab->especialidades : '' }}
+                    </option>
+                @endforeach
+            </select>
+
+            {{-- 5. Input Fecha (Flatpickr) --}}
+            <label class="booking-label" for="heroFecha">Fecha</label>
+            <input type="text" class="booking-field" id="heroFecha" readonly
+                   placeholder="Seleccionar fecha"
+                   style="cursor:pointer;background:#fff;">
+
+            {{-- 6. Slots de hora (dinámicos según horario del negocio) --}}
+            <label class="booking-label">Horario disponible</label>
+            <div class="booking-slots-grid" id="heroSlotsGrid">
+                {{-- Se llena por JS según la fecha seleccionada --}}
+            </div>
+            <p id="heroSlotsEmpty" class="hidden" style="text-align:center;color:#94a3b8;font-size:0.82rem;padding:12px 0;">
+                <i class="fas fa-calendar-times" style="margin-right:4px;"></i> No hay horarios para esta fecha
+            </p>
+
+            {{-- 7. Resumen --}}
+            <div class="booking-summary-card">
+                <div class="booking-summary-row">
+                    <span>Servicio</span>
+                    <strong id="summaryServicio">—</strong>
+                </div>
+                <div class="booking-summary-row">
+                    <span>Profesional</span>
+                    <strong id="summaryProfesional">—</strong>
+                </div>
+                <div class="booking-summary-row">
+                    <span>Fecha & hora</span>
+                    <strong id="summaryFecha">—</strong>
+                </div>
+                <div class="booking-summary-row">
+                    <span>Total</span>
+                    <strong id="summaryTotal">—</strong>
                 </div>
             </div>
 
-            <button onclick="window.openAgendarModal()" class="btn-agendar btn-agendar-desktop">
-                <i class="fas fa-calendar-plus"></i> Agendar Cita
+            {{-- 8. Botón continuar --}}
+            <button id="btnContinuarReserva" class="booking-btn-submit">Continuar reserva →</button>
+
+            {{-- 9. Texto inferior --}}
+            <p class="booking-footnote">Sin registro previo · Confirmación inmediata</p>
+        </aside>
+    </div>
+</div>
+</section>
+
+{{-- ===== PROFILE NAV ===== --}}
+<nav class="profile-nav" id="profileNav">
+    <div class="profile-nav-inner">
+        <a href="{{ url('/') }}" style="display:flex;align-items:center;text-decoration:none;">
+            <img src="{{ asset('images/morado.png') }}"
+                 alt="Calendarix"
+                 style="height:30px;width:auto;"
+                 onerror="this.outerHTML='<span class=\'profile-nav-logo-text\'>Calendarix</span>'">
+            <span style="font-size:1.1rem;font-weight:800;color:#5a31d7;letter-spacing:-.02em;margin-left:6px;">Calendarix</span>
+        </a>
+        <div class="profile-nav-links">
+            <a href="#seccion-servicios" class="nav-link" data-section="seccion-servicios">Servicios</a>
+            <a href="#seccion-equipo" class="nav-link" data-section="seccion-equipo">Equipo</a>
+            <a href="#seccion-galeria" class="nav-link" data-section="seccion-galeria">Galería</a>
+            <a href="#seccion-reviews" class="nav-link" data-section="seccion-reviews">Reviews</a>
+            <a href="#seccion-contacto" class="nav-link" data-section="seccion-contacto">Contacto</a>
+            <button onclick="window.openAgendarModal()" class="btn-ref btn-ref-primary nav-cta" style="padding:10px 18px;font-size:.85rem;">
+                Reservar ahora
+            </button>
+            <button class="nav-mobile-toggle" id="navMobileToggle" aria-label="Menú">
+                <i class="fas fa-bars"></i>
             </button>
         </div>
     </div>
+</nav>
+
+{{-- Mobile dropdown menu --}}
+<div class="nav-mobile-menu" id="navMobileMenu">
+    <a href="#seccion-servicios" class="nav-link-mobile" data-section="seccion-servicios"><i class="fas fa-concierge-bell" style="width:18px;text-align:center;color:var(--primary);"></i> Servicios</a>
+    <a href="#seccion-equipo" class="nav-link-mobile" data-section="seccion-equipo"><i class="fas fa-users" style="width:18px;text-align:center;color:var(--primary);"></i> Equipo</a>
+    <a href="#seccion-galeria" class="nav-link-mobile" data-section="seccion-galeria"><i class="fas fa-images" style="width:18px;text-align:center;color:var(--primary);"></i> Galería</a>
+    <a href="#seccion-reviews" class="nav-link-mobile" data-section="seccion-reviews"><i class="fas fa-star" style="width:18px;text-align:center;color:var(--primary);"></i> Reviews</a>
+    <a href="#seccion-contacto" class="nav-link-mobile" data-section="seccion-contacto"><i class="fas fa-map-marker-alt" style="width:18px;text-align:center;color:var(--primary);"></i> Contacto</a>
 </div>
 
-{{-- ===== TABS BAR ===== --}}
-<div class="tabs-bar">
-    <div class="tabs-inner">
-        <button class="tab-btn active" data-tab="acerca"><i class="fas fa-info-circle"></i> Acerca</button>
-        <button class="tab-btn" data-tab="equipo"><i class="fas fa-users"></i> Equipo</button>
-        <button class="tab-btn" data-tab="servicios"><i class="fas fa-concierge-bell"></i> Servicios</button>
-    </div>
-</div>
+{{-- ===== SECTIONS ===== --}}
+<div style="background:var(--bg);padding-top:8px;">
+    <div class="acerca-flow">
 
-{{-- ===== PANEL: ACERCA ===== --}}
-<div id="panel-acerca" class="tab-panel active">
-
-{{-- ===== EQUIPO (mini strip dentro de Acerca) ===== --}}
-@if($trabajadores->count())
-<div style="background:linear-gradient(180deg,#faf9ff 0%,#f9fafb 100%);border-bottom:1px solid #ece9f8;">
-    <div style="max-width:1152px;margin:0 auto;padding:16px 1rem 18px;">
-        <p style="font-size:0.68rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 12px 0;">
-            <i class="fas fa-users" style="color:var(--primary);margin-right:5px;"></i>Nuestro equipo
-            <span style="font-weight:600;color:#c4b5fd;margin-left:6px;">{{ $trabajadores->count() }} profesionales</span>
-        </p>
-        <div class="team-scroll scrollbar-hide">
-            @foreach($trabajadores as $trab)
-                <div class="team-item">
-                    @if($trab->foto)
-                        <img src="{{ asset('storage/' . $trab->foto) }}" alt="{{ $trab->nombre }}" class="team-avatar">
-                    @else
-                        <div class="team-avatar-initials">{{ strtoupper(substr($trab->nombre, 0, 2)) }}</div>
-                    @endif
-                    <p style="font-size:0.68rem;color:var(--gray-800);font-weight:600;margin-top:6px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;">{{ $trab->nombre }}</p>
-                    @if($trab->especialidades)
-                        <p style="font-size:0.62rem;color:var(--gray-400);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;margin-top:1px;">{{ $trab->especialidades }}</p>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    </div>
-</div>
-@endif
-
-{{-- ===== MAIN GRID ===== --}}
-<div style="background:var(--gray-50);">
-    <div class="perfil-grid">
-
-        {{-- COLUMNA IZQUIERDA --}}
-        <div class="col-left">
-
-            {{-- Calendario --}}
-            <div class="perfil-card fade-up">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+        {{-- ===== SERVICIOS ===== --}}
+        <div id="seccion-servicios" class="scroll-section">
+            <div class="srv-section-card">
+                {{-- Cabecera --}}
+                <div class="srv-header">
                     <div>
-                        <h2 class="card-title" style="margin:0 0 4px 0;">
-                            <i class="fas fa-calendar-alt"></i>Reserva tu cita
-                        </h2>
-                        <p style="font-size:0.75rem;color:var(--gray-400);margin:0;">Selecciona un dia disponible en el calendario</p>
+                        <span class="srv-eyebrow">Servicios destacados</span>
+                        <h2 class="srv-title">Elegir debería tomar segundos</h2>
+                        <p class="srv-copy">Cada servicio con precio, duración y reserva directa.</p>
                     </div>
-                    <span style="font-size:0.72rem;color:var(--primary);background:#f0ecfb;padding:5px 12px;border-radius:20px;font-weight:600;">
-                        <i class="fas fa-hand-pointer" style="margin-right:4px;font-size:0.65rem;"></i>Toca un dia
-                    </span>
+                    <button class="srv-btn-outline" onclick="window.openAgendarModal()">Ver disponibilidad</button>
                 </div>
-                <div id="calendarioCitas" style="border-radius:10px;overflow:hidden;"></div>
-                <button onclick="window.openAgendarModal()" class="btn-agendar-full" style="margin-top:1rem;">
-                    <i class="fas fa-calendar-plus"></i> Agendar Cita
-                </button>
-            </div>
 
-            {{-- Reseñas --}}
-            @if($resenas->count())
-            <div class="perfil-card fade-up">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-                    <h2 class="card-title" style="margin:0;">
-                        <i class="fas fa-star"></i>Reseñas
-                    </h2>
-                    @if($promedioRating)
-                        <div class="rating-summary">
-                            <i class="fas fa-star" style="color:#f59e0b;font-size:0.75rem;"></i>
-                            <strong>{{ $promedioRating }}</strong>
-                            <span style="font-weight:400;">({{ $totalResenas }})</span>
-                        </div>
-                    @endif
-                </div>
-                @foreach($resenas->take(5) as $resena)
-                    <div class="resena-item">
-                        <div style="display:flex;align-items:flex-start;gap:10px;">
-                            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:700;flex-shrink:0;">
-                                {{ strtoupper(substr($resena->user->name ?? 'C', 0, 2)) }}
-                            </div>
-                            <div style="flex:1;min-width:0;">
-                                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:3px;">
-                                    <span style="font-weight:700;color:var(--gray-800);font-size:0.85rem;">{{ $resena->user->name ?? 'Cliente' }}</span>
-                                    <div style="display:flex;align-items:center;gap:6px;">
-                                        <div class="stars-display">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <i class="fas fa-star" style="color:{{ $i <= $resena->rating ? '#f59e0b' : '#e5e7eb' }};"></i>
-                                            @endfor
-                                        </div>
-                                        <span style="font-size:0.72rem;color:var(--gray-400);">{{ $resena->created_at->format('d/m/Y') }}</span>
+                {{-- Grid --}}
+                @if($negocio->servicios->count())
+                    <div class="srv-grid">
+                        @foreach($negocio->servicios as $servicio)
+                            <article class="srv-card" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
+                                <div class="srv-card-top">
+                                    <div>
+                                        <div class="srv-card-eyebrow">{{ is_array($negocio->neg_categorias) && count($negocio->neg_categorias) ? $negocio->neg_categorias[0] : 'Servicio' }}</div>
+                                        <div class="srv-card-name">{{ $servicio->nombre }}</div>
                                     </div>
+                                    <div class="srv-card-price">${{ number_format($servicio->precio, 0, ',', '.') }}</div>
                                 </div>
-                                <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.55;margin:0;">{{ $resena->comentario }}</p>
-                                @if($resena->respuesta_negocio)
-                                    <div style="margin-top:8px;padding:8px 12px;border-left:3px solid var(--primary);background:linear-gradient(135deg,#faf9ff,#f5f3ff);border-radius:0 8px 8px 0;">
-                                        <p style="font-size:0.72rem;font-weight:700;color:var(--primary);margin:0 0 3px 0;"><i class="fas fa-reply" style="margin-right:4px;"></i>Respuesta del negocio</p>
-                                        <p style="font-size:0.82rem;color:var(--gray-600);margin:0;">{{ $resena->respuesta_negocio }}</p>
+                                <div class="srv-card-tags">
+                                    @if($servicio->duracion)
+                                        <span class="srv-tag">{{ $servicio->duracion }} min</span>
+                                    @endif
+                                    <span class="srv-tag-accent">Reservar</span>
+                                </div>
+                                @if($servicio->descripcion)
+                                    <div class="srv-card-desc">{{ Str::limit($servicio->descripcion, 100) }}</div>
+                                @endif
+                                <button class="srv-card-btn">Reservar</button>
+                            </article>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="padding:3rem 0;text-align:center;">
+                        <i class="fas fa-concierge-bell" style="font-size:2rem;color:#e8ebf3;margin-bottom:12px;"></i>
+                        <p style="color:#64748b;font-size:0.9rem;">Este negocio aún no ha agregado servicios.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- ===== EQUIPO ===== --}}
+        <div id="seccion-equipo" class="scroll-section">
+            <div style="background:#fff;border-radius:24px;border:1px solid #e8ebf3;box-shadow:0 18px 45px rgba(15,23,42,.08);padding:24px;margin-bottom:24px;">
+                {{-- Cabecera --}}
+                <div style="margin-bottom:18px;">
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#5a31d7;font-weight:800;background:#f3f0ff;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:8px;">Equipo</span>
+                    <h2 style="font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:#0f172a;margin:0;">Deja que el cliente elija a quién atenderse</h2>
+                    <p style="color:#64748b;font-size:0.9rem;line-height:1.7;margin:6px 0 0;">Mostrar el profesional mejora confianza y conversión, especialmente en barbería, estética y bienestar.</p>
+                </div>
+
+                @if($trabajadores->count())
+                    <div class="team-grid">
+                        @foreach($trabajadores as $trab)
+                            <div class="team-card">
+                                {{-- Avatar --}}
+                                @if($trab->foto)
+                                    <div class="team-avatar">
+                                        <img src="{{ asset('storage/' . $trab->foto) }}" alt="{{ $trab->nombre }}">
+                                    </div>
+                                @else
+                                    <div class="team-avatar team-avatar-initials">
+                                        {{ strtoupper(substr($trab->nombre, 0, 2)) }}
                                     </div>
                                 @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            @endif
 
-            {{-- Galería --}}
-            @if($negocio->fotos->count())
-            <div class="perfil-card fade-up">
-                <h2 class="card-title">
-                    <i class="fas fa-images"></i>Galería
-                    <span style="font-size:0.72rem;font-weight:500;color:var(--gray-400);margin-left:auto;">{{ $negocio->fotos->count() }} fotos</span>
-                </h2>
-                <div class="gallery-grid">
-                    @foreach($negocio->fotos as $foto)
-                        <div class="gallery-item" onclick="document.getElementById('lb{{ $foto->id }}').classList.add('open')">
-                            <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto">
+                                {{-- Info --}}
+                                <div>
+                                    <div class="team-name">{{ $trab->nombre }}</div>
+                                    @if($trab->especialidades)
+                                        <div class="team-role">{{ $trab->especialidades }}</div>
+                                    @endif
+                                    <div class="team-tags">
+                                        <span class="team-tag">★ 4.9</span>
+                                        <span class="team-tag">+240 reservas</span>
+                                        @if($trab->especialidades)
+                                            <span class="team-tag">{{ $trab->especialidades }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                {{-- Botón --}}
+                                <button class="team-btn" onclick="window.openAgendarModal({workerId: {{ $trab->id }}})">
+                                    Reservar con {{ explode(' ', $trab->nombre)[0] }}
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="text-align:center;padding:3rem 1rem;">
+                        <i class="fas fa-users" style="font-size:2rem;color:#e2e8f0;margin-bottom:12px;display:block;"></i>
+                        <p style="color:#64748b;font-size:0.9rem;margin:0;">Este negocio aún no ha agregado miembros del equipo.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Galería --}}
+        <div id="seccion-galeria" class="scroll-section">
+            <div class="gal-section-card">
+                <div class="gal-header">
+                    <span class="gal-eyebrow">Galería</span>
+                    <h2 class="gal-title">Más visual, más confianza</h2>
+                    <p class="gal-copy">Una galería editorial ayuda mucho: muestra el local, el estilo y el nivel del trabajo antes de reservar.</p>
+                </div>
+
+                @if($negocio->fotos->count())
+                <div class="gal-grid">
+                    @foreach($negocio->fotos as $i => $foto)
+                        <div class="gal-item{{ $i === 0 ? ' gal-featured' : '' }}" onclick="document.getElementById('lb{{ $foto->id }}').classList.add('open')">
+                            <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto {{ $i + 1 }}">
+                            <div class="gal-label">Foto {{ $i + 1 }}</div>
+                            <div class="gal-hover-overlay"></div>
                         </div>
                         <div id="lb{{ $foto->id }}" class="lightbox" onclick="this.classList.remove('open')">
                             <img src="{{ asset('storage/' . $foto->ruta) }}"
-                                 style="max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,0.6);display:block;"
+                                 style="max-width:92vw;max-height:88vh;border-radius:18px;box-shadow:0 30px 60px rgba(0,0,0,0.6);display:block;"
                                  alt="Foto">
                         </div>
                     @endforeach
                 </div>
-            </div>
-            @endif
-
-        </div>
-
-        {{-- SIDEBAR --}}
-        <div class="col-right">
-
-            {{-- Horarios --}}
-            @if($negocio->horarios->count())
-            <div class="perfil-card perfil-card-hover fade-up">
-                <h2 class="card-title"><i class="far fa-clock"></i>Horarios</h2>
-                @foreach($negocio->horarios as $h)
-                    @php $esHoy = $h->dia_semana == now()->dayOfWeekIso; @endphp
-                    <div class="horario-row" style="{{ $h->activo ? '' : 'opacity:0.38;' }}{{ $esHoy ? 'background:#f8f6ff;border-radius:8px;padding:6px 8px;margin:0 -8px;' : '' }}">
-                        <span style="font-weight:{{ $esHoy ? '700' : '600' }};color:{{ $esHoy ? 'var(--primary)' : 'var(--gray-800)' }};font-size:0.82rem;text-transform:capitalize;display:flex;align-items:center;gap:6px;">
-                            @if($esHoy)<i class="fas fa-circle" style="font-size:5px;color:var(--primary);"></i>@endif
-                            {{ \Carbon\Carbon::create()->startOfWeek()->addDays($h->dia_semana - 1)->locale('es')->isoFormat('dddd') }}
-                        </span>
-                        @if($h->activo && $h->hora_inicio && $h->hora_fin)
-                            <span style="font-size:0.8rem;color:{{ $esHoy ? 'var(--primary)' : 'var(--gray-600)' }};font-weight:{{ $esHoy ? '700' : '500' }};">
-                                {{ substr($h->hora_inicio,0,5) }} – {{ substr($h->hora_fin,0,5) }}
-                            </span>
-                        @else
-                            <span style="font-size:0.72rem;color:#ef4444;font-weight:700;background:#fef2f2;padding:2px 8px;border-radius:6px;">Cerrado</span>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-            @endif
-
-            {{-- Contacto --}}
-            <div class="perfil-card perfil-card-hover fade-up">
-                <h2 class="card-title"><i class="fas fa-address-card"></i>Contacto</h2>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    @if($negocio->neg_telefono)
-                        <a href="tel:{{ $negocio->neg_telefono }}" class="contacto-row">
-                            <div class="contacto-icon"><i class="fas fa-phone"></i></div>
-                            <span style="padding-top:5px;">{{ $negocio->neg_telefono }}</span>
-                        </a>
-                    @endif
-                    @if($negocio->neg_email)
-                        <a href="mailto:{{ $negocio->neg_email }}" class="contacto-row">
-                            <div class="contacto-icon"><i class="fas fa-envelope"></i></div>
-                            <span style="padding-top:5px;word-break:break-all;">{{ $negocio->neg_email }}</span>
-                        </a>
-                    @endif
-                    @if($negocio->neg_direccion)
-                        <div class="contacto-row">
-                            <div class="contacto-icon"><i class="fas fa-map-marker-alt"></i></div>
-                            <span style="padding-top:5px;">{{ $negocio->neg_direccion }}</span>
-                        </div>
-                    @endif
-                    @if($negocio->neg_pais)
-                        <div class="contacto-row">
-                            <div class="contacto-icon"><i class="fas fa-globe-americas"></i></div>
-                            <span style="padding-top:5px;">{{ $negocio->neg_pais }}</span>
-                        </div>
-                    @endif
-                </div>
-                @if($negocio->neg_telefono)
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $negocio->neg_telefono) }}"
-                   target="_blank"
-                   style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;padding:10px;background:#25D366;color:#fff;font-size:0.82rem;font-weight:700;border-radius:10px;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(37,211,102,0.25);"
-                   onmouseover="this.style.background='#20bd5a';this.style.transform='translateY(-1px)'"
-                   onmouseout="this.style.background='#25D366';this.style.transform='none'">
-                    <i class="fab fa-whatsapp" style="font-size:1.1rem;"></i> Escribir por WhatsApp
-                </a>
-                @endif
-
-                @if($negocio->neg_facebook || $negocio->neg_instagram || $negocio->neg_sitio_web)
-                <div style="display:flex;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6;">
-                    @if($negocio->neg_facebook)
-                        <a href="{{ $negocio->neg_facebook }}" target="_blank"
-                           style="width:36px;height:36px;border-radius:10px;background:#f0f0f8;display:flex;align-items:center;justify-content:center;color:#9ca3af;text-decoration:none;transition:all 0.2s;font-size:1rem;"
-                           onmouseover="this.style.background='#1877F2';this.style.color='#fff'"
-                           onmouseout="this.style.background='#f0f0f8';this.style.color='#9ca3af'">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                    @endif
-                    @if($negocio->neg_instagram)
-                        <a href="{{ $negocio->neg_instagram }}" target="_blank"
-                           style="width:36px;height:36px;border-radius:10px;background:#f0f0f8;display:flex;align-items:center;justify-content:center;color:#9ca3af;text-decoration:none;transition:all 0.2s;font-size:1rem;"
-                           onmouseover="this.style.background='#E4405F';this.style.color='#fff'"
-                           onmouseout="this.style.background='#f0f0f8';this.style.color='#9ca3af'">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    @endif
-                    @if($negocio->neg_sitio_web)
-                        <a href="{{ $negocio->neg_sitio_web }}" target="_blank"
-                           style="width:36px;height:36px;border-radius:10px;background:#f0f0f8;display:flex;align-items:center;justify-content:center;color:#9ca3af;text-decoration:none;transition:all 0.2s;font-size:1rem;"
-                           onmouseover="this.style.background='var(--primary)';this.style.color='#fff'"
-                           onmouseout="this.style.background='#f0f0f8';this.style.color='#9ca3af'">
-                            <i class="fas fa-globe"></i>
-                        </a>
-                    @endif
+                @else
+                <div class="gal-empty">
+                    <i class="fas fa-images"></i>
+                    <p>Este negocio aún no ha agregado fotos.</p>
                 </div>
                 @endif
             </div>
-
-            {{-- Ubicacion / Mapa --}}
-            @if($negocio->neg_latitud && $negocio->neg_longitud)
-            <div class="perfil-card fade-up" style="padding:0;overflow:hidden;">
-                <div style="padding:1.25rem 1.25rem 10px;">
-                    <h2 class="card-title" style="margin-bottom:10px;"><i class="fas fa-map-marker-alt"></i>Ubicacion</h2>
-                </div>
-                <div class="mapa-container">
-                    <div id="mapaUbicacion"></div>
-                    <div class="mapa-direccion-overlay">
-                        <div class="mapa-direccion-text">
-                            <i class="fas fa-location-dot"></i>
-                            {{ $negocio->neg_direccion ?? 'Ver en el mapa' }}
-                        </div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ $negocio->neg_latitud }},{{ $negocio->neg_longitud }}"
-                           target="_blank" class="mapa-btn-ir">
-                            <i class="fas fa-directions"></i> Como llegar
-                        </a>
-                    </div>
-                </div>
-            </div>
-            @endif
-
         </div>
-    </div>
-</div>
 
-</div>{{-- /panel-acerca --}}
+        {{-- Reseñas --}}
+        <div id="seccion-reviews" class="scroll-section">
+            <div class="rev-section-card">
+                <div class="rev-header">
+                    <span class="rev-eyebrow">Reseñas</span>
+                    <h2 class="rev-title">Prueba social visible desde arriba</h2>
+                    <p class="rev-copy">Las reviews no deberían quedar escondidas. En este tipo de negocio venden casi tanto como las fotos.</p>
+                </div>
 
-{{-- ===== PANEL: EQUIPO ===== --}}
-<div id="panel-equipo" class="tab-panel">
-    <div style="background:var(--gray-50);min-height:40vh;">
-        @if($trabajadores->count())
-            <div style="max-width:1152px;margin:0 auto;padding:1.5rem 1rem 0.5rem;">
-                <p style="font-size:0.75rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0;">
-                    <i class="fas fa-users" style="color:var(--primary);margin-right:5px;"></i>Nuestro equipo
-                    <span style="font-weight:600;color:#c4b5fd;margin-left:6px;">{{ $trabajadores->count() }} profesionales</span>
-                </p>
-            </div>
-            <div class="equipo-grid">
-                @foreach($trabajadores as $trab)
-                    <div class="equipo-card">
-                        @if($trab->foto)
-                            <img src="{{ asset('storage/' . $trab->foto) }}" alt="{{ $trab->nombre }}" class="equipo-card-avatar">
-                        @else
-                            <div class="equipo-card-initials">{{ strtoupper(substr($trab->nombre, 0, 2)) }}</div>
-                        @endif
-                        <p style="font-weight:700;color:var(--gray-800);font-size:0.9rem;margin:0;">{{ $trab->nombre }}</p>
-                        @if($trab->especialidades)
-                            <p style="font-size:0.78rem;color:var(--gray-400);margin:4px 0 0 0;">{{ $trab->especialidades }}</p>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div style="max-width:1152px;margin:0 auto;padding:3rem 1rem;text-align:center;">
-                <i class="fas fa-users" style="font-size:2rem;color:var(--gray-200);margin-bottom:12px;"></i>
-                <p style="color:var(--gray-400);font-size:0.9rem;">Este negocio aun no ha agregado miembros del equipo.</p>
-            </div>
-        @endif
-    </div>
-</div>
-
-{{-- ===== PANEL: SERVICIOS ===== --}}
-<div id="panel-servicios" class="tab-panel">
-    <div style="background:var(--gray-50);min-height:40vh;">
-        @if($negocio->servicios->count())
-            <div style="max-width:1152px;margin:0 auto;padding:1.5rem 1rem 0.5rem;">
-                <p style="font-size:0.75rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin:0;">
-                    <i class="fas fa-concierge-bell" style="color:var(--primary);margin-right:5px;"></i>Nuestros servicios
-                    <span style="font-weight:600;color:#c4b5fd;margin-left:6px;">{{ $negocio->servicios->count() }} disponibles</span>
-                </p>
-            </div>
-            <div class="servicios-grid">
-                @foreach($negocio->servicios as $servicio)
-                    <div class="servicio-card-full" onclick="window.openAgendarModal({serviceId: {{ $servicio->id }}})">
-                        @if($servicio->imagen)
-                            <div class="servicio-img-full">
-                                <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
+                @if($resenas->count())
+                <div class="rev-grid{{ !$promedioRating ? ' no-score' : '' }}">
+                    {{-- Score card --}}
+                    @if($promedioRating)
+                    <article class="rev-card">
+                        <div style="display:flex;align-items:flex-end;gap:14px;">
+                            <div class="rev-score-num">{{ $promedioRating }}</div>
+                            <div>
+                                <div class="rev-stars">★★★★★</div>
+                                <div class="rev-verified">{{ $totalResenas }} opiniones verificadas</div>
                             </div>
-                        @else
-                            <div class="servicio-placeholder-full">
-                                <i class="fas fa-concierge-bell"></i>
+                        </div>
+                        <p class="rev-score-text">Excelente atención y resultados consistentes. Este bloque da autoridad inmediata.</p>
+                    </article>
+                    @endif
+                    {{-- Individual reviews --}}
+                    @foreach($resenas->take(2) as $resena)
+                    <article class="rev-card">
+                        <div class="rev-quote">&ldquo;{{ $resena->comentario }}&rdquo;</div>
+                        <div class="rev-author">{{ $resena->user->name ?? $resena->nombre_cliente ?? 'Cliente' }}</div>
+                        <div class="rev-date">{{ $resena->created_at->format('d/m/Y') }}</div>
+                        @if($resena->respuesta_negocio)
+                            <div class="rev-reply">
+                                <div class="rev-reply-label">Respuesta del negocio</div>
+                                <p class="rev-reply-text">{{ $resena->respuesta_negocio }}</p>
                             </div>
                         @endif
-                        <div style="flex:1;min-width:0;">
-                            <p style="font-weight:700;color:var(--gray-800);font-size:0.92rem;margin:0;">{{ $servicio->nombre }}</p>
-                            @if($servicio->descripcion)
-                                <p style="font-size:0.78rem;color:var(--gray-400);margin:4px 0 0 0;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ $servicio->descripcion }}</p>
-                            @endif
-                            <div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
-                                <span class="precio-tag">${{ number_format($servicio->precio, 0, ',', '.') }}</span>
-                                @if($servicio->duracion)
-                                    <span style="font-size:0.75rem;color:var(--gray-400);">
-                                        <i class="far fa-clock" style="margin-right:3px;"></i>{{ $servicio->duracion }} min
+                    </article>
+                    @endforeach
+                </div>
+                @else
+                <div class="rev-empty">
+                    <i class="fas fa-star"></i>
+                    <p>Este negocio aún no tiene reseñas.</p>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- ===== UBICACIÓN & CONTACTO ===== --}}
+        <div id="seccion-contacto" class="section-card scroll-section">
+            <div class="section-head">
+                <div>
+                    <div class="eyebrow">Ubicación & contacto</div>
+                    <h2 class="section-title">Toda la información</h2>
+                </div>
+            </div>
+            <div class="info-grid-ref">
+                <div>
+                    <div class="info-list-ref">
+                        @if($negocio->neg_direccion)
+                            <div class="info-item-ref"><span>Dirección</span><strong>{{ $negocio->neg_direccion }}</strong></div>
+                        @endif
+                        @if($negocio->neg_telefono)
+                            <div class="info-item-ref"><span>Teléfono</span><strong><a href="tel:{{ $negocio->neg_telefono }}" style="color:var(--text);text-decoration:none;">{{ $negocio->neg_telefono }}</a></strong></div>
+                        @endif
+                        @if($negocio->neg_email)
+                            <div class="info-item-ref"><span>Email</span><strong><a href="mailto:{{ $negocio->neg_email }}" style="color:var(--text);text-decoration:none;word-break:break-all;">{{ $negocio->neg_email }}</a></strong></div>
+                        @endif
+                        @if($negocio->neg_pais)
+                            <div class="info-item-ref"><span>País</span><strong>{{ $negocio->neg_pais }}</strong></div>
+                        @endif
+                        @if($negocio->horarios->count())
+                            @foreach($negocio->horarios as $h)
+                                @php $esHoy = $h->dia_semana == now()->dayOfWeekIso; @endphp
+                                <div class="info-item-ref" style="{{ $esHoy ? 'background:#f3f0ff;border-radius:8px;padding:14px 8px;' : '' }}{{ $h->activo ? '' : 'opacity:0.4;' }}">
+                                    <span style="{{ $esHoy ? 'color:var(--primary-dark);font-weight:700;' : '' }}">
+                                        @if($esHoy)<i class="fas fa-circle" style="font-size:5px;vertical-align:middle;margin-right:4px;color:var(--primary);"></i>@endif
+                                        {{ \Carbon\Carbon::create()->startOfWeek()->addDays($h->dia_semana - 1)->locale('es')->isoFormat('dddd') }}
                                     </span>
-                                @endif
-                                <span style="font-size:0.72rem;font-weight:700;color:var(--accent);margin-left:auto;">
-                                    <i class="fas fa-calendar-plus" style="margin-right:3px;font-size:0.65rem;"></i>Reservar
-                                </span>
+                                    @if($h->activo && $h->hora_inicio && $h->hora_fin)
+                                        <strong style="{{ $esHoy ? 'color:var(--primary-dark);' : '' }}">{{ substr($h->hora_inicio,0,5) }} – {{ substr($h->hora_fin,0,5) }}</strong>
+                                    @else
+                                        <strong style="color:#ef4444;">Cerrado</strong>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+                        <button onclick="window.openAgendarModal()" class="btn-ref btn-ref-primary">
+                            <i class="fas fa-calendar-plus"></i> Agendar cita
+                        </button>
+                        @if($negocio->neg_telefono)
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $negocio->neg_telefono) }}" target="_blank" class="btn-ref btn-ref-light">
+                                <i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp
+                            </a>
+                        @endif
+                        @if($negocio->neg_instagram)
+                            <a href="{{ $negocio->neg_instagram }}" target="_blank" class="btn-ref btn-ref-light">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        @endif
+                        @if($negocio->neg_facebook)
+                            <a href="{{ $negocio->neg_facebook }}" target="_blank" class="btn-ref btn-ref-light">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        @endif
+                        @if($negocio->neg_sitio_web)
+                            <a href="{{ $negocio->neg_sitio_web }}" target="_blank" class="btn-ref btn-ref-light">
+                                <i class="fas fa-globe"></i>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Mapa --}}
+                @if($negocio->neg_latitud && $negocio->neg_longitud)
+                <div>
+                    <div class="mapa-container">
+                        <div id="mapaUbicacion"></div>
+                        <div class="mapa-direccion-overlay">
+                            <div class="mapa-direccion-text">
+                                <i class="fas fa-location-dot" style="color:var(--primary);margin-right:5px;"></i>
+                                {{ $negocio->neg_direccion ?? 'Ver en el mapa' }}
                             </div>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $negocio->neg_latitud }},{{ $negocio->neg_longitud }}"
+                               target="_blank" class="mapa-btn-ir">
+                                <i class="fas fa-directions"></i> Cómo llegar
+                            </a>
                         </div>
                     </div>
-                @endforeach
+                </div>
+                @else
+                <div></div>
+                @endif
             </div>
-        @else
-            <div style="max-width:1152px;margin:0 auto;padding:3rem 1rem;text-align:center;">
-                <i class="fas fa-concierge-bell" style="font-size:2rem;color:var(--gray-200);margin-bottom:12px;"></i>
-                <p style="color:var(--gray-400);font-size:0.9rem;">Este negocio aun no ha agregado servicios.</p>
-            </div>
-        @endif
+        </div>
+
     </div>
 </div>
 
@@ -1264,7 +1528,6 @@ document.addEventListener('DOMContentLoaded', function() {
         maxZoom: 19,
     }).addTo(map);
 
-    // Custom purple marker
     const markerIcon = L.divIcon({
         className: 'custom-marker',
         html: '<div class="marker-pin"></div><i class="fas fa-store marker-pin-icon"></i>',
@@ -1287,22 +1550,260 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endif
 
-{{-- Tab switching --}}
+{{-- Flatpickr --}}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+{{-- Booking Card Logic --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.tab-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-            document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-            this.classList.add('active');
-            var panel = document.getElementById('panel-' + this.dataset.tab);
-            if (panel) panel.classList.add('active');
-            // Re-render calendar when switching back to Acerca tab
-            if (this.dataset.tab === 'acerca' && window.calendar) {
-                setTimeout(function() { window.calendar.updateSize(); }, 50);
+
+  const selServicio    = document.getElementById('heroServicio');
+  const selProfesional = document.getElementById('heroProfesional');
+  const inputFecha     = document.getElementById('heroFecha');
+  const slotsGrid      = document.getElementById('heroSlotsGrid');
+  const slotsEmpty     = document.getElementById('heroSlotsEmpty');
+  const btnContinuar   = document.getElementById('btnContinuarReserva');
+
+  let horaSeleccionada = null;
+
+  function actualizarResumen() {
+    // Servicio
+    var optS = selServicio.options[selServicio.selectedIndex];
+    document.getElementById('summaryServicio').textContent =
+      optS ? optS.dataset.nombre : '—';
+    document.getElementById('summaryTotal').textContent =
+      optS && optS.dataset.precio
+        ? '$' + Number(optS.dataset.precio).toLocaleString('es')
+        : '—';
+
+    // Profesional
+    var optP = selProfesional.options[selProfesional.selectedIndex];
+    document.getElementById('summaryProfesional').textContent =
+      optP && optP.dataset.nombre ? optP.dataset.nombre : 'Cualquier profesional';
+
+    // Fecha + hora
+    var fecha = inputFecha.value;
+    if (fecha) {
+      var parts = fecha.split('-');
+      var meses = ['Ene','Feb','Mar','Abr','May','Jun',
+                   'Jul','Ago','Sep','Oct','Nov','Dic'];
+      var fechaStr = parts[2] + ' ' + meses[parseInt(parts[1]) - 1];
+      document.getElementById('summaryFecha').textContent =
+        fechaStr + (horaSeleccionada ? ' · ' + horaSeleccionada : ' · --:--');
+    } else {
+      document.getElementById('summaryFecha').textContent = '—';
+    }
+  }
+
+  // Generar slots dinámicos según horarios reales del negocio
+  function generarSlotsHero() {
+    if (!slotsGrid) return;
+    slotsGrid.innerHTML = '';
+    slotsEmpty.classList.add('hidden');
+    horaSeleccionada = null;
+
+    var fecha = inputFecha.value;
+    if (!fecha || !window.NEGOCIO_HORARIOS) return;
+
+    var dt = new Date(fecha + 'T12:00:00');
+    var jsDay = dt.getDay();
+    var laravelDay = jsDay === 0 ? 7 : jsDay;
+    var ranges = window.NEGOCIO_HORARIOS[laravelDay] || [];
+
+    if (!ranges.length) {
+      slotsEmpty.classList.remove('hidden');
+      return;
+    }
+
+    // Duración del servicio seleccionado (default 30 min)
+    var duracion = 30;
+    var optS = selServicio.options[selServicio.selectedIndex];
+    if (optS && optS.dataset.duracion) {
+      var durStr = optS.dataset.duracion.toLowerCase();
+      var match = durStr.match(/(\d+)\s*(min|hora|hr|h)/);
+      if (match) {
+        duracion = match[2].startsWith('h') ? parseInt(match[1]) * 60 : parseInt(match[1]);
+      } else {
+        var numOnly = durStr.match(/^(\d+)$/);
+        if (numOnly) duracion = parseInt(numOnly[1]);
+      }
+    }
+
+    // Generar slots cada 30 minutos (vista rápida)
+    var count = 0;
+    ranges.forEach(function(range) {
+      var minT = window.t2m(range.inicio);
+      var maxT = window.t2m(range.fin);
+      for (var t = minT; t + duracion <= maxT; t += 30) {
+        if (count >= 6) return; // máximo 6 slots visibles
+        var hhmm = window.m2t(t);
+        var slot = document.createElement('div');
+        slot.className = 'booking-slot';
+        slot.dataset.hora = hhmm;
+        slot.textContent = hhmm;
+        slot.addEventListener('click', function() {
+          slotsGrid.querySelectorAll('.booking-slot').forEach(function(s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          horaSeleccionada = this.dataset.hora;
+          actualizarResumen();
+        });
+        slotsGrid.appendChild(slot);
+        count++;
+      }
+    });
+
+    if (count === 0) {
+      slotsEmpty.classList.remove('hidden');
+    }
+
+    actualizarResumen();
+  }
+
+  // --- Días bloqueados (fechas específicas) ---
+  const diasBloqueados = [
+    @foreach($negocio->bloqueos as $bloqueo)
+      '{{ \Carbon\Carbon::parse($bloqueo->fecha_bloqueada)->format('Y-m-d') }}',
+    @endforeach
+  ];
+
+  // --- Qué días de semana están cerrados (sin horarios) ---
+  function esDiaCerrado(date) {
+    const jsDay = date.getDay(); // 0=Dom
+    const laravelDay = jsDay === 0 ? 7 : jsDay;
+    const rangos = window.NEGOCIO_HORARIOS[laravelDay];
+    return (!rangos || rangos.length === 0);
+  }
+
+  // --- Inicializar Flatpickr ---
+  const fp = flatpickr(inputFecha, {
+    locale: 'es',
+    dateFormat: 'Y-m-d',
+    altInput: true,
+    altFormat: 'j M Y',
+    minDate: 'today',
+    disableMobile: true,
+    disable: [
+      // Deshabilitar días de semana cerrados
+      function(date) {
+        return esDiaCerrado(date);
+      },
+      // Deshabilitar fechas bloqueadas
+      ...diasBloqueados.map(function(f) { return f; })
+    ],
+    onChange: function(selectedDates, dateStr) {
+      generarSlotsHero();
+      actualizarResumen();
+    },
+    onReady: function(selectedDates, dateStr, instance) {
+      // Seleccionar el próximo día abierto automáticamente
+      const hoy = new Date();
+      hoy.setHours(12,0,0,0);
+      let d = new Date(hoy);
+      for (let i = 0; i < 90; i++) {
+        const ymd = d.getFullYear() + '-' +
+          String(d.getMonth()+1).padStart(2,'0') + '-' +
+          String(d.getDate()).padStart(2,'0');
+        if (!esDiaCerrado(d) && !diasBloqueados.includes(ymd)) {
+          instance.setDate(d, true);
+          break;
+        }
+        d.setDate(d.getDate() + 1);
+      }
+    }
+  });
+
+  // Cambios en selects y fecha → regenerar slots
+  selServicio.addEventListener('change', function() {
+    actualizarResumen();
+    generarSlotsHero();
+  });
+  selProfesional.addEventListener('change', actualizarResumen);
+
+  // Botón continuar
+  btnContinuar.addEventListener('click', function() {
+    var serviceId = selServicio.value;
+    var workerId  = selProfesional.value;
+    var date      = inputFecha.value;
+    if (typeof window.openAgendarModal === 'function') {
+      window.openAgendarModal({ serviceId: serviceId, workerId: workerId, date: date });
+    }
+  });
+
+  // Ejecutar al cargar para poblar el resumen y generar slots iniciales
+  actualizarResumen();
+  generarSlotsHero();
+
+});
+</script>
+
+{{-- Nav scroll & active state --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var nav = document.getElementById('profileNav');
+    var mobileToggle = document.getElementById('navMobileToggle');
+    var mobileMenu = document.getElementById('navMobileMenu');
+    var allLinks = document.querySelectorAll('.nav-link[data-section], .nav-link-mobile[data-section]');
+    var sections = document.querySelectorAll('.scroll-section');
+
+    // Scroll shadow on nav
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 20) { nav.classList.add('scrolled'); }
+        else { nav.classList.remove('scrolled'); }
+    });
+
+    // Mobile menu toggle
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('open');
+            var icon = mobileToggle.querySelector('i');
+            if (mobileMenu.classList.contains('open')) {
+                icon.className = 'fas fa-times';
+            } else {
+                icon.className = 'fas fa-bars';
+            }
+        });
+    }
+
+    // Smooth scroll on link click
+    allLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var sectionId = this.getAttribute('data-section');
+            var target = document.getElementById(sectionId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Close mobile menu
+            if (mobileMenu.classList.contains('open')) {
+                mobileMenu.classList.remove('open');
+                var icon = mobileToggle.querySelector('i');
+                icon.className = 'fas fa-bars';
             }
         });
     });
+
+    // IntersectionObserver for active state
+    if (sections.length) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var id = entry.target.id;
+                    allLinks.forEach(function(l) { l.classList.remove('active'); });
+                    allLinks.forEach(function(l) {
+                        if (l.getAttribute('data-section') === id) l.classList.add('active');
+                    });
+                }
+            });
+        }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+        sections.forEach(function(s) { observer.observe(s); });
+    }
+
+    // Calendar resize after layout (no longer tab-based)
+    if (window.calendar) {
+        setTimeout(function() { window.calendar.updateSize(); }, 100);
+    }
 });
 </script>
 @endpush

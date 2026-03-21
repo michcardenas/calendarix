@@ -13,6 +13,7 @@
     {{-- ✅ Estilos Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         html,
         body {
@@ -34,6 +35,98 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        /* === Mobile Header === */
+        .emp-mobile-header {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(90,49,215,0.08);
+            padding: 10px 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .emp-mobile-header__brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .emp-mobile-header__brand img {
+            height: 26px;
+            width: auto;
+        }
+        .emp-mobile-header__brand span {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #5a31d7;
+        }
+        .emp-mobile-header__biz {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .emp-hamburger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 1px solid rgba(90,49,215,0.12);
+            border-radius: 10px;
+            cursor: pointer;
+            color: #5a31d7;
+            font-size: 1.15rem;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .emp-hamburger:hover,
+        .emp-hamburger:active {
+            background: rgba(90,49,215,0.06);
+            border-color: rgba(90,49,215,0.25);
+        }
+
+        /* === Sidebar overlay (mobile) === */
+        .emp-sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .emp-sidebar-overlay.emp-menu-open {
+            display: block;
+            opacity: 1;
+        }
+
+        /* === Responsive === */
+        @media (max-width: 768px) {
+            .emp-mobile-header {
+                display: flex;
+            }
+            .sidebar-clx {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+                overflow-y: auto;
+            }
+            .sidebar-clx.emp-menu-open {
+                transform: translateX(0);
+            }
+            .content-area {
+                padding: 16px;
+            }
         }
     </style>
 
@@ -126,6 +219,20 @@
 </head>
 
 <body>
+    {{-- Mobile Header --}}
+    <div class="emp-mobile-header">
+        <div class="emp-mobile-header__brand">
+            <img src="{{ asset('images/morado.png') }}" alt="Calendarix">
+            <span>Calendarix</span>
+        </div>
+        <button type="button" class="emp-hamburger" id="empHamburger">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    {{-- Sidebar overlay --}}
+    <div class="emp-sidebar-overlay" id="empSidebarOverlay"></div>
+
     <div class="layout-container">
         @include('empresa.partials.sidebar', [
         'empresa' => $empresa ,
@@ -145,6 +252,36 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
     @stack('scripts')
+
+    {{-- Hamburger sidebar toggle JS --}}
+    <script>
+    (function() {
+        var hamburger = document.getElementById('empHamburger');
+        var overlay = document.getElementById('empSidebarOverlay');
+        var sidebar = document.querySelector('.sidebar-clx');
+
+        function openMenu() {
+            if (sidebar) sidebar.classList.add('emp-menu-open');
+            if (overlay) overlay.classList.add('emp-menu-open');
+        }
+        function closeMenu() {
+            if (sidebar) sidebar.classList.remove('emp-menu-open');
+            if (overlay) overlay.classList.remove('emp-menu-open');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', openMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // Close on link click
+        if (sidebar) {
+            sidebar.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    setTimeout(closeMenu, 100);
+                });
+            });
+        }
+    })();
+    </script>
 
     {{-- 🧠 Script de formateo de precios --}}
     <script>

@@ -1,5 +1,6 @@
 @extends('layouts.base')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/empresa/dashboard-empresa.css') }}">
 
 <!-- Fondo animado con partículas -->
@@ -9,7 +10,21 @@
     @endfor
 </div>
 
-<div class="layout" style="display: flex;">
+{{-- Mobile Header --}}
+<div class="mobile-header">
+    <div class="mobile-header__brand">
+        <img src="{{ asset('images/morado.png') }}" alt="Calendarix">
+        <span>Calendarix</span>
+    </div>
+    <button type="button" class="mobile-header__hamburger" id="dashHamburger">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+<div class="layout">
+    {{-- Sidebar overlay (must be inside .layout to share stacking context with sidebar) --}}
+    <div class="dash-sidebar-overlay" id="dashSidebarOverlay"></div>
+
     {{-- Sidebar a la izquierda --}}
     @include('empresa.partials.sidebar', [
         'empresa' => $empresa,
@@ -17,7 +32,7 @@
         'currentSubPage' => $currentSubPage ?? null
     ])
 
-    <main class="content" style="padding: 2rem;">
+    <main class="content">
 
         {{-- Saludo y fecha --}}
         <div class="dash-welcome">
@@ -225,3 +240,32 @@
 
     </main>
 </div>
+
+{{-- Hamburger sidebar toggle JS --}}
+<script>
+(function() {
+    var hamburger = document.getElementById('dashHamburger');
+    var overlay = document.getElementById('dashSidebarOverlay');
+    var sidebar = document.querySelector('.sidebar-clx');
+
+    function openMenu() {
+        if (sidebar) sidebar.classList.add('dash-menu-open');
+        if (overlay) overlay.classList.add('dash-menu-open');
+    }
+    function closeMenu() {
+        if (sidebar) sidebar.classList.remove('dash-menu-open');
+        if (overlay) overlay.classList.remove('dash-menu-open');
+    }
+
+    if (hamburger) hamburger.addEventListener('click', openMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
+
+    if (sidebar) {
+        sidebar.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                setTimeout(closeMenu, 100);
+            });
+        });
+    }
+})();
+</script>
