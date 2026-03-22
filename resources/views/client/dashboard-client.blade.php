@@ -79,46 +79,45 @@
                         Dashboard
                     </a>
                 </li>
-                <li class="clx-nav-item">
-                    <a href="#" class="clx-nav-link" data-clx-page="favorites">
-                        <i class="fas fa-heart clx-nav-icon"></i>
-                        Favoritos
-                    </a>
-                </li>
-                <li class="clx-nav-item">
-                    <a href="#" class="clx-nav-link" data-clx-page="history">
-                        <i class="fas fa-history clx-nav-icon"></i>
-                        Historial
-                    </a>
-                </li>
+                @if($misEmpresas->count() > 0)
+                    @php $primeraEmpNav = $misEmpresas->first(); @endphp
+                    <li class="clx-nav-item">
+                        <a href="{{ route('empresa.agenda', ['id' => $primeraEmpNav->id]) }}" class="clx-nav-link">
+                            <i class="fas fa-calendar-alt clx-nav-icon"></i>
+                            Agenda
+                        </a>
+                    </li>
+                    <li class="clx-nav-item">
+                        <a href="{{ route('empresa.clientes.index', $primeraEmpNav->id) }}" class="clx-nav-link">
+                            <i class="fas fa-users clx-nav-icon"></i>
+                            Clientes
+                        </a>
+                    </li>
+                    <li class="clx-nav-item">
+                        <a href="{{ route('empresa.catalogo.servicios', $primeraEmpNav->id) }}" class="clx-nav-link">
+                            <i class="fas fa-concierge-bell clx-nav-icon"></i>
+                            Servicios
+                        </a>
+                    </li>
+                    <li class="clx-nav-item">
+                        <a href="{{ route('empresa.dashboard', $primeraEmpNav->id) }}" class="clx-nav-link">
+                            <i class="fas fa-chart-bar clx-nav-icon"></i>
+                            Panel Empresa
+                        </a>
+                    </li>
+                @else
+                    <li class="clx-nav-item">
+                        <a href="{{ route('negocio.create') }}" class="clx-nav-link">
+                            <i class="fas fa-store clx-nav-icon"></i>
+                            Crear Negocio
+                        </a>
+                    </li>
+                @endif
                 <li class="clx-nav-item">
                     <a href="#" class="clx-nav-link" data-clx-page="profile">
                         <i class="fas fa-user-cog clx-nav-icon"></i>
                         Mi Perfil
                     </a>
-                </li>
-                <li class="clx-nav-item">
-                    @if($misEmpresas->isEmpty())
-                        <a href="{{ route('negocio.create') }}" class="clx-nav-link">
-                            <i class="fas fa-briefcase clx-nav-icon"></i>
-                            Mi Empresa
-                        </a>
-                    @else
-                        <a href="#" class="clx-nav-link" data-clx-toggle="empresa-submenu">
-                            <i class="fas fa-briefcase clx-nav-icon"></i>
-                            Mi Empresa <i class="fas fa-chevron-down float-end"></i>
-                        </a>
-
-                        <ul id="empresa-submenu" class="clx-submenu" style="display: none; padding-left: 1rem;">
-                            @foreach ($misEmpresas as $empresa)
-                            <li>
-                                <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="clx-submenu-link">
-                                    {{ $empresa->neg_nombre_comercial ?? 'Sin nombre comercial' }}
-                                </a>
-                            </li>
-                            @endforeach
-                        </ul>
-                    @endif
                 </li>
             </ul>
         </nav>
@@ -140,64 +139,105 @@
         {{-- ===== SECCION: DASHBOARD ===== --}}
         <div data-clx-section="dashboard">
 
+        @php
+            $primeraEmpresa = $misEmpresas->first();
+            $tieneNegocio = $misEmpresas->count() > 0;
+            $nombreNegocio = $primeraEmpresa->neg_nombre_comercial ?? $primeraEmpresa->neg_nombre ?? null;
+        @endphp
+
         <!-- Header de bienvenida -->
         <header class="clx-header">
             <div class="clx-welcome">
                 <div>
-                    <h2>¡Bienvenido de vuelta, {{ explode(' ', auth()->user()->name)[0] }}!</h2>
-                    <p>
-                        Tienes
-                        <span id="clx-pending-count">{{ number_format($citasPendientes ?? 0) }} {{ ($citasPendientes ?? 0) === 1 ? 'cita' : 'citas' }}</span>
-                        pendientes para esta semana
-                    </p>
+                    @if($tieneNegocio)
+                        <h2>{{ $nombreNegocio }}</h2>
+                        <p style="color: #6b7280; font-size: 0.85rem;">
+                            {{ \Illuminate\Support\Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}
+                            &middot; <span id="clx-pending-count" style="color: #5a31d7; font-weight: 600;">{{ $citasNegocioPendientes ?? 0 }} {{ ($citasNegocioPendientes ?? 0) === 1 ? 'cita pendiente' : 'citas pendientes' }}</span>
+                        </p>
+                    @else
+                        <h2>¡Bienvenido, {{ explode(' ', auth()->user()->name)[0] }}!</h2>
+                        <p>Registra tu negocio para comenzar a recibir citas</p>
+                    @endif
                 </div>
-                @if(!auth()->user()->negocios()->exists())
-                <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" style="flex:none; width:auto; display:inline-flex; padding:10px 20px; font-size:0.85rem; border-radius:12px;">
-                    <i class="fas fa-store"></i>
-                    Registra tu negocio
-                </a>
+                @if($tieneNegocio)
+                    <a href="{{ route('empresa.agenda', ['id' => $primeraEmpresa->id]) }}" class="clx-btn clx-btn-primary" style="flex:none; width:auto; display:inline-flex; padding:10px 20px; font-size:0.85rem; border-radius:12px;">
+                        <i class="fas fa-calendar-plus"></i>
+                        Ir a la Agenda
+                    </a>
+                @else
+                    <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" style="flex:none; width:auto; display:inline-flex; padding:10px 20px; font-size:0.85rem; border-radius:12px;">
+                        <i class="fas fa-store"></i>
+                        Registra tu negocio
+                    </a>
                 @endif
             </div>
         </header>
 
-        <!-- Estadísticas -->
+        <!-- Estadísticas del negocio -->
         <section class="clx-stats">
             <div class="clx-stat-card">
                 <div class="clx-stat-icon primary">
                     <i class="fas fa-calendar-check"></i>
                 </div>
-                <div class="clx-stat-number" id="clx-stat-appointments">{{ number_format($citosMes ?? $citasMes ?? 0) }}</div>
+                <div class="clx-stat-number" id="clx-stat-appointments">{{ number_format($citasNegocioMes ?? 0) }}</div>
                 <div class="clx-stat-label">Citas este mes</div>
             </div>
             <div class="clx-stat-card">
                 <div class="clx-stat-icon success">
-                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-users"></i>
                 </div>
-                <div class="clx-stat-number" id="clx-stat-favorites">{{ number_format($favoritosCount ?? 0) }}</div>
-                <div class="clx-stat-label">Negocios favoritos</div>
+                <div class="clx-stat-number" id="clx-stat-clients">{{ number_format($clientesCount ?? 0) }}</div>
+                <div class="clx-stat-label">Clientes</div>
             </div>
             <div class="clx-stat-card">
                 <div class="clx-stat-icon warning">
                     <i class="fas fa-clock"></i>
                 </div>
-                <div class="clx-stat-number" id="clx-stat-pending">{{ number_format($citasPendientes ?? 0) }}</div>
-                <div class="clx-stat-label">Citas pendientes</div>
+                <div class="clx-stat-number" id="clx-stat-pending">{{ number_format($citasNegocioPendientes ?? 0) }}</div>
+                <div class="clx-stat-label">Pendientes</div>
             </div>
         </section>
 
+        @if($tieneNegocio)
+        <!-- Acciones rápidas -->
+        <section style="margin-bottom: 1.25rem;">
+            <div class="clx-card">
+                <div class="clx-card-header">
+                    <h3 class="clx-card-title">Acciones rápidas</h3>
+                </div>
+                <div class="clx-card-body">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;">
+                        <a href="{{ route('empresa.agenda', ['id' => $primeraEmpresa->id]) }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:1rem 0.75rem; background:#f8f6ff; border-radius:12px; text-decoration:none; transition: all 0.2s; border: 1px solid transparent;" onmouseover="this.style.borderColor='#5a31d7'; this.style.background='#f0ecfb'" onmouseout="this.style.borderColor='transparent'; this.style.background='#f8f6ff'">
+                            <i class="fas fa-calendar-alt" style="font-size:1.25rem; color:#5a31d7;"></i>
+                            <span style="font-size:0.8rem; font-weight:600; color:#374151;">Agenda</span>
+                        </a>
+                        <a href="{{ route('empresa.catalogo.servicios', $primeraEmpresa->id) }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:1rem 0.75rem; background:#f0fdf4; border-radius:12px; text-decoration:none; transition: all 0.2s; border: 1px solid transparent;" onmouseover="this.style.borderColor='#22c55e'; this.style.background='#dcfce7'" onmouseout="this.style.borderColor='transparent'; this.style.background='#f0fdf4'">
+                            <i class="fas fa-concierge-bell" style="font-size:1.25rem; color:#22c55e;"></i>
+                            <span style="font-size:0.8rem; font-weight:600; color:#374151;">Servicios</span>
+                        </a>
+                        <a href="{{ route('empresa.clientes.index', $primeraEmpresa->id) }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:1rem 0.75rem; background:#eff6ff; border-radius:12px; text-decoration:none; transition: all 0.2s; border: 1px solid transparent;" onmouseover="this.style.borderColor='#3b82f6'; this.style.background='#dbeafe'" onmouseout="this.style.borderColor='transparent'; this.style.background='#eff6ff'">
+                            <i class="fas fa-users" style="font-size:1.25rem; color:#3b82f6;"></i>
+                            <span style="font-size:0.8rem; font-weight:600; color:#374151;">Clientes</span>
+                        </a>
+                        <a href="{{ route('empresa.configuracion.negocio', $primeraEmpresa->id) }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:1rem 0.75rem; background:#fef3c7; border-radius:12px; text-decoration:none; transition: all 0.2s; border: 1px solid transparent;" onmouseover="this.style.borderColor='#f59e0b'; this.style.background='#fde68a'" onmouseout="this.style.borderColor='transparent'; this.style.background='#fef3c7'">
+                            <i class="fas fa-cog" style="font-size:1.25rem; color:#f59e0b;"></i>
+                            <span style="font-size:0.8rem; font-weight:600; color:#374151;">Configurar</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @endif
+
         <!-- Contenido principal -->
         <section class="clx-content-grid">
-            <!-- Próximas citas -->
+            <!-- Próximas citas del negocio -->
             <div class="clx-card">
                 <div class="clx-card-header">
                     <h3 class="clx-card-title">Próximas Citas</h3>
-                    @if($misEmpresas->count() > 0)
-                        @php
-                            $primeraEmpresa = $misEmpresas->first();
-                        @endphp
+                    @if($tieneNegocio)
                         <a href="{{ route('empresa.configuracion.citas', $primeraEmpresa->id) }}" class="clx-btn clx-btn-ghost">Ver todas</a>
-                    @else
-                        <button class="clx-btn clx-btn-ghost" onclick="alert('Aún no tienes empresas registradas')">Ver todas</button>
                     @endif
                 </div>
                 <div class="clx-card-body">
@@ -207,109 +247,70 @@
                 </div>
             </div>
 
-            <!-- Negocios recomendados -->
+            <!-- Resumen del negocio -->
             <div class="clx-card">
                 <div class="clx-card-header">
-                    <h3 class="clx-card-title">Recomendados</h3>
-                    <button class="clx-btn clx-btn-ghost">
-                        <i class="fas fa-refresh"></i>
-                    </button>
+                    <h3 class="clx-card-title">Tu Negocio</h3>
+                    @if($tieneNegocio)
+                        <a href="{{ route('empresa.dashboard', $primeraEmpresa->id) }}" class="clx-btn clx-btn-ghost">
+                            Panel completo
+                        </a>
+                    @endif
                 </div>
                 <div class="clx-card-body">
-                    <div id="clx-recommendations-list">
-                        <!-- Se llena dinámicamente con JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {{-- Citas completadas + Dejar reseña --}}
-        @if(isset($citasCompletadas) && $citasCompletadas->count())
-        <section style="margin-top: 1.5rem;">
-            <div class="clx-card">
-                <div class="clx-card-header">
-                    <h3 class="clx-card-title">Citas Completadas</h3>
-                </div>
-                <div class="clx-card-body">
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        @foreach($citasCompletadas as $citaComp)
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem;">
-                                <div>
-                                    <p style="font-weight: 600; color: #1f2937; font-size: 0.9rem;">
-                                        {{ $citaComp->negocio->neg_nombre_comercial ?? 'Negocio' }}
-                                    </p>
-                                    <p style="font-size: 0.8rem; color: #6b7280;">
-                                        {{ $citaComp->servicio->nombre ?? 'Servicio' }}
-                                        @if($citaComp->trabajador) &middot; {{ $citaComp->trabajador->nombre }} @endif
-                                        &middot; {{ \Carbon\Carbon::parse($citaComp->fecha)->format('d/m/Y') }}
-                                    </p>
-                                </div>
-                                @if(in_array($citaComp->id, $resenasExistentes ?? []))
-                                    <span style="font-size: 0.75rem; color: #32ccbc; font-weight: 500;">
-                                        <i class="fas fa-check-circle"></i> Reseñada
-                                    </span>
+                    @if($tieneNegocio)
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            {{-- Info del negocio --}}
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 0.75rem; background: #f8f6ff; border-radius: 12px;">
+                                @if($primeraEmpresa->neg_imagen)
+                                    <img src="{{ str_starts_with($primeraEmpresa->neg_imagen, 'http') ? $primeraEmpresa->neg_imagen : asset('storage/' . $primeraEmpresa->neg_imagen) }}"
+                                         alt="{{ $nombreNegocio }}"
+                                         style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb;">
                                 @else
-                                    <button onclick="document.getElementById('modalResena{{ $citaComp->id }}').classList.remove('hidden')"
-                                            style="background-color: #5a31d7; color: white; border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500; cursor: pointer;">
-                                        <i class="fas fa-star"></i> Dejar reseña
-                                    </button>
+                                    <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#5a31d7,#7b5ce0); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:1.1rem; flex-shrink:0;">
+                                        {{ strtoupper(substr($nombreNegocio ?? 'N', 0, 1)) }}
+                                    </div>
                                 @endif
-                            </div>
-
-                            {{-- Modal de reseña --}}
-                            @if(!in_array($citaComp->id, $resenasExistentes ?? []))
-                            <div id="modalResena{{ $citaComp->id }}" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-                                <div style="background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
-                                    <button onclick="document.getElementById('modalResena{{ $citaComp->id }}').classList.add('hidden')"
-                                            style="position: absolute; top: 0.75rem; right: 0.75rem; background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.1rem;">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #5a31d7; margin-bottom: 0.25rem;">Dejar Reseña</h2>
-                                    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem;">
-                                        {{ $citaComp->negocio->neg_nombre_comercial ?? '' }} &middot; {{ $citaComp->servicio->nombre ?? '' }}
-                                    </p>
-                                    <form action="{{ route('resenas.store') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="cita_id" value="{{ $citaComp->id }}">
-
-                                        <div style="margin-bottom: 1rem;">
-                                            <label style="display: block; font-size: 0.85rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Calificación</label>
-                                            <div class="star-rating-input" data-cita="{{ $citaComp->id }}" style="display: flex; gap: 0.25rem;">
-                                                @for($s = 1; $s <= 5; $s++)
-                                                    <label style="cursor: pointer;">
-                                                        <input type="radio" name="rating" value="{{ $s }}" required style="display: none;">
-                                                        <i class="fas fa-star star-icon" data-value="{{ $s }}" style="font-size: 1.5rem; color: #d1d5db; transition: color 0.15s;"></i>
-                                                    </label>
-                                                @endfor
-                                            </div>
-                                        </div>
-
-                                        <div style="margin-bottom: 1rem;">
-                                            <label style="display: block; font-size: 0.85rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Comentario</label>
-                                            <textarea name="comentario" rows="3" required maxlength="1000" placeholder="Contanos tu experiencia..."
-                                                      style="width: 100%; border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.9rem; resize: vertical; outline: none; font-family: inherit;"></textarea>
-                                        </div>
-
-                                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                                            <button type="button" onclick="document.getElementById('modalResena{{ $citaComp->id }}').classList.add('hidden')"
-                                                    style="padding: 0.5rem 1rem; background: #e5e7eb; color: #374151; border: none; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
-                                                Cancelar
-                                            </button>
-                                            <button type="submit"
-                                                    style="padding: 0.5rem 1rem; background: #5a31d7; color: white; border: none; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer; font-weight: 500;">
-                                                Enviar Reseña
-                                            </button>
-                                        </div>
-                                    </form>
+                                <div style="min-width:0;">
+                                    <p style="font-weight:600; color:#1f2937; font-size:0.9rem; margin:0;">{{ $nombreNegocio }}</p>
+                                    <p style="font-size:0.78rem; color:#6b7280; margin:2px 0 0 0;">{{ $primeraEmpresa->neg_categoria ?? 'Sin categoria' }}</p>
                                 </div>
                             </div>
-                            @endif
-                        @endforeach
-                    </div>
+
+                            {{-- Métricas rápidas --}}
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                <div style="padding: 0.6rem 0.75rem; background: #f9fafb; border-radius: 10px; text-align: center;">
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: #5a31d7;">{{ $serviciosCount ?? 0 }}</div>
+                                    <div style="font-size: 0.72rem; color: #6b7280;">Servicios</div>
+                                </div>
+                                <div style="padding: 0.6rem 0.75rem; background: #f9fafb; border-radius: 10px; text-align: center;">
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">{{ $trabajadoresCount ?? 0 }}</div>
+                                    <div style="font-size: 0.72rem; color: #6b7280;">Profesionales</div>
+                                </div>
+                            </div>
+
+                            {{-- Link al perfil público --}}
+                            @php
+                                $slug = \Illuminate\Support\Str::slug($nombreNegocio ?? 'negocio');
+                            @endphp
+                            <a href="{{ url('/negocios/' . $primeraEmpresa->id . '-' . $slug) }}" target="_blank"
+                               style="display:flex; align-items:center; justify-content:center; gap:6px; padding:0.6rem; background:#fff; border:1px solid #e5e7eb; border-radius:10px; font-size:0.8rem; font-weight:500; color:#5a31d7; text-decoration:none; transition:all 0.2s;"
+                               onmouseover="this.style.borderColor='#5a31d7'; this.style.background='#f8f6ff'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='#fff'">
+                                <i class="fas fa-external-link-alt" style="font-size:0.7rem;"></i> Ver perfil publico
+                            </a>
+                        </div>
+                    @else
+                        <div style="text-align: center; padding: 2rem 1rem;">
+                            <i class="fas fa-store" style="font-size: 2.5rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">Aun no tienes un negocio registrado</p>
+                            <a href="{{ route('negocio.create') }}" style="display:inline-flex; align-items:center; gap:6px; padding:10px 20px; background:#5a31d7; color:#fff; border-radius:10px; font-size:0.85rem; font-weight:600; text-decoration:none;">
+                                <i class="fas fa-plus"></i> Crear mi negocio
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>
-        @endif
 
         </div>{{-- /data-clx-section="dashboard" --}}
 
@@ -487,23 +488,31 @@
 <nav class="clx-bottom-nav">
     <a href="#" class="clx-bottom-nav__item clx-bnav-active" data-clx-page="dashboard">
         <i class="fas fa-home"></i>
-        <span>Dashboard</span>
+        <span>Inicio</span>
     </a>
-    <a href="#" class="clx-bottom-nav__item" data-clx-page="favorites">
-        <i class="fas fa-heart"></i>
-        <span>Favoritos</span>
-    </a>
-    <a href="#" class="clx-bottom-nav__item" data-clx-page="history">
-        <i class="fas fa-history"></i>
-        <span>Historial</span>
-    </a>
+    @if(($misEmpresas ?? collect())->count() > 0)
+        @php $empNav = $misEmpresas->first(); @endphp
+        <a href="{{ route('empresa.agenda', ['id' => $empNav->id]) }}" class="clx-bottom-nav__item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Agenda</span>
+        </a>
+        <a href="{{ route('empresa.clientes.index', $empNav->id) }}" class="clx-bottom-nav__item">
+            <i class="fas fa-users"></i>
+            <span>Clientes</span>
+        </a>
+    @else
+        <a href="{{ route('negocio.create') }}" class="clx-bottom-nav__item">
+            <i class="fas fa-store"></i>
+            <span>Crear</span>
+        </a>
+    @endif
     <a href="#" class="clx-bottom-nav__item" data-clx-page="profile">
         <i class="fas fa-user"></i>
-        <span>Mi Perfil</span>
+        <span>Perfil</span>
     </a>
     <button type="button" class="clx-bottom-nav__item" id="btnMasCliente">
         <i class="fas fa-bars"></i>
-        <span>Más</span>
+        <span>Mas</span>
     </button>
 </nav>
 
@@ -541,29 +550,38 @@
         <a href="#" class="drawer-link drawer-active" data-clx-drawer-page="dashboard">
             <i class="fas fa-home"></i> Dashboard
         </a>
-        <a href="#" class="drawer-link" data-clx-drawer-page="favorites">
-            <i class="fas fa-heart"></i> Favoritos
-        </a>
-        <a href="#" class="drawer-link" data-clx-drawer-page="history">
-            <i class="fas fa-history"></i> Historial
-        </a>
-        <a href="#" class="drawer-link" data-clx-drawer-page="profile">
-            <i class="fas fa-user-cog"></i> Mi Perfil
-        </a>
+
+        @if(($misEmpresas ?? collect())->count() > 0)
+            @php $empDrawer = $misEmpresas->first(); @endphp
+            <a href="{{ route('empresa.agenda', ['id' => $empDrawer->id]) }}" class="drawer-link">
+                <i class="fas fa-calendar-alt"></i> Agenda
+            </a>
+            <a href="{{ route('empresa.clientes.index', $empDrawer->id) }}" class="drawer-link">
+                <i class="fas fa-users"></i> Clientes
+            </a>
+            <a href="{{ route('empresa.catalogo.servicios', $empDrawer->id) }}" class="drawer-link">
+                <i class="fas fa-concierge-bell"></i> Servicios
+            </a>
+            <a href="{{ route('empresa.configuracion.negocio', $empDrawer->id) }}" class="drawer-link">
+                <i class="fas fa-cog"></i> Configuracion
+            </a>
+
+            <div class="drawer-separator"></div>
+
+            <a href="{{ route('empresa.dashboard', $empDrawer->id) }}" class="drawer-link">
+                <i class="fas fa-chart-bar"></i> Panel Empresa
+            </a>
+        @else
+            <a href="{{ route('negocio.create') }}" class="drawer-link">
+                <i class="fas fa-store"></i> Crear Negocio
+            </a>
+        @endif
 
         <div class="drawer-separator"></div>
 
-        @if(($misEmpresas ?? collect())->isEmpty())
-            <a href="{{ route('negocio.create') }}" class="drawer-link">
-                <i class="fas fa-briefcase"></i> Mi Empresa
-            </a>
-        @else
-            @foreach ($misEmpresas as $empresa)
-                <a href="{{ route('empresa.dashboard', $empresa->id) }}" class="drawer-link">
-                    <i class="fas fa-store"></i> {{ $empresa->neg_nombre_comercial ?? 'Mi Empresa' }}
-                </a>
-            @endforeach
-        @endif
+        <a href="#" class="drawer-link" data-clx-drawer-page="profile">
+            <i class="fas fa-user-cog"></i> Mi Perfil
+        </a>
 
         <div class="drawer-separator"></div>
 
@@ -587,8 +605,6 @@
     // Page title map
     var pageTitles = {
         dashboard: 'Dashboard',
-        favorites: 'Favoritos',
-        history: 'Historial',
         profile: 'Mi Perfil'
     };
 
@@ -736,19 +752,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleLink = document.querySelector('[data-clx-toggle="empresa-submenu"]');
-        const submenu = document.getElementById('empresa-submenu');
-
-        if (toggleLink && submenu) {
-            toggleLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-            });
-        }
-    });
-</script>
 
 {{-- JavaScript específico del dashboard cliente --}}
 <script src="{{ asset('js/cliente/cliente-dashboard.js') }}"></script>
@@ -838,12 +841,11 @@ document.addEventListener('DOMContentLoaded', function() {
       ];
   })->values();
 
-  // --- Stats desde servidor ---
-  // Nota: "pending" = activas (pendiente + confirmada) según tu controller
+  // --- Stats desde servidor (enfocado en negocio) ---
   $serverStats = [
-      'appointmentsMonth' => (int)($citasMes ?? 0),
-      'favorites'         => (int)($favoritosCount ?? 0),
-      'pending'           => (int)($citasPendientes ?? 0),
+      'appointmentsMonth' => (int)($citasNegocioMes ?? 0),
+      'clients'           => (int)($clientesCount ?? 0),
+      'pending'           => (int)($citasNegocioPendientes ?? 0),
   ];
 
   // 🔍 LOG PHP: Debug de datos antes de pasar a JavaScript
@@ -906,17 +908,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof clxLoadAppointments === 'function') clxLoadAppointments();
     if (typeof clxLoadRecommendations === 'function') clxLoadRecommendations();
 
-    // Stats desde el servidor
-    const s = window.clxData.stats || {appointmentsMonth: 0, favorites: 0, pending: 0};
+    // Stats desde el servidor (negocio)
+    const s = window.clxData.stats || {appointmentsMonth: 0, clients: 0, pending: 0};
     const statAppointments = document.getElementById('clx-stat-appointments');
-    const statFavorites    = document.getElementById('clx-stat-favorites');
+    const statClients      = document.getElementById('clx-stat-clients');
     const statPending      = document.getElementById('clx-stat-pending');
     const pendingCount     = document.getElementById('clx-pending-count');
 
     if (statAppointments) clxAnimateNumber(statAppointments, s.appointmentsMonth);
-    if (statFavorites)    clxAnimateNumber(statFavorites,    s.favorites);
+    if (statClients)      clxAnimateNumber(statClients,      s.clients);
     if (statPending)      clxAnimateNumber(statPending,      s.pending);
-    if (pendingCount)     pendingCount.textContent = `${s.pending} ${s.pending === 1 ? 'cita' : 'citas'}`;
+    if (pendingCount)     pendingCount.textContent = `${s.pending} ${s.pending === 1 ? 'cita pendiente' : 'citas pendientes'}`;
   }
 });
 </script>

@@ -15,6 +15,8 @@ use App\Models\Resena;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\Cliente;
+use App\Models\Trabajador;
 
 class DashboardController extends Controller
 {
@@ -233,6 +235,30 @@ class DashboardController extends Controller
         $subscription = $user->subscription;
         $plan = $subscription?->plan;
 
+        // --- Datos específicos de negocio ---
+        $clientesCount = 0;
+        $trabajadoresCount = 0;
+        $citasNegocioMes = 0;
+        $citasNegocioPendientes = 0;
+        $serviciosCount = 0;
+
+        if (!empty($misEmpresasIds)) {
+            $clientesCount = Cliente::whereIn('negocio_id', $misEmpresasIds)->count();
+            $trabajadoresCount = Trabajador::whereIn('negocio_id', $misEmpresasIds)->count();
+            $serviciosCount = \App\Models\Empresa\ServicioEmpresa::whereIn('negocio_id', $misEmpresasIds)->count();
+
+            // Citas recibidas en mis negocios este mes
+            $citasNegocioMes = Cita::whereIn('negocio_id', $misEmpresasIds)
+                ->whereBetween('fecha', [$inicioMes->toDateString(), $finMes->toDateString()])
+                ->count();
+
+            // Citas pendientes en mis negocios
+            $citasNegocioPendientes = Cita::whereIn('negocio_id', $misEmpresasIds)
+                ->whereIn('estado', $estadosActivos)
+                ->whereDate('fecha', '>=', Carbon::today())
+                ->count();
+        }
+
         return view('client.dashboard-client', [
             'misEmpresas'             => $misEmpresas,
             'citasMes'                => $citasMes,
@@ -248,6 +274,12 @@ class DashboardController extends Controller
             'resenasExistentes'       => $resenasExistentes,
             'subscription'            => $subscription,
             'plan'                    => $plan,
+            // Business-specific
+            'clientesCount'           => $clientesCount,
+            'trabajadoresCount'       => $trabajadoresCount,
+            'citasNegocioMes'         => $citasNegocioMes,
+            'citasNegocioPendientes'  => $citasNegocioPendientes,
+            'serviciosCount'          => $serviciosCount,
         ]);
     }
 
