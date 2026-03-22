@@ -384,9 +384,16 @@
 
     /* ===== MOBILE FIRST FIXES ===== */
     @media (max-width: 767px) {
-        /* Cover se extiende sin margen negativo roto */
+        /* Prevent horizontal overflow */
+        .content-area {
+            overflow-x: hidden !important;
+            padding: 0 !important;
+        }
+
+        /* Cover edge-to-edge sin margin negativo */
         .negocio-cover-wrapper {
-            margin: -1rem -1rem 0 -1rem !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
         }
         .negocio-cover-wrapper img.negocio-cover-img,
         .negocio-cover-fallback {
@@ -401,8 +408,8 @@
 
         /* Info bar compacto */
         .negocio-info-bar {
-            padding: 0 0 1rem 0 !important;
-            margin-bottom: 1rem !important;
+            padding: 12px 16px 1rem 16px !important;
+            margin-bottom: 0 !important;
         }
         .info-bar-flex {
             flex-direction: column !important;
@@ -420,6 +427,7 @@
         }
         .info-bar-name {
             font-size: 1.25rem !important;
+            word-break: break-word !important;
         }
         .info-bar-cats,
         .info-bar-meta {
@@ -428,6 +436,20 @@
         .info-bar-meta {
             gap: 8px !important;
             font-size: 0.75rem !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        /* Messages */
+        .msg-success,
+        .msg-error {
+            margin: 0 16px 1rem 16px !important;
+            border-radius: 10px !important;
+        }
+
+        /* Form wrapper con padding lateral */
+        form#negocio-profile-form {
+            padding: 0 16px !important;
         }
 
         /* Grid a 1 columna */
@@ -438,23 +460,34 @@
 
         /* Cards compactas */
         .profile-card {
-            padding: 1rem !important;
-            border-radius: 10px !important;
+            padding: 14px !important;
+            border-radius: 12px !important;
         }
         .profile-card-title {
-            font-size: 1rem !important;
+            font-size: 0.95rem !important;
             margin-bottom: 0.75rem !important;
+        }
+
+        /* Field group spacing */
+        .profile-card .field-group {
+            gap: 0.75rem !important;
         }
 
         /* Inputs touch-friendly */
         .profile-card .field-input {
-            padding: 10px 12px !important;
-            font-size: 0.9rem !important;
+            padding: 11px 12px !important;
+            font-size: 0.875rem !important;
             min-height: 44px !important;
             border-radius: 10px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
         .profile-card .field-input-icon .field-input {
             padding-left: 36px !important;
+        }
+        .profile-card textarea.field-input {
+            min-height: 80px !important;
+            resize: vertical !important;
         }
 
         /* Labels */
@@ -480,11 +513,13 @@
         /* Save bar full width */
         .save-bar {
             justify-content: center !important;
+            padding: 1rem 0 0 0 !important;
+            margin-bottom: 1.5rem !important;
         }
         .btn-save {
             width: 100% !important;
             justify-content: center !important;
-            padding: 12px 20px !important;
+            padding: 14px 20px !important;
             min-height: 48px !important;
             border-radius: 12px !important;
             font-size: 1rem !important;
@@ -493,6 +528,16 @@
         /* Map */
         #config-map {
             height: 200px !important;
+        }
+
+        /* Inline style overrides for category chips */
+        .profile-card label[style] {
+            min-height: 36px !important;
+        }
+
+        /* Column right flex container */
+        .negocio-forms-grid > div[style] {
+            gap: 1rem !important;
         }
     }
     /* ===== FIN MOBILE FIRST FIXES ===== */
