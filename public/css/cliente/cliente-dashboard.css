@@ -293,8 +293,8 @@ body {
     border: 1px solid rgba(90,49,215,0.08);
 }
 .clx-welcome {
-    display: flex; flex-direction: column;
-    align-items: flex-start; gap: 12px;
+    display: flex; flex-direction: row; flex-wrap: wrap;
+    align-items: center; justify-content: space-between; gap: 12px;
 }
 .clx-welcome h2 {
     color: var(--clx-dark);

@@ -152,12 +152,10 @@
                     </p>
                 </div>
                 @if(!auth()->user()->negocios()->exists())
-                <div class="clx-quick-actions">
-                    <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary">
-                        <i class="fas fa-store"></i>
-                        Registra tu negocio
-                    </a>
-                </div>
+                <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" style="flex:none; width:auto; display:inline-flex; padding:10px 20px; font-size:0.85rem; border-radius:12px;">
+                    <i class="fas fa-store"></i>
+                    Registra tu negocio
+                </a>
                 @endif
             </div>
         </header>
