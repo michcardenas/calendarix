@@ -1,5 +1,14 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/negocios/categorias-negocio.css') }}">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - Calendarix</title>
+    <link rel="icon" href="{{ asset('images/morado.png') }}" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/negocios/categorias-negocio.css') }}">
+</head>
+<body>
 
 <!-- Fondo animado con partículas -->
 <div class="background-animation">
@@ -200,3 +209,5 @@ document.addEventListener("DOMContentLoaded", function () {
     @endforeach
 });
 </script>
+</body>
+</html>

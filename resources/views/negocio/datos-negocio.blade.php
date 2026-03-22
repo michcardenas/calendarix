@@ -1,4 +1,13 @@
-<link rel="stylesheet" href="{{ asset('css/negocios/datos-negocio.css') }}">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nombre del Negocio - Calendarix</title>
+    <link rel="icon" href="{{ asset('images/morado.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ asset('css/negocios/datos-negocio.css') }}">
+</head>
+<body>
 
 <!-- Fondo animado con partículas -->
 <div class="background-animation">
@@ -39,3 +48,5 @@
 </div>
 
 <script src="{{ asset('js/negocios/datos-negocio.js') }}"></script>
+</body>
+</html>

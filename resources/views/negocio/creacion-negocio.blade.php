@@ -1,6 +1,14 @@
-<form action="{{ route('negocio.store') }}" method="POST" id="neg_form_creacion" enctype="multipart/form-data">
-
-<link rel="stylesheet" href="{{ asset('css/negocios/creacion-negocios.css') }}">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Negocio - Calendarix</title>
+    <link rel="icon" href="{{ asset('images/morado.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ asset('css/negocios/creacion-negocios.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
 
 <!-- Fondo animado con partículas -->
 <div class="background-animation">
@@ -116,3 +124,5 @@
 </div>
 
 <script src="{{ asset('js/negocios/creacion-negocios.js') }}"></script>
+</body>
+</html>
