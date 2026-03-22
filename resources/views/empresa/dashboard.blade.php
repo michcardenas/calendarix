@@ -1,4 +1,5 @@
 @extends('layouts.base')
+<link rel="icon" href="{{ asset('images/morado.png') }}" type="image/png">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/empresa/dashboard-empresa.css') }}">

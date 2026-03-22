@@ -425,6 +425,200 @@
                 text-align: center;
             }
         }
+
+        /* ============================================
+           USER DROPDOWN
+           ============================================ */
+        .user-dropdown-wrap {
+            position: relative;
+        }
+
+        .user-dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.375rem 0.75rem;
+            border-radius: 8px;
+            transition: background var(--transition-fast);
+            font-family: inherit;
+            color: var(--gray-700);
+        }
+
+        .user-dropdown-trigger:hover {
+            background: var(--gray-100);
+        }
+
+        .user-dropdown-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-dropdown-avatar--initials {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-100);
+            color: var(--primary-600);
+            font-weight: 700;
+            font-size: 0.8125rem;
+        }
+
+        .user-dropdown-name {
+            font-weight: 500;
+            font-size: 0.9375rem;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-dropdown-chevron {
+            font-size: 0.625rem;
+            transition: transform var(--transition-fast);
+        }
+
+        .user-dropdown-wrap.open .user-dropdown-chevron {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 240px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            box-shadow: var(--shadow-xl);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity var(--transition-base), transform var(--transition-base), visibility var(--transition-base);
+            z-index: 200;
+            overflow: hidden;
+        }
+
+        .user-dropdown-wrap.open .user-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+        }
+
+        .user-dropdown-header__avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .user-dropdown-header__name {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--gray-900);
+        }
+
+        .user-dropdown-header__email {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            max-width: 170px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-dropdown-divider {
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: background var(--transition-fast);
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        .user-dropdown-item:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        .user-dropdown-item i {
+            width: 18px;
+            text-align: center;
+            color: var(--gray-400);
+        }
+
+        .user-dropdown-item:hover i {
+            color: var(--primary-500);
+        }
+
+        .user-dropdown-item--logout {
+            color: var(--error);
+        }
+
+        .user-dropdown-item--logout:hover {
+            background: #fef2f2;
+            color: var(--error);
+        }
+
+        .user-dropdown-item--logout i {
+            color: var(--error);
+        }
+
+        @media (max-width: 768px) {
+            .user-dropdown-wrap {
+                width: 100%;
+            }
+
+            .user-dropdown-trigger {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: 1px solid var(--gray-200);
+                margin-top: 0.5rem;
+                display: none;
+            }
+
+            .user-dropdown-wrap.open .user-dropdown-menu {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-dropdown-name {
+                display: none;
+            }
+        }
     </style>
 
     @yield('styles')
@@ -445,7 +639,15 @@
             </button>
 
             <nav class="app-nav" id="app-nav">
-                <a href="#" class="app-nav-btn-outline">Para Negocios</a>
+                @auth
+                    @if(auth()->user()->negocios()->exists())
+                        <a href="{{ url('/dashboard') }}" class="app-nav-btn-outline">Mi Negocio</a>
+                    @else
+                        <a href="{{ route('register') }}" class="app-nav-btn-outline">Para Negocios</a>
+                    @endif
+                @else
+                    <a href="{{ route('register') }}" class="app-nav-btn-outline">Para Negocios</a>
+                @endauth
                 <a href="#" class="app-nav-link">Ofertas del día</a>
                 <a href="#" class="app-nav-link">Profesionales</a>
                 @guest
@@ -455,9 +657,48 @@
                     </a>
                 @else
                     <a href="{{ url('/dashboard') }}" class="app-nav-link">Dashboard</a>
-                    <a href="#" class="app-nav-link">
-                        {{ Auth::user()->name }}
-                    </a>
+                    <div class="user-dropdown-wrap">
+                        <button type="button" class="user-dropdown-trigger" id="userDropdownTrigger">
+                            @if(Auth::user()->foto)
+                                <img src="{{ asset(Auth::user()->foto) }}" alt="{{ Auth::user()->name }}" class="user-dropdown-avatar">
+                            @else
+                                <span class="user-dropdown-avatar user-dropdown-avatar--initials">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                                </span>
+                            @endif
+                            <span class="user-dropdown-name">{{ Auth::user()->name }}</span>
+                            <i class="fas fa-chevron-down user-dropdown-chevron"></i>
+                        </button>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-header">
+                                @if(Auth::user()->foto)
+                                    <img src="{{ asset(Auth::user()->foto) }}" alt="" class="user-dropdown-header__avatar">
+                                @else
+                                    <span class="user-dropdown-header__avatar user-dropdown-avatar--initials">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                                    </span>
+                                @endif
+                                <div>
+                                    <div class="user-dropdown-header__name">{{ Auth::user()->name }}</div>
+                                    <div class="user-dropdown-header__email">{{ Auth::user()->email }}</div>
+                                </div>
+                            </div>
+                            <div class="user-dropdown-divider"></div>
+                            <a href="{{ route('client.dashboard-client') }}" class="user-dropdown-item">
+                                <i class="fas fa-user"></i> Mi Perfil
+                            </a>
+                            <a href="{{ route('client.elegir-plan') }}" class="user-dropdown-item">
+                                <i class="fas fa-crown"></i> Suscripción
+                            </a>
+                            <div class="user-dropdown-divider"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="user-dropdown-item user-dropdown-item--logout">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 @endguest
             </nav>
         </div>
@@ -553,6 +794,29 @@
                 icon.classList.add('fa-bars');
             }
         }
+        // User dropdown toggle
+        (function() {
+            var wrap = document.querySelector('.user-dropdown-wrap');
+            var trigger = document.getElementById('userDropdownTrigger');
+            if (!wrap || !trigger) return;
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                wrap.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!wrap.contains(e.target)) {
+                    wrap.classList.remove('open');
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    wrap.classList.remove('open');
+                }
+            });
+        })();
     </script>
 
     @stack('scripts')

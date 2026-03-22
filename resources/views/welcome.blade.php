@@ -990,9 +990,11 @@
         <div style="text-align:center;padding:3rem 1rem;color:var(--gray-500);">
             <i class="fas fa-store" style="font-size:2.5rem;color:var(--primary-200);margin-bottom:1rem;display:block;"></i>
             <p>Aun no hay negocios registrados. Se el primero en unirte.</p>
+            @if(!auth()->check() || !auth()->user()->negocios()->exists())
             <a href="{{ route('register') }}" style="display:inline-block;margin-top:1rem;color:var(--primary-500);font-weight:600;text-decoration:none;">
                 Registrar mi negocio <i class="fas fa-arrow-right"></i>
             </a>
+            @endif
         </div>
         @endif
     </section>
@@ -1076,9 +1078,15 @@
                             @endforeach
                         </ul>
 
+                        @if(auth()->check() && auth()->user()->negocios()->exists())
+                        <a href="{{ url('/dashboard') }}" class="pricing-cta">
+                            Ir a mi Dashboard
+                        </a>
+                        @else
                         <a href="{{ route('register') }}" class="pricing-cta">
                             Comenzar con este plan
                         </a>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -1130,10 +1138,17 @@
                 {{ $cta['subtitle'] ?? 'Únete a miles de profesionales que usan Calendarix para gestionar sus citas, atraer nuevos clientes y hacer crecer su negocio.' }}
             </p>
             <div class="cta-buttons">
+                @if(auth()->check() && auth()->user()->negocios()->exists())
+                <a href="{{ url('/dashboard') }}" class="btn btn-cta-white btn-lg">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Ir a mi Dashboard
+                </a>
+                @else
                 <a href="{{ route('register') }}" class="btn btn-cta-white btn-lg">
                     <i class="{{ $cta['btn1_icon'] ?? 'fas fa-rocket' }}"></i>
                     {{ $cta['btn1_text'] ?? 'Registrar mi Negocio' }}
                 </a>
+                @endif
                 <a href="#" class="btn btn-cta-outline btn-lg">
                     <i class="{{ $cta['btn2_icon'] ?? 'fas fa-play-circle' }}"></i>
                     {{ $cta['btn2_text'] ?? 'Ver cómo funciona' }}

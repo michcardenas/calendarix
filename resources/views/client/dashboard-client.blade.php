@@ -1,4 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="icon" href="{{ asset('images/morado.png') }}" type="image/png">
 
 {{-- CSS específico del dashboard cliente --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -150,17 +151,14 @@
                         pendientes para esta semana
                     </p>
                 </div>
+                @if(!auth()->user()->negocios()->exists())
                 <div class="clx-quick-actions">
-                    <a href="{{ route('negocios.explorar') }}" class="clx-btn clx-btn-primary">
-                        <i class="fas fa-plus"></i>
-                        Agendar Cita
-                    </a>
-                </div>
-                <div class="text-center mt-6">
                     <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary">
+                        <i class="fas fa-store"></i>
                         Registra tu negocio
                     </a>
                 </div>
+                @endif
             </div>
         </header>
 
