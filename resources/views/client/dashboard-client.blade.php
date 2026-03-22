@@ -79,40 +79,25 @@
                         Dashboard
                     </a>
                 </li>
-                @if($misEmpresas->count() > 0)
-                    @php $primeraEmpNav = $misEmpresas->first(); @endphp
+
+                {{-- Lista de negocios del usuario --}}
+                @foreach($misEmpresas as $empNav)
                     <li class="clx-nav-item">
-                        <a href="{{ route('empresa.agenda', ['id' => $primeraEmpNav->id]) }}" class="clx-nav-link">
-                            <i class="fas fa-calendar-alt clx-nav-icon"></i>
-                            Agenda
-                        </a>
-                    </li>
-                    <li class="clx-nav-item">
-                        <a href="{{ route('empresa.clientes.index', $primeraEmpNav->id) }}" class="clx-nav-link">
-                            <i class="fas fa-users clx-nav-icon"></i>
-                            Clientes
-                        </a>
-                    </li>
-                    <li class="clx-nav-item">
-                        <a href="{{ route('empresa.catalogo.servicios', $primeraEmpNav->id) }}" class="clx-nav-link">
-                            <i class="fas fa-concierge-bell clx-nav-icon"></i>
-                            Servicios
-                        </a>
-                    </li>
-                    <li class="clx-nav-item">
-                        <a href="{{ route('empresa.dashboard', $primeraEmpNav->id) }}" class="clx-nav-link">
-                            <i class="fas fa-chart-bar clx-nav-icon"></i>
-                            Panel Empresa
-                        </a>
-                    </li>
-                @else
-                    <li class="clx-nav-item">
-                        <a href="{{ route('negocio.create') }}" class="clx-nav-link">
+                        <a href="{{ route('empresa.dashboard', $empNav->id) }}" class="clx-nav-link">
                             <i class="fas fa-store clx-nav-icon"></i>
-                            Crear Negocio
+                            {{ \Illuminate\Support\Str::limit($empNav->neg_nombre_comercial ?? $empNav->neg_nombre ?? 'Negocio', 20) }}
                         </a>
                     </li>
-                @endif
+                @endforeach
+
+                {{-- Siempre visible: registrar nuevo negocio --}}
+                <li class="clx-nav-item">
+                    <a href="{{ route('negocio.create') }}" class="clx-nav-link">
+                        <i class="fas fa-plus-circle clx-nav-icon"></i>
+                        Registrar negocio
+                    </a>
+                </li>
+
                 <li class="clx-nav-item">
                     <a href="#" class="clx-nav-link" data-clx-page="profile">
                         <i class="fas fa-user-cog clx-nav-icon"></i>
@@ -140,37 +125,28 @@
         <div data-clx-section="dashboard">
 
         @php
-            $primeraEmpresa = $misEmpresas->first();
             $tieneNegocio = $misEmpresas->count() > 0;
-            $nombreNegocio = $primeraEmpresa->neg_nombre_comercial ?? $primeraEmpresa->neg_nombre ?? null;
+            $primeraEmpresa = $misEmpresas->first();
         @endphp
 
         <!-- Header de bienvenida -->
         <header class="clx-header">
             <div class="clx-welcome">
                 <div>
-                    @if($tieneNegocio)
-                        <h2>{{ $nombreNegocio }}</h2>
-                        <p style="color: #6b7280; font-size: 0.85rem;">
-                            {{ \Illuminate\Support\Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}
+                    <h2>¡Hola, {{ explode(' ', auth()->user()->name)[0] }}!</h2>
+                    <p style="color: #6b7280; font-size: 0.85rem;">
+                        {{ \Illuminate\Support\Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}
+                        @if($tieneNegocio)
                             &middot; <span id="clx-pending-count" style="color: #5a31d7; font-weight: 600;">{{ $citasNegocioPendientes ?? 0 }} {{ ($citasNegocioPendientes ?? 0) === 1 ? 'cita pendiente' : 'citas pendientes' }}</span>
-                        </p>
-                    @else
-                        <h2>¡Bienvenido, {{ explode(' ', auth()->user()->name)[0] }}!</h2>
-                        <p>Registra tu negocio para comenzar a recibir citas</p>
-                    @endif
+                        @endif
+                    </p>
                 </div>
-                @if($tieneNegocio)
-                    <a href="{{ route('empresa.agenda', ['id' => $primeraEmpresa->id]) }}" class="clx-btn clx-btn-primary" style="flex:none; width:auto; display:inline-flex; padding:10px 20px; font-size:0.85rem; border-radius:12px;">
-                        <i class="fas fa-calendar-plus"></i>
-                        Ir a la Agenda
-                    </a>
-                @else
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
                     <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-primary" style="flex:none; width:auto; display:inline-flex; padding:10px 20px; font-size:0.85rem; border-radius:12px;">
-                        <i class="fas fa-store"></i>
-                        Registra tu negocio
+                        <i class="fas fa-plus"></i>
+                        Registrar negocio
                     </a>
-                @endif
+                </div>
             </div>
         </header>
 
@@ -200,11 +176,11 @@
         </section>
 
         @if($tieneNegocio)
-        <!-- Acciones rápidas -->
+        <!-- Acciones rápidas (usa el primer negocio) -->
         <section style="margin-bottom: 1.25rem;">
             <div class="clx-card">
                 <div class="clx-card-header">
-                    <h3 class="clx-card-title">Acciones rápidas</h3>
+                    <h3 class="clx-card-title">Acciones rapidas</h3>
                 </div>
                 <div class="clx-card-body">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;">
@@ -247,57 +223,41 @@
                 </div>
             </div>
 
-            <!-- Resumen del negocio -->
+            <!-- Mis Negocios -->
             <div class="clx-card">
                 <div class="clx-card-header">
-                    <h3 class="clx-card-title">Tu Negocio</h3>
-                    @if($tieneNegocio)
-                        <a href="{{ route('empresa.dashboard', $primeraEmpresa->id) }}" class="clx-btn clx-btn-ghost">
-                            Panel completo
-                        </a>
-                    @endif
+                    <h3 class="clx-card-title">Mis Negocios</h3>
+                    <a href="{{ route('negocio.create') }}" class="clx-btn clx-btn-ghost" style="gap:4px;">
+                        <i class="fas fa-plus"></i> Nuevo
+                    </a>
                 </div>
                 <div class="clx-card-body">
                     @if($tieneNegocio)
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                            {{-- Info del negocio --}}
-                            <div style="display: flex; align-items: center; gap: 12px; padding: 0.75rem; background: #f8f6ff; border-radius: 12px;">
-                                @if($primeraEmpresa->neg_imagen)
-                                    <img src="{{ str_starts_with($primeraEmpresa->neg_imagen, 'http') ? $primeraEmpresa->neg_imagen : asset('storage/' . $primeraEmpresa->neg_imagen) }}"
-                                         alt="{{ $nombreNegocio }}"
-                                         style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb;">
-                                @else
-                                    <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#5a31d7,#7b5ce0); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:1.1rem; flex-shrink:0;">
-                                        {{ strtoupper(substr($nombreNegocio ?? 'N', 0, 1)) }}
+                            @foreach($misEmpresas as $emp)
+                                @php
+                                    $empNombre = $emp->neg_nombre_comercial ?? $emp->neg_nombre ?? 'Mi Negocio';
+                                    $empSlug = \Illuminate\Support\Str::slug($empNombre);
+                                @endphp
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 0.75rem; background: #f8f6ff; border-radius: 12px;">
+                                    @if($emp->neg_imagen)
+                                        <img src="{{ str_starts_with($emp->neg_imagen, 'http') ? $emp->neg_imagen : asset('storage/' . $emp->neg_imagen) }}"
+                                             alt="{{ $empNombre }}"
+                                             style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb; flex-shrink:0;">
+                                    @else
+                                        <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#5a31d7,#7b5ce0); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:1rem; flex-shrink:0;">
+                                            {{ strtoupper(substr($empNombre, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    <div style="flex:1; min-width:0;">
+                                        <p style="font-weight:600; color:#1f2937; font-size:0.88rem; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $empNombre }}</p>
+                                        <p style="font-size:0.75rem; color:#6b7280; margin:2px 0 0 0;">{{ $emp->neg_categoria ?? 'Sin categoria' }}</p>
                                     </div>
-                                @endif
-                                <div style="min-width:0;">
-                                    <p style="font-weight:600; color:#1f2937; font-size:0.9rem; margin:0;">{{ $nombreNegocio }}</p>
-                                    <p style="font-size:0.78rem; color:#6b7280; margin:2px 0 0 0;">{{ $primeraEmpresa->neg_categoria ?? 'Sin categoria' }}</p>
+                                    <a href="{{ route('empresa.dashboard', $emp->id) }}" style="flex-shrink:0; padding:6px 12px; background:#5a31d7; color:#fff; border-radius:8px; font-size:0.75rem; font-weight:600; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#7b5ce0'" onmouseout="this.style.background='#5a31d7'">
+                                        <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i> Gestionar
+                                    </a>
                                 </div>
-                            </div>
-
-                            {{-- Métricas rápidas --}}
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                                <div style="padding: 0.6rem 0.75rem; background: #f9fafb; border-radius: 10px; text-align: center;">
-                                    <div style="font-size: 1.1rem; font-weight: 700; color: #5a31d7;">{{ $serviciosCount ?? 0 }}</div>
-                                    <div style="font-size: 0.72rem; color: #6b7280;">Servicios</div>
-                                </div>
-                                <div style="padding: 0.6rem 0.75rem; background: #f9fafb; border-radius: 10px; text-align: center;">
-                                    <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">{{ $trabajadoresCount ?? 0 }}</div>
-                                    <div style="font-size: 0.72rem; color: #6b7280;">Profesionales</div>
-                                </div>
-                            </div>
-
-                            {{-- Link al perfil público --}}
-                            @php
-                                $slug = \Illuminate\Support\Str::slug($nombreNegocio ?? 'negocio');
-                            @endphp
-                            <a href="{{ url('/negocios/' . $primeraEmpresa->id . '-' . $slug) }}" target="_blank"
-                               style="display:flex; align-items:center; justify-content:center; gap:6px; padding:0.6rem; background:#fff; border:1px solid #e5e7eb; border-radius:10px; font-size:0.8rem; font-weight:500; color:#5a31d7; text-decoration:none; transition:all 0.2s;"
-                               onmouseover="this.style.borderColor='#5a31d7'; this.style.background='#f8f6ff'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='#fff'">
-                                <i class="fas fa-external-link-alt" style="font-size:0.7rem;"></i> Ver perfil publico
-                            </a>
+                            @endforeach
                         </div>
                     @else
                         <div style="text-align: center; padding: 2rem 1rem;">
@@ -484,7 +444,7 @@
     </main>
 </div>
 
-{{-- Bottom Nav (mobile) — 5 items --}}
+{{-- Bottom Nav (mobile) --}}
 <nav class="clx-bottom-nav">
     <a href="#" class="clx-bottom-nav__item clx-bnav-active" data-clx-page="dashboard">
         <i class="fas fa-home"></i>
@@ -492,20 +452,15 @@
     </a>
     @if(($misEmpresas ?? collect())->count() > 0)
         @php $empNav = $misEmpresas->first(); @endphp
-        <a href="{{ route('empresa.agenda', ['id' => $empNav->id]) }}" class="clx-bottom-nav__item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Agenda</span>
-        </a>
-        <a href="{{ route('empresa.clientes.index', $empNav->id) }}" class="clx-bottom-nav__item">
-            <i class="fas fa-users"></i>
-            <span>Clientes</span>
-        </a>
-    @else
-        <a href="{{ route('negocio.create') }}" class="clx-bottom-nav__item">
+        <a href="{{ route('empresa.dashboard', $empNav->id) }}" class="clx-bottom-nav__item">
             <i class="fas fa-store"></i>
-            <span>Crear</span>
+            <span>Negocio</span>
         </a>
     @endif
+    <a href="{{ route('negocio.create') }}" class="clx-bottom-nav__item">
+        <i class="fas fa-plus-circle"></i>
+        <span>Registrar</span>
+    </a>
     <a href="#" class="clx-bottom-nav__item" data-clx-page="profile">
         <i class="fas fa-user"></i>
         <span>Perfil</span>
@@ -551,31 +506,19 @@
             <i class="fas fa-home"></i> Dashboard
         </a>
 
-        @if(($misEmpresas ?? collect())->count() > 0)
-            @php $empDrawer = $misEmpresas->first(); @endphp
-            <a href="{{ route('empresa.agenda', ['id' => $empDrawer->id]) }}" class="drawer-link">
-                <i class="fas fa-calendar-alt"></i> Agenda
-            </a>
-            <a href="{{ route('empresa.clientes.index', $empDrawer->id) }}" class="drawer-link">
-                <i class="fas fa-users"></i> Clientes
-            </a>
-            <a href="{{ route('empresa.catalogo.servicios', $empDrawer->id) }}" class="drawer-link">
-                <i class="fas fa-concierge-bell"></i> Servicios
-            </a>
-            <a href="{{ route('empresa.configuracion.negocio', $empDrawer->id) }}" class="drawer-link">
-                <i class="fas fa-cog"></i> Configuracion
-            </a>
+        <div class="drawer-separator"></div>
 
-            <div class="drawer-separator"></div>
-
+        {{-- Todos los negocios del usuario --}}
+        @foreach($misEmpresas ?? collect() as $empDrawer)
             <a href="{{ route('empresa.dashboard', $empDrawer->id) }}" class="drawer-link">
-                <i class="fas fa-chart-bar"></i> Panel Empresa
+                <i class="fas fa-store"></i> {{ \Illuminate\Support\Str::limit($empDrawer->neg_nombre_comercial ?? $empDrawer->neg_nombre ?? 'Negocio', 22) }}
             </a>
-        @else
-            <a href="{{ route('negocio.create') }}" class="drawer-link">
-                <i class="fas fa-store"></i> Crear Negocio
-            </a>
-        @endif
+        @endforeach
+
+        {{-- Siempre visible --}}
+        <a href="{{ route('negocio.create') }}" class="drawer-link">
+            <i class="fas fa-plus-circle"></i> Registrar negocio
+        </a>
 
         <div class="drawer-separator"></div>
 
