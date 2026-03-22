@@ -279,6 +279,15 @@
 
             <div class="profile-section">
 
+                {{-- Breadcrumbs --}}
+                <nav style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#9ca3af; margin-bottom:1rem;">
+                    <a href="#" data-clx-page="dashboard" style="color:#5a31d7; text-decoration:none; font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                        <i class="fas fa-home" style="font-size:0.7rem;"></i> Dashboard
+                    </a>
+                    <i class="fas fa-chevron-right" style="font-size:0.55rem; color:#d1d5db;"></i>
+                    <span style="color:#374151; font-weight:500;">Mi Perfil</span>
+                </nav>
+
                 {{-- Header --}}
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
                     <div>

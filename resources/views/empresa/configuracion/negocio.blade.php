@@ -19,6 +19,17 @@
     $imgPerfil  = $resolveImg($empresa->neg_imagen);
 @endphp
 
+{{-- Breadcrumbs --}}
+<nav style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#9ca3af; margin-bottom:1rem; flex-wrap:wrap;">
+    <a href="{{ route('empresa.dashboard', $empresa->id) }}" style="color:#5a31d7; text-decoration:none; font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+        <i class="fas fa-home" style="font-size:0.7rem;"></i> Dashboard
+    </a>
+    <i class="fas fa-chevron-right" style="font-size:0.55rem; color:#d1d5db;"></i>
+    <span style="color:#6b7280;">Configuracion</span>
+    <i class="fas fa-chevron-right" style="font-size:0.55rem; color:#d1d5db;"></i>
+    <span style="color:#374151; font-weight:500;">{{ $empresa->neg_nombre_comercial ?? 'Negocio' }}</span>
+</nav>
+
 {{-- ============================== PORTADA ============================== --}}
 <div class="negocio-cover-wrapper">
     <div id="coverFallback" class="negocio-cover-fallback {{ $imgPortada ? 'is-hidden' : '' }}"
