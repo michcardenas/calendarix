@@ -381,6 +381,121 @@
             font-size: 1.4rem;
         }
     }
+
+    /* ===== MOBILE FIRST FIXES ===== */
+    @media (max-width: 767px) {
+        /* Cover se extiende sin margen negativo roto */
+        .negocio-cover-wrapper {
+            margin: -1rem -1rem 0 -1rem !important;
+        }
+        .negocio-cover-wrapper img.negocio-cover-img,
+        .negocio-cover-fallback {
+            height: 160px !important;
+        }
+        .negocio-cover-btn {
+            bottom: 10px !important;
+            right: 10px !important;
+            padding: 6px 12px !important;
+            font-size: 0.75rem !important;
+        }
+
+        /* Info bar compacto */
+        .negocio-info-bar {
+            padding: 0 0 1rem 0 !important;
+            margin-bottom: 1rem !important;
+        }
+        .info-bar-flex {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 0.75rem !important;
+        }
+        .profile-img-container {
+            margin-top: -35px !important;
+        }
+        .profile-img-container img,
+        .profile-img-container .profile-initials {
+            width: 90px !important;
+            height: 90px !important;
+        }
+        .info-bar-name {
+            font-size: 1.25rem !important;
+        }
+        .info-bar-cats,
+        .info-bar-meta {
+            justify-content: center !important;
+        }
+        .info-bar-meta {
+            gap: 8px !important;
+            font-size: 0.75rem !important;
+        }
+
+        /* Grid a 1 columna */
+        .negocio-forms-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+
+        /* Cards compactas */
+        .profile-card {
+            padding: 1rem !important;
+            border-radius: 10px !important;
+        }
+        .profile-card-title {
+            font-size: 1rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        /* Inputs touch-friendly */
+        .profile-card .field-input {
+            padding: 10px 12px !important;
+            font-size: 0.9rem !important;
+            min-height: 44px !important;
+            border-radius: 10px !important;
+        }
+        .profile-card .field-input-icon .field-input {
+            padding-left: 36px !important;
+        }
+
+        /* Labels */
+        .profile-card .field-label {
+            font-size: 0.8rem !important;
+        }
+
+        /* Checkbox row stacked */
+        .checkbox-row {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+
+        /* Image previews */
+        .img-preview-circle {
+            width: 70px !important;
+            height: 70px !important;
+        }
+        .img-preview-rect {
+            height: 80px !important;
+        }
+
+        /* Save bar full width */
+        .save-bar {
+            justify-content: center !important;
+        }
+        .btn-save {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            min-height: 48px !important;
+            border-radius: 12px !important;
+            font-size: 1rem !important;
+        }
+
+        /* Map */
+        #config-map {
+            height: 200px !important;
+        }
+    }
+    /* ===== FIN MOBILE FIRST FIXES ===== */
 </style>
 
 @php
