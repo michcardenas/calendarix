@@ -363,10 +363,102 @@ button[type="submit"]:hover::after {
 
 @media (max-width: 480px) {
     .container { padding: 10px; }
-    
-    .form-wrapper { 
-        padding: 25px 15px; 
+
+    .form-wrapper {
+        padding: 25px 15px;
     }
-    
+
     h1 { font-size: 20px; }
 }
+
+/* ===== MOBILE FIRST FIXES ===== */
+@media (max-width: 767px) {
+  .background-animation { display: none !important; }
+
+  .container {
+    padding: 16px !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  .form-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  .form-content {
+    padding: 20px 16px 32px !important;
+    border-radius: 20px !important;
+    background: var(--white) !important;
+    box-shadow: var(--shadow-sm) !important;
+  }
+
+  h1 {
+    font-size: 1.4rem !important;
+    text-align: center !important;
+    margin-bottom: 16px !important;
+  }
+
+  p {
+    font-size: 0.85rem !important;
+    text-align: center !important;
+    margin-bottom: 24px !important;
+  }
+
+  #neg_nombre_comercial,
+  #neg_sitio_web {
+    width: 100% !important;
+    padding: 13px 14px !important;
+    font-size: 15px !important;
+    border-radius: 12px !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+  }
+
+  .buttons-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-top: 20px !important;
+  }
+
+  .btn-volver {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 13px !important;
+    border-radius: 12px !important;
+    font-size: 0.9rem !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  button[type="submit"] {
+    width: 100% !important;
+    padding: 15px !important;
+    font-size: 1rem !important;
+    border-radius: 14px !important;
+    min-height: 52px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .buttons-row {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+  }
+  button[type="submit"] {
+    width: auto !important;
+    min-width: 200px !important;
+  }
+}
+/* ===== FIN MOBILE FIRST FIXES ===== */
