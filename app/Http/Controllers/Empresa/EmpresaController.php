@@ -84,6 +84,40 @@ class EmpresaController extends Controller
         ]);
     }
 
+    public function exportarClientes(Request $request, $empresaId)
+    {
+        $request->validate([
+            'ids'   => 'required|array|min:1',
+            'ids.*' => 'integer|exists:clientes,id',
+        ]);
+
+        $clientes = Cliente::where('negocio_id', $empresaId)
+            ->whereIn('id', $request->ids)
+            ->get(['nombre', 'email', 'telefono']);
+
+        $callback = function () use ($clientes) {
+            $handle = fopen('php://output', 'w');
+            // BOM UTF-8 para que Excel reconozca acentos
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['Nombre', 'Email', 'Telefono'], ';');
+            foreach ($clientes as $cliente) {
+                fputcsv($handle, [
+                    $cliente->nombre,
+                    $cliente->email ?? '',
+                    $cliente->telefono ?? '',
+                ], ';');
+            }
+            fclose($handle);
+        };
+
+        $fecha = now()->format('Y-m-d');
+
+        return response()->stream($callback, 200, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=clientes-{$fecha}.csv",
+        ]);
+    }
+
     // 🟢 Crear cliente
     public function storeCliente(Request $request)
     {

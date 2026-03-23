@@ -274,6 +274,7 @@ Route::get('/empresa/{empresa}/clientes', [EmpresaController::class, 'clientes']
 
 Route::prefix('empresa/{empresa}/clientes')->group(function () {
     Route::post('/crear', [EmpresaController::class, 'storeCliente'])->name('empresa.clientes.store');
+    Route::post('/exportar', [EmpresaController::class, 'exportarClientes'])->name('empresa.clientes.exportar');
     Route::put('/{cliente}/editar', [EmpresaController::class, 'updateCliente'])->name('empresa.clientes.update');
     Route::delete('/{cliente}/eliminar', [EmpresaController::class, 'destroyCliente'])->name('empresa.clientes.destroy');
 });

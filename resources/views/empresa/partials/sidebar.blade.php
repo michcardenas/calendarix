@@ -113,11 +113,14 @@
         margin-left: 0.75rem;
     }
 
-    /* Botón salir */
+    /* Bloque de salir / cerrar sesión */
     .sidebar-clx .sidebar-exit-wrap {
         margin-top: auto;
-        padding: 1rem 1.5rem 0;
+        padding: 1rem 1.5rem;
         border-top: 1px solid rgba(90, 49, 215, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
     .sidebar-clx a.sidebar-exit {
         display: flex;
@@ -139,6 +142,26 @@
     }
     .sidebar-clx a.sidebar-exit:hover i {
         color: #ffffff;
+    }
+    .sidebar-clx .sidebar-logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        background: #dc2626;
+        color: #ffffff;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        gap: 0.5rem;
+    }
+    .sidebar-clx .sidebar-logout-btn:hover {
+        background: #b91c1c;
     }
 </style>
 
@@ -222,11 +245,17 @@
         </div>
     </nav>
 
-    {{-- Salir --}}
+    {{-- Salir / Cerrar sesión --}}
     <div class="sidebar-exit-wrap">
         <a href="{{ url('/dashboard') }}" class="sidebar-exit">
-            <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i> Salir
+            <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i> Volver al inicio
         </a>
+        <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+            @csrf
+            <button type="submit" class="sidebar-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </button>
+        </form>
     </div>
 
 </aside>
