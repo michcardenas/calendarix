@@ -150,6 +150,11 @@
             </div>
         </header>
 
+        @if($tieneNegocio)
+        {{-- Link público compartible --}}
+        @include('components.share-link', ['slug' => $primeraEmpresa->slug])
+        @endif
+
         <!-- Estadísticas del negocio -->
         <section class="clx-stats">
             <div class="clx-stat-card">
@@ -253,9 +258,14 @@
                                         <p style="font-weight:600; color:#1f2937; font-size:0.88rem; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $empNombre }}</p>
                                         <p style="font-size:0.75rem; color:#6b7280; margin:2px 0 0 0;">{{ $emp->neg_categoria ?? 'Sin categoria' }}</p>
                                     </div>
-                                    <a href="{{ route('empresa.dashboard', $emp->id) }}" style="flex-shrink:0; padding:6px 12px; background:#5a31d7; color:#fff; border-radius:8px; font-size:0.75rem; font-weight:600; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#7b5ce0'" onmouseout="this.style.background='#5a31d7'">
-                                        <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i> Gestionar
-                                    </a>
+                                    <div style="display:flex; gap:6px; flex-shrink:0;">
+                                        <button type="button" onclick="copyNegocioLink(this, '{{ url('/negocios/' . $emp->slug) }}')" style="padding:6px 10px; background:#f8f6ff; color:#5a31d7; border:1px solid #e5e7eb; border-radius:8px; font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap;" title="Copiar enlace publico">
+                                            <i class="fas fa-link" style="font-size:0.6rem;"></i>
+                                        </button>
+                                        <a href="{{ route('empresa.dashboard', $emp->id) }}" style="padding:6px 12px; background:#5a31d7; color:#fff; border-radius:8px; font-size:0.75rem; font-weight:600; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#7b5ce0'" onmouseout="this.style.background='#5a31d7'">
+                                            <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i> Gestionar
+                                        </a>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -873,4 +883,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pendingCount)     pendingCount.textContent = `${s.pending} ${s.pending === 1 ? 'cita pendiente' : 'citas pendientes'}`;
   }
 });
+
+function copyNegocioLink(btn, url) {
+    navigator.clipboard.writeText(url).then(function() {
+        var orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check" style="font-size:0.6rem;"></i>';
+        btn.style.background = '#10b981';
+        btn.style.color = '#fff';
+        btn.style.borderColor = '#10b981';
+        setTimeout(function() {
+            btn.innerHTML = orig;
+            btn.style.background = '#f8f6ff';
+            btn.style.color = '#5a31d7';
+            btn.style.borderColor = '#e5e7eb';
+        }, 2000);
+    });
+}
 </script>

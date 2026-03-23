@@ -46,6 +46,9 @@
             </a>
         </div>
 
+        {{-- Link público compartible --}}
+        @include('components.share-link', ['slug' => $empresa->slug])
+
         {{-- Tarjetas de estadísticas principales --}}
         <div class="stats">
             <div class="stat-card stat-card--primary">

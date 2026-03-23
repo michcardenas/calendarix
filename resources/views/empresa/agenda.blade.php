@@ -169,6 +169,9 @@ $citasManana = $citas->filter(fn($c) => $c->fecha->isTomorrow())->sortBy('hora_i
         </a>
     </div>
 
+    {{-- Link público compartible --}}
+    @include('components.share-link', ['slug' => $empresa->slug])
+
     {{-- Flash messages --}}
     @if(session('success'))
         <div class="agenda-flash agenda-flash--success">

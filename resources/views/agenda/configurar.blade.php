@@ -190,6 +190,9 @@ $diasSemana = [
         </div>
     </div>
 
+    {{-- Link público compartible --}}
+    @include('components.share-link', ['slug' => $empresa->slug])
+
     <form action="{{ route('agenda.guardar_bloqueados', $empresa->id) }}" method="POST">
         @csrf
         <input type="hidden" name="fechas_bloqueadas" id="fechas_bloqueadas">
