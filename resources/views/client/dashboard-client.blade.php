@@ -99,6 +99,13 @@
                 </li>
 
                 <li class="clx-nav-item">
+                    <a href="#" class="clx-nav-link" data-clx-page="billing">
+                        <i class="fas fa-file-invoice-dollar clx-nav-icon"></i>
+                        Facturacion
+                    </a>
+                </li>
+
+                <li class="clx-nav-item">
                     <a href="#" class="clx-nav-link" data-clx-page="profile">
                         <i class="fas fa-user-cog clx-nav-icon"></i>
                         Mi Perfil
@@ -304,7 +311,7 @@
                         <h1 style="font-size:1.5rem;font-weight:800;color:#5a31d7;margin:0;">
                             <i class="fas fa-user-cog" style="margin-right:8px;opacity:0.7;"></i>Mi Perfil
                         </h1>
-                        <p style="font-size:0.82rem;color:#9ca3af;margin:4px 0 0 0;">Administra tu informacion personal y plan.</p>
+                        <p style="font-size:0.82rem;color:#9ca3af;margin:4px 0 0 0;">Administra tu informacion personal.</p>
                     </div>
                 </div>
 
@@ -321,246 +328,6 @@
                         <i class="fas fa-exclamation-circle"></i>
                         {{ $errors->first() }}
                     </div>
-                @endif
-
-                {{-- ===== SECCION 1: Plan Card mejorada ===== --}}
-                <div class="profile-card">
-                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-                        <div>
-                            <div class="profile-card-title" style="margin-bottom:8px;">
-                                <i class="fas fa-crown"></i> Tu Plan
-                            </div>
-
-                            @if($plan ?? false)
-                                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                                    <span class="plan-badge plan-badge-pro">
-                                        <i class="fas fa-gem"></i> {{ $plan->name }}
-                                    </span>
-                                    @if($subscription)
-                                        @if($subscription->isTrial())
-                                            <span class="billing-status-trial"><i class="fas fa-clock"></i> Periodo de prueba</span>
-                                        @elseif($subscription->status === 'active')
-                                            <span class="billing-status-active"><i class="fas fa-check"></i> Activo</span>
-                                        @elseif($subscription->status === 'payment_failed')
-                                            <span class="billing-status-failed"><i class="fas fa-exclamation-triangle"></i> Pago fallido</span>
-                                        @endif
-                                    @endif
-                                </div>
-
-                                @if($subscription)
-                                    <div style="margin-top:10px;">
-                                        <span style="font-size:0.78rem;color:#6b7280;">
-                                            Desde {{ $subscription->starts_at->format('d/m/Y') }}
-                                            @if($subscription->ends_at)
-                                                — Hasta {{ $subscription->ends_at->format('d/m/Y') }}
-                                            @endif
-                                        </span>
-                                    </div>
-
-                                    {{-- Barra de progreso --}}
-                                    @if($subscription->ends_at)
-                                        @php
-                                            $daysRemaining = $subscription->daysRemaining();
-                                            $totalDays = max(1, $subscription->starts_at->diffInDays($subscription->ends_at));
-                                            $pct = min(100, round((($totalDays - $daysRemaining) / $totalDays) * 100));
-                                        @endphp
-                                        <div class="billing-progress-bar" style="margin-top:8px;">
-                                            <div class="billing-progress-fill" style="width:{{ $pct }}%;"></div>
-                                        </div>
-                                        <span style="font-size:0.72rem;color:#5a31d7;font-weight:600;">
-                                            {{ $daysRemaining }} {{ $daysRemaining === 1 ? 'dia' : 'dias' }} restantes
-                                        </span>
-                                    @endif
-
-                                    {{-- Precio --}}
-                                    <div style="margin-top:12px;">
-                                        <span style="font-size:1.5rem;font-weight:800;color:#1f2937;">
-                                            {{ $plan->currency }} ${{ number_format($plan->price, 0) }}
-                                        </span>
-                                        <span style="font-size:0.82rem;color:#6b7280;">
-                                            / {{ $plan->interval === 'monthly' ? 'mes' : 'año' }}
-                                        </span>
-                                    </div>
-                                @endif
-
-                                {{-- Features --}}
-                                <div class="plan-features" style="margin-top:12px;">
-                                    <span class="plan-feature {{ $plan->crm_ia_enabled ? 'plan-feature-on' : 'plan-feature-off' }}">
-                                        <i class="fas {{ $plan->crm_ia_enabled ? 'fa-check-circle' : 'fa-times-circle' }}"></i> CRM & IA
-                                    </span>
-                                    <span class="plan-feature {{ $plan->multi_branch_enabled ? 'plan-feature-on' : 'plan-feature-off' }}">
-                                        <i class="fas {{ $plan->multi_branch_enabled ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Multi-sucursal
-                                    </span>
-                                    <span class="plan-feature {{ $plan->email_reminders ? 'plan-feature-on' : 'plan-feature-off' }}">
-                                        <i class="fas {{ $plan->email_reminders ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Recordatorios Email
-                                    </span>
-                                    @if($plan->max_professionals)
-                                        <span class="plan-feature plan-feature-on">
-                                            <i class="fas fa-users"></i> {{ $plan->max_professionals }} profesionales
-                                        </span>
-                                    @endif
-                                </div>
-                            @else
-                                <span class="plan-badge plan-badge-free">
-                                    <i class="fas fa-tag"></i> Sin plan activo
-                                </span>
-                                <span style="font-size:0.72rem;color:#9ca3af;margin-left:8px;">
-                                    Elegi un plan para acceder a todas las funciones
-                                </span>
-                                <div class="plan-features" style="margin-top:10px;">
-                                    <span class="plan-feature plan-feature-on"><i class="fas fa-check-circle"></i> Agendar citas</span>
-                                    <span class="plan-feature plan-feature-on"><i class="fas fa-check-circle"></i> Perfil de negocio</span>
-                                    <span class="plan-feature plan-feature-on"><i class="fas fa-check-circle"></i> Calendario</span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                @if($plan ?? false)
-                {{-- ===== SECCION 2: Profesionales y Costos ===== --}}
-                @php
-                    $maxProf = $plan->max_professionals;
-                    $registered = $trabajadoresCount ?? 0;
-                    $additional = $maxProf !== null ? max(0, $registered - $maxProf) : 0;
-                    $pricePerAdditional = (float) ($plan->price_per_additional_professional ?? 0);
-                    $costAdditional = $additional * $pricePerAdditional;
-                @endphp
-                <div class="profile-card">
-                    <div class="profile-card-title" style="margin-bottom:12px;">
-                        <i class="fas fa-users-cog"></i> Profesionales y Costos
-                    </div>
-
-                    <div class="billing-line">
-                        <span>Incluidos en tu plan</span>
-                        <span style="font-weight:700;color:#1f2937;">
-                            {{ $maxProf !== null ? $maxProf : 'Ilimitados' }}
-                        </span>
-                    </div>
-                    <div class="billing-line">
-                        <span>Registrados actualmente</span>
-                        <span style="font-weight:700;color:#1f2937;">{{ $registered }}</span>
-                    </div>
-                    @if($maxProf !== null)
-                        <div class="billing-line">
-                            <span>Profesionales adicionales</span>
-                            <span style="font-weight:700;{{ $additional > 0 ? 'color:#f59e0b;' : 'color:#1f2937;' }}">
-                                {{ $additional }}
-                            </span>
-                        </div>
-                    @endif
-                    @if($pricePerAdditional > 0)
-                        <div class="billing-line">
-                            <span>Costo por adicional</span>
-                            <span style="font-weight:600;color:#6b7280;">
-                                {{ $plan->currency }} ${{ number_format($pricePerAdditional, 0) }} / {{ $plan->interval === 'monthly' ? 'mes' : 'año' }}
-                            </span>
-                        </div>
-                        @if($additional > 0)
-                            <div class="billing-line" style="background:#fef3c7;padding:6px 10px;border-radius:8px;margin-top:4px;">
-                                <span style="font-weight:600;color:#92400e;">Subtotal adicionales</span>
-                                <span style="font-weight:700;color:#92400e;">
-                                    {{ $plan->currency }} ${{ number_format($costAdditional, 0) }}
-                                </span>
-                            </div>
-                        @endif
-                    @endif
-                </div>
-
-                {{-- ===== SECCION 3: Resumen de Facturacion ===== --}}
-                @php
-                    $baseCost = (float) $plan->price;
-                    $totalBilling = $baseCost + $costAdditional;
-                @endphp
-                <div class="profile-card">
-                    <div class="profile-card-title" style="margin-bottom:12px;">
-                        <i class="fas fa-file-invoice-dollar"></i> Resumen de Facturacion
-                    </div>
-
-                    <div class="billing-line">
-                        <span>Plan {{ $plan->name }}</span>
-                        <span style="font-weight:600;">{{ $plan->currency }} ${{ number_format($baseCost, 0) }}</span>
-                    </div>
-                    @if($additional > 0)
-                        <div class="billing-line">
-                            <span>+ {{ $additional }} profesional{{ $additional > 1 ? 'es' : '' }} adicional{{ $additional > 1 ? 'es' : '' }}</span>
-                            <span style="font-weight:600;">{{ $plan->currency }} ${{ number_format($costAdditional, 0) }}</span>
-                        </div>
-                    @endif
-
-                    <hr class="billing-divider">
-
-                    <div class="billing-line billing-line-total">
-                        <span>Total proxima facturacion</span>
-                        <span>{{ $plan->currency }} ${{ number_format($totalBilling, 0) }}</span>
-                    </div>
-
-                    @if($subscription && $subscription->ends_at)
-                        <div style="margin-top:8px;font-size:0.78rem;color:#6b7280;">
-                            <i class="fas fa-calendar-alt" style="margin-right:4px;color:#5a31d7;"></i>
-                            Fecha proximo cobro: <strong>{{ $subscription->ends_at->format('d/m/Y') }}</strong>
-                        </div>
-                    @endif
-
-                    @if($subscription && $subscription->isTrial())
-                        <div style="margin-top:10px;display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:10px 14px;border-radius:10px;font-size:0.78rem;">
-                            <i class="fas fa-info-circle" style="flex-shrink:0;"></i>
-                            Al finalizar tu periodo de prueba se cobrara este monto.
-                        </div>
-                    @endif
-                </div>
-
-                {{-- ===== SECCION 4: Historial de Pagos ===== --}}
-                <div class="profile-card">
-                    <div class="profile-card-title" style="margin-bottom:12px;">
-                        <i class="fas fa-history"></i> Historial de Pagos
-                    </div>
-
-                    @if(($paymentLogs ?? collect())->count() > 0)
-                        @foreach($paymentLogs as $log)
-                            <div class="payment-log-entry">
-                                <div class="payment-log-row">
-                                    <div>
-                                        <span style="font-size:0.82rem;font-weight:600;color:#374151;">
-                                            @switch($log->action)
-                                                @case('purchase') Cobro @break
-                                                @case('create_customer') Registro @break
-                                                @case('tokenize') Tarjeta registrada @break
-                                                @case('purchase_retry') Reintento de cobro @break
-                                                @default {{ ucfirst($log->action) }}
-                                            @endswitch
-                                        </span>
-                                        <span style="font-size:0.72rem;color:#9ca3af;margin-left:6px;">
-                                            {{ $log->created_at->format('d/m/Y H:i') }}
-                                        </span>
-                                    </div>
-                                    <div style="display:flex;align-items:center;gap:8px;">
-                                        @php
-                                            $logAmount = $log->request_payload['Amount'] ?? null;
-                                        @endphp
-                                        @if($logAmount)
-                                            <span style="font-weight:700;font-size:0.85rem;color:#1f2937;">
-                                                ${{ number_format($logAmount / 100, 2) }}
-                                            </span>
-                                        @else
-                                            <span style="font-size:0.78rem;color:#9ca3af;">—</span>
-                                        @endif
-                                        @if($log->success)
-                                            <span class="billing-status-success"><i class="fas fa-check"></i> Exitoso</span>
-                                        @else
-                                            <span class="billing-status-failed"><i class="fas fa-times"></i> Fallido</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div style="text-align:center;padding:1.5rem 1rem;color:#9ca3af;font-size:0.85rem;">
-                            <i class="fas fa-receipt" style="font-size:1.5rem;margin-bottom:8px;display:block;color:#d1d5db;"></i>
-                            No hay pagos registrados.
-                        </div>
-                    @endif
-                </div>
                 @endif
 
                 {{-- Profile form --}}
@@ -638,6 +405,288 @@
             </div>
         </div>{{-- /data-clx-section="profile" --}}
 
+        {{-- ===== SECCION: FACTURACION ===== --}}
+        <div data-clx-section="billing" style="display:none;">
+            <div class="profile-section">
+
+                {{-- Breadcrumbs --}}
+                <nav style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#9ca3af; margin-bottom:1rem;">
+                    <a href="#" data-clx-page="dashboard" style="color:#5a31d7; text-decoration:none; font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                        <i class="fas fa-home" style="font-size:0.7rem;"></i> Dashboard
+                    </a>
+                    <i class="fas fa-chevron-right" style="font-size:0.55rem; color:#d1d5db;"></i>
+                    <span style="color:#374151; font-weight:500;">Facturacion</span>
+                </nav>
+
+                {{-- Header --}}
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+                    <div>
+                        <h1 style="font-size:1.5rem;font-weight:800;color:#5a31d7;margin:0;">
+                            <i class="fas fa-file-invoice-dollar" style="margin-right:8px;opacity:0.7;"></i>Facturacion
+                        </h1>
+                        <p style="font-size:0.82rem;color:#9ca3af;margin:4px 0 0 0;">Tu plan, profesionales y pagos en un solo lugar.</p>
+                    </div>
+                </div>
+
+                {{-- ===== Tu Plan ===== --}}
+                <div class="profile-card" style="position:relative;overflow:hidden;">
+                    {{-- Decoracion sutil --}}
+                    <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:linear-gradient(135deg,rgba(90,49,215,0.06),rgba(123,92,224,0.03));border-radius:0 0 0 100%;pointer-events:none;"></div>
+
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+                        <div style="flex:1;min-width:200px;">
+                            <div class="profile-card-title" style="margin-bottom:12px;">
+                                <i class="fas fa-crown"></i> Tu Plan
+                            </div>
+
+                            @if($plan ?? false)
+                                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:12px;font-size:0.85rem;font-weight:700;background:linear-gradient(135deg,#5a31d7,#7b5ce0);color:#fff;">
+                                        <i class="fas fa-gem" style="font-size:0.7rem;"></i> {{ $plan->name }}
+                                    </span>
+                                    @if($subscription)
+                                        @if($subscription->isTrial())
+                                            <span class="billing-status-trial"><i class="fas fa-clock"></i> Periodo de prueba</span>
+                                        @elseif($subscription->status === 'active')
+                                            <span class="billing-status-active"><i class="fas fa-check"></i> Activo</span>
+                                        @elseif($subscription->status === 'payment_failed')
+                                            <span class="billing-status-failed"><i class="fas fa-exclamation-triangle"></i> Pago fallido</span>
+                                        @endif
+                                    @endif
+                                </div>
+
+                                {{-- Precio grande --}}
+                                <div style="margin-bottom:12px;">
+                                    <span style="font-size:2rem;font-weight:800;color:#1f2937;line-height:1;">
+                                        {{ $plan->currency }} ${{ number_format($plan->price, 0) }}
+                                    </span>
+                                    <span style="font-size:0.9rem;color:#6b7280;">
+                                        / {{ $plan->interval === 'monthly' ? 'mes' : 'año' }}
+                                    </span>
+                                </div>
+
+                                @if($subscription)
+                                    {{-- Periodo --}}
+                                    <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:#6b7280;margin-bottom:8px;">
+                                        <i class="fas fa-calendar-alt" style="color:#5a31d7;font-size:0.75rem;"></i>
+                                        {{ $subscription->starts_at->format('d/m/Y') }}
+                                        <i class="fas fa-arrow-right" style="font-size:0.6rem;color:#d1d5db;"></i>
+                                        {{ $subscription->ends_at ? $subscription->ends_at->format('d/m/Y') : 'Sin vencimiento' }}
+                                    </div>
+
+                                    {{-- Barra de progreso --}}
+                                    @if($subscription->ends_at)
+                                        @php
+                                            $daysRemaining = $subscription->daysRemaining();
+                                            $totalDays = max(1, $subscription->starts_at->diffInDays($subscription->ends_at));
+                                            $pct = min(100, round((($totalDays - $daysRemaining) / $totalDays) * 100));
+                                        @endphp
+                                        <div class="billing-progress-bar">
+                                            <div class="billing-progress-fill" style="width:{{ $pct }}%;"></div>
+                                        </div>
+                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                                            <span style="font-size:0.72rem;color:#5a31d7;font-weight:600;">
+                                                {{ $daysRemaining }} {{ $daysRemaining === 1 ? 'dia' : 'dias' }} restantes
+                                            </span>
+                                            <span style="font-size:0.68rem;color:#9ca3af;">{{ $pct }}% transcurrido</span>
+                                        </div>
+                                    @endif
+                                @endif
+
+                                {{-- Features --}}
+                                <div class="plan-features" style="margin-top:14px;">
+                                    <span class="plan-feature {{ $plan->crm_ia_enabled ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                        <i class="fas {{ $plan->crm_ia_enabled ? 'fa-check-circle' : 'fa-times-circle' }}"></i> CRM & IA
+                                    </span>
+                                    <span class="plan-feature {{ $plan->multi_branch_enabled ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                        <i class="fas {{ $plan->multi_branch_enabled ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Multi-sucursal
+                                    </span>
+                                    <span class="plan-feature {{ $plan->email_reminders ? 'plan-feature-on' : 'plan-feature-off' }}">
+                                        <i class="fas {{ $plan->email_reminders ? 'fa-check-circle' : 'fa-times-circle' }}"></i> Recordatorios Email
+                                    </span>
+                                    @if($plan->max_professionals)
+                                        <span class="plan-feature plan-feature-on">
+                                            <i class="fas fa-users"></i> {{ $plan->max_professionals }} profesionales
+                                        </span>
+                                    @endif
+                                </div>
+                            @else
+                                <div style="text-align:center;padding:2rem 1rem;">
+                                    <i class="fas fa-layer-group" style="font-size:2.5rem;color:#d1d5db;margin-bottom:12px;"></i>
+                                    <p style="font-size:0.95rem;color:#6b7280;margin-bottom:12px;">No tienes un plan activo</p>
+                                    <a href="{{ route('client.elegir-plan') }}" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;background:#5a31d7;color:#fff;border-radius:10px;font-size:0.85rem;font-weight:600;text-decoration:none;">
+                                        <i class="fas fa-rocket"></i> Elegir un plan
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                @if($plan ?? false)
+                @php
+                    $maxProf = $plan->max_professionals;
+                    $registered = $trabajadoresCount ?? 0;
+                    $additional = $maxProf !== null ? max(0, $registered - $maxProf) : 0;
+                    $pricePerAdditional = (float) ($plan->price_per_additional_professional ?? 0);
+                    $costAdditional = $additional * $pricePerAdditional;
+                    $baseCost = (float) $plan->price;
+                    $totalBilling = $baseCost + $costAdditional;
+                @endphp
+
+                {{-- Grid de 2 columnas para profesionales y resumen --}}
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:0;">
+
+                    {{-- Profesionales y Costos --}}
+                    <div class="profile-card" style="margin-bottom:0;">
+                        <div class="profile-card-title" style="margin-bottom:14px;">
+                            <i class="fas fa-users-cog"></i> Profesionales
+                        </div>
+
+                        <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:16px;">
+                            <div style="text-align:center;">
+                                <div style="font-size:2rem;font-weight:800;color:#5a31d7;line-height:1;">{{ $registered }}</div>
+                                <div style="font-size:0.7rem;color:#6b7280;font-weight:500;margin-top:2px;">Registrados</div>
+                            </div>
+                            <div style="width:1px;height:40px;background:#e5e7eb;"></div>
+                            <div style="text-align:center;">
+                                <div style="font-size:2rem;font-weight:800;color:#1f2937;line-height:1;">{{ $maxProf ?? '∞' }}</div>
+                                <div style="font-size:0.7rem;color:#6b7280;font-weight:500;margin-top:2px;">Incluidos</div>
+                            </div>
+                            @if($maxProf !== null && $additional > 0)
+                                <div style="width:1px;height:40px;background:#e5e7eb;"></div>
+                                <div style="text-align:center;">
+                                    <div style="font-size:2rem;font-weight:800;color:#f59e0b;line-height:1;">+{{ $additional }}</div>
+                                    <div style="font-size:0.7rem;color:#6b7280;font-weight:500;margin-top:2px;">Adicionales</div>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($pricePerAdditional > 0)
+                            <div style="background:#f8f6ff;border-radius:10px;padding:10px 14px;">
+                                <div class="billing-line" style="border:none;padding:4px 0;">
+                                    <span style="font-size:0.8rem;">Costo por adicional</span>
+                                    <span style="font-weight:700;color:#5a31d7;font-size:0.85rem;">
+                                        {{ $plan->currency }} ${{ number_format($pricePerAdditional, 0) }}
+                                    </span>
+                                </div>
+                                @if($additional > 0)
+                                    <div class="billing-line" style="border:none;padding:4px 0;">
+                                        <span style="font-size:0.8rem;">Subtotal ({{ $additional }}x)</span>
+                                        <span style="font-weight:700;color:#f59e0b;font-size:0.85rem;">
+                                            {{ $plan->currency }} ${{ number_format($costAdditional, 0) }}
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Resumen de Facturacion --}}
+                    <div class="profile-card" style="margin-bottom:0;">
+                        <div class="profile-card-title" style="margin-bottom:14px;">
+                            <i class="fas fa-receipt"></i> Proxima Facturacion
+                        </div>
+
+                        <div style="text-align:center;margin-bottom:16px;">
+                            <div style="font-size:2.5rem;font-weight:800;color:#5a31d7;line-height:1;">
+                                ${{ number_format($totalBilling, 0) }}
+                            </div>
+                            <div style="font-size:0.78rem;color:#6b7280;margin-top:4px;">{{ $plan->currency }} / {{ $plan->interval === 'monthly' ? 'mes' : 'año' }}</div>
+                        </div>
+
+                        <div style="background:#f9fafb;border-radius:10px;padding:10px 14px;">
+                            <div class="billing-line" style="border-color:#e5e7eb;padding:6px 0;">
+                                <span style="font-size:0.8rem;">Plan {{ $plan->name }}</span>
+                                <span style="font-weight:600;font-size:0.85rem;">${{ number_format($baseCost, 0) }}</span>
+                            </div>
+                            @if($additional > 0)
+                                <div class="billing-line" style="border-color:#e5e7eb;padding:6px 0;">
+                                    <span style="font-size:0.8rem;">+ {{ $additional }} adicional{{ $additional > 1 ? 'es' : '' }}</span>
+                                    <span style="font-weight:600;font-size:0.85rem;">${{ number_format($costAdditional, 0) }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($subscription && $subscription->ends_at)
+                            <div style="margin-top:12px;display:flex;align-items:center;gap:6px;font-size:0.78rem;color:#6b7280;">
+                                <i class="fas fa-calendar-check" style="color:#5a31d7;"></i>
+                                Proximo cobro: <strong style="color:#1f2937;">{{ $subscription->ends_at->format('d/m/Y') }}</strong>
+                            </div>
+                        @endif
+
+                        @if($subscription && $subscription->isTrial())
+                            <div style="margin-top:10px;display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:10px 14px;border-radius:10px;font-size:0.75rem;">
+                                <i class="fas fa-info-circle" style="flex-shrink:0;"></i>
+                                Al finalizar tu prueba se cobrara este monto.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Historial de Pagos --}}
+                <div class="profile-card">
+                    <div class="profile-card-title" style="margin-bottom:14px;">
+                        <i class="fas fa-history"></i> Historial de Pagos
+                    </div>
+
+                    @if(($paymentLogs ?? collect())->count() > 0)
+                        @foreach($paymentLogs as $log)
+                            <div class="payment-log-entry">
+                                <div class="payment-log-row">
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        @php
+                                            $logIcon = match($log->action) {
+                                                'purchase' => 'fa-credit-card',
+                                                'create_customer' => 'fa-user-plus',
+                                                'tokenize' => 'fa-lock',
+                                                'purchase_retry' => 'fa-redo',
+                                                default => 'fa-receipt',
+                                            };
+                                            $logLabel = match($log->action) {
+                                                'purchase' => 'Cobro',
+                                                'create_customer' => 'Registro',
+                                                'tokenize' => 'Tarjeta registrada',
+                                                'purchase_retry' => 'Reintento',
+                                                default => ucfirst($log->action),
+                                            };
+                                        @endphp
+                                        <div style="width:34px;height:34px;border-radius:10px;background:#f8f6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                            <i class="fas {{ $logIcon }}" style="color:#5a31d7;font-size:0.8rem;"></i>
+                                        </div>
+                                        <div>
+                                            <div style="font-size:0.82rem;font-weight:600;color:#374151;">{{ $logLabel }}</div>
+                                            <div style="font-size:0.7rem;color:#9ca3af;">{{ $log->created_at->format('d/m/Y H:i') }}</div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        @php $logAmount = $log->request_payload['Amount'] ?? null; @endphp
+                                        @if($logAmount)
+                                            <span style="font-weight:700;font-size:0.9rem;color:#1f2937;">
+                                                ${{ number_format($logAmount / 100, 2) }}
+                                            </span>
+                                        @endif
+                                        @if($log->success)
+                                            <span class="billing-status-success"><i class="fas fa-check"></i> Exitoso</span>
+                                        @else
+                                            <span class="billing-status-failed"><i class="fas fa-times"></i> Fallido</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div style="text-align:center;padding:2rem 1rem;color:#9ca3af;font-size:0.85rem;">
+                            <i class="fas fa-receipt" style="font-size:2rem;margin-bottom:10px;display:block;color:#d1d5db;"></i>
+                            No hay pagos registrados.
+                        </div>
+                    @endif
+                </div>
+                @endif
+
+            </div>
+        </div>{{-- /data-clx-section="billing" --}}
+
     </main>
 </div>
 
@@ -658,9 +707,9 @@
         <i class="fas fa-plus-circle"></i>
         <span>Registrar</span>
     </a>
-    <a href="#" class="clx-bottom-nav__item" data-clx-page="profile">
-        <i class="fas fa-user"></i>
-        <span>Perfil</span>
+    <a href="#" class="clx-bottom-nav__item" data-clx-page="billing">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <span>Facturacion</span>
     </a>
     <button type="button" class="clx-bottom-nav__item" id="btnMasCliente">
         <i class="fas fa-bars"></i>
@@ -719,6 +768,10 @@
 
         <div class="drawer-separator"></div>
 
+        <a href="#" class="drawer-link" data-clx-drawer-page="billing">
+            <i class="fas fa-file-invoice-dollar"></i> Facturacion
+        </a>
+
         <a href="#" class="drawer-link" data-clx-drawer-page="profile">
             <i class="fas fa-user-cog"></i> Mi Perfil
         </a>
@@ -745,6 +798,7 @@
     // Page title map
     var pageTitles = {
         dashboard: 'Dashboard',
+        billing: 'Facturacion',
         profile: 'Mi Perfil'
     };
 
