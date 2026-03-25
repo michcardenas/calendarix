@@ -1167,13 +1167,11 @@
                                     @if($trab->especialidades)
                                         <div class="team-role">{{ $trab->especialidades }}</div>
                                     @endif
-                                    <div class="team-tags">
-                                        <span class="team-tag">★ 4.9</span>
-                                        <span class="team-tag">+240 reservas</span>
-                                        @if($trab->especialidades)
+                                    @if($trab->especialidades)
+                                        <div class="team-tags">
                                             <span class="team-tag">{{ $trab->especialidades }}</span>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 {{-- Botón --}}
