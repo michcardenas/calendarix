@@ -1027,7 +1027,7 @@
                         $features = [
                             ['enabled' => $plan->crm_ia_enabled,       'label' => 'Agenda inteligente + CRM + IA'],
                             ['enabled' => $plan->multi_branch_enabled, 'label' => 'Multi-sucursal'],
-                            ['enabled' => $plan->whatsapp_reminders,   'label' => 'Recordatorios WhatsApp'],
+
                             ['enabled' => $plan->email_reminders,      'label' => 'Recordatorios Email'],
                         ];
                     @endphp
@@ -1109,7 +1109,7 @@
                     ['icon' => 'fas fa-clock', 'title' => 'Reserva 24/7', 'description' => 'Agenda citas en cualquier momento. Disponibilidad actualizada en tiempo real.'],
                     ['icon' => 'fas fa-shield-alt', 'title' => 'Pagos Seguros', 'description' => 'Transacciones protegidas. Si algo sale mal, te devolvemos tu dinero.'],
                     ['icon' => 'fas fa-star', 'title' => 'Profesionales Verificados', 'description' => 'Todos los profesionales tienen reseñas reales de clientes como tú.'],
-                    ['icon' => 'fas fa-bell', 'title' => 'Recordatorios', 'description' => 'Recibe notificaciones por email y WhatsApp para no olvidar tu cita.'],
+                    ['icon' => 'fas fa-bell', 'title' => 'Recordatorios', 'description' => 'Recibe notificaciones por email para no olvidar tu cita.'],
                     ['icon' => 'fas fa-mobile-alt', 'title' => 'Gestión Fácil', 'description' => 'Cancela o reprograma citas fácilmente desde cualquier dispositivo.'],
                     ['icon' => 'fas fa-percent', 'title' => 'Ofertas Exclusivas', 'description' => 'Accede a descuentos especiales solo disponibles en nuestra plataforma.'],
                 ];

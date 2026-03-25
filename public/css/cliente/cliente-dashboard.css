@@ -692,3 +692,61 @@ body {
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     .clx-shape { animation: none; opacity: 0.1; }
 }
+
+/* ===============================================
+   BILLING / FACTURACION
+   =============================================== */
+.billing-progress-bar {
+    height: 8px; background: #e5e7eb; border-radius: 4px;
+    overflow: hidden;
+}
+.billing-progress-fill {
+    height: 100%; background: linear-gradient(90deg, #5a31d7, #7b5ce0);
+    border-radius: 4px; transition: width 0.5s ease;
+}
+.billing-line {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0; font-size: 0.85rem; color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}
+.billing-line:last-child { border-bottom: none; }
+.billing-line-total {
+    font-size: 1.05rem; font-weight: 800; color: #5a31d7;
+    border-bottom: none; padding-top: 10px;
+}
+.billing-divider {
+    border: none; border-top: 2px solid rgba(90,49,215,0.15);
+    margin: 8px 0;
+}
+.billing-status-trial {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+    background: #fef3c7; color: #92400e;
+}
+.billing-status-active {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+    background: #d1fae5; color: #065f46;
+}
+.billing-status-success {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #d1fae5; color: #065f46;
+    padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 600;
+}
+.billing-status-failed {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #fee2e2; color: #991b1b;
+    padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 600;
+}
+.payment-log-entry {
+    padding: 10px 0; border-bottom: 1px solid #f3f4f6;
+}
+.payment-log-entry:last-child { border-bottom: none; }
+.payment-log-row {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 6px;
+}
+@media (max-width: 480px) {
+    .payment-log-row { flex-direction: column; align-items: flex-start; }
+    .billing-line { font-size: 0.8rem; }
+}

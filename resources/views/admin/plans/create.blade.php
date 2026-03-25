@@ -153,19 +153,6 @@
                         <span class="plan-toggle-switch"></span>
                     </label>
 
-                    <label class="plan-toggle-item">
-                        <div class="plan-toggle-info">
-                            <i class="fab fa-whatsapp plan-toggle-icon plan-toggle-icon--wa"></i>
-                            <div>
-                                <span class="plan-toggle-label">Recordatorios WhatsApp</span>
-                                <span class="plan-toggle-desc">Notificaciones automáticas de citas</span>
-                            </div>
-                        </div>
-                        <input type="hidden" name="whatsapp_reminders" value="0">
-                        <input type="checkbox" name="whatsapp_reminders" value="1" class="plan-toggle-checkbox"
-                               {{ old('whatsapp_reminders', '1') ? 'checked' : '' }}>
-                        <span class="plan-toggle-switch"></span>
-                    </label>
 
                     <label class="plan-toggle-item">
                         <div class="plan-toggle-info">

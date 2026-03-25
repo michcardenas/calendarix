@@ -125,7 +125,6 @@
                     $toggles = [
                         ['name' => 'crm_ia_enabled',       'icon' => 'fas fa-brain',         'label' => 'Agenda inteligente + CRM + IA',  'desc' => 'Predicción de retorno, aprendizaje de horarios', 'extra_class' => ''],
                         ['name' => 'multi_branch_enabled', 'icon' => 'fas fa-code-branch',    'label' => 'Multi-sucursal',                 'desc' => 'Gestionar múltiples locales', 'extra_class' => ''],
-                        ['name' => 'whatsapp_reminders',   'icon' => 'fab fa-whatsapp',       'label' => 'Recordatorios WhatsApp',         'desc' => 'Notificaciones automáticas de citas', 'extra_class' => 'plan-toggle-icon--wa'],
                         ['name' => 'email_reminders',      'icon' => 'fas fa-envelope',       'label' => 'Recordatorios Email',            'desc' => 'Confirmaciones y recordatorios por correo', 'extra_class' => ''],
                         ['name' => 'is_active',            'icon' => 'fas fa-toggle-on',      'label' => 'Plan activo',                   'desc' => 'Visible y disponible para los negocios', 'extra_class' => 'plan-toggle-icon--active'],
                     ];

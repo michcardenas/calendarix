@@ -329,7 +329,6 @@
                     $features = [
                         ['enabled' => $plan->crm_ia_enabled,       'label' => 'Agenda inteligente + CRM + IA'],
                         ['enabled' => $plan->multi_branch_enabled, 'label' => 'Multi-sucursal'],
-                        ['enabled' => $plan->whatsapp_reminders,   'label' => 'Recordatorios WhatsApp'],
                         ['enabled' => $plan->email_reminders,      'label' => 'Recordatorios Email'],
                     ];
                 @endphp

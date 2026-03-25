@@ -259,6 +259,11 @@ class DashboardController extends Controller
                 ->count();
         }
 
+        $paymentLogs = \App\Models\BambooPaymentLog::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('client.dashboard-client', [
             'misEmpresas'             => $misEmpresas,
             'citasMes'                => $citasMes,
@@ -274,6 +279,7 @@ class DashboardController extends Controller
             'resenasExistentes'       => $resenasExistentes,
             'subscription'            => $subscription,
             'plan'                    => $plan,
+            'paymentLogs'             => $paymentLogs,
             // Business-specific
             'clientesCount'           => $clientesCount,
             'trabajadoresCount'       => $trabajadoresCount,

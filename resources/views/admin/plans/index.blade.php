@@ -81,10 +81,6 @@
                             <i class="fas fa-{{ $plan->multi_branch_enabled ? 'check' : 'times' }}"></i>
                             Multi-sucursal
                         </li>
-                        <li class="{{ $plan->whatsapp_reminders ? 'feature--on' : 'feature--off' }}">
-                            <i class="fas fa-{{ $plan->whatsapp_reminders ? 'check' : 'times' }}"></i>
-                            Recordatorios WhatsApp
-                        </li>
                         <li class="{{ $plan->email_reminders ? 'feature--on' : 'feature--off' }}">
                             <i class="fas fa-{{ $plan->email_reminders ? 'check' : 'times' }}"></i>
                             Recordatorios Email
